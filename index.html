@@ -84,10 +84,6 @@ svg.i.sm{width:16px;height:16px}
 .link .i{transition:transform .2s}
 
 /* Header */
-.demo-strip{background:var(--ink);color:#FFFCF3;font-size:var(--cap)}
-.demo-strip .wrap{display:flex;align-items:center;justify-content:center;gap:12px;min-height:36px;padding-block:6px;text-align:center}
-.demo-strip b{color:var(--y)}
-.demo-strip button{background:none;border:0;color:#FFFCF3;cursor:pointer;display:grid;place-items:center;width:32px;height:32px;border-radius:8px;flex:none}
 header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid transparent;transition:border-color .25s,box-shadow .25s}
 header.site.scrolled{border-bottom-color:var(--line);box-shadow:0 6px 24px -18px rgba(21,21,21,.5)}
 .hbar{display:flex;align-items:center;gap:24px;height:72px}
@@ -536,9 +532,6 @@ footer.site ul a:hover{color:var(--y)}
 <style>img{max-width:100%}[hidden]{display:none!important}body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 </head>
 <body>
-<div class="demo-strip" id="demoStrip">
-  <div class="wrap"><span><b>Preview build.</b> Masters, class dates and prices shown here are sample data, ready to be replaced.</span><button type="button" id="hideStrip" aria-label="Hide preview notice"><svg class="i sm" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-</div>
 <header class="site" id="hdr">
   <div class="wrap hbar">
     <a class="brand" href="#home" aria-label="ChessMasters home"><span id="hdrLogo"></span><span><em>Chess</em><b>Masters</b></span></a>
@@ -1314,8 +1307,6 @@ addEventListener('scroll',()=>{const y=scrollY;$('#hdr').classList.toggle('scrol
 
 /* Logos */
 $('#hdrLogo').innerHTML=logoMark();$('#drLogo').innerHTML=logoMark();$('#ftLogo').innerHTML=logoMark('#FFCC00','#151515');
-if(store.get('cm-strip')==='0')$('#demoStrip').hidden=true;
-$('#hideStrip').onclick=()=>{$('#demoStrip').hidden=true;store.set('cm-strip','0')};
 
 addEventListener('hashchange',route);
 route();
