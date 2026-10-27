@@ -349,6 +349,10 @@ nav.main a:hover::after,nav.main a[aria-current="page"]::after{transform:scaleX(
 @media (max-width:760px){.row{grid-template-columns:64px minmax(0,1fr);gap:14px;padding:14px}.dtile{width:64px;height:76px;border-radius:12px}.dtile .d{font-size:1.5rem;margin-top:4px}.rside{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;text-align:left;border-top:1px dashed var(--line);padding-top:12px}}
 .empty{display:grid;justify-items:center;gap:12px;text-align:center;padding:48px 24px;border:2px dashed var(--line);border-radius:var(--r-lg)}
 .empty .glyph{font-size:3.5rem;opacity:.35}
+.soon-form{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:8px;width:100%;max-width:560px}
+.soon-form .sel{flex:1 1 220px}
+.soon-form .btn{flex:0 1 auto}
+@media (max-width:520px){.soon-form .btn{flex:1 1 100%}}
 
 /* Detail page */
 .dgrid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:clamp(24px,4vw,48px);align-items:start}
@@ -497,12 +501,13 @@ td a:hover{text-decoration:underline}
 .methods{display:grid;gap:10px}
 .method{display:flex;align-items:center;gap:12px;background:rgba(255,252,243,.7);border:1.5px solid rgba(21,21,21,.2);border-radius:14px;padding:12px 14px;font-size:.9375rem;color:#151515}
 .method b{display:block}
+a.method{text-decoration:none;transition:background .2s}a.method:hover{background:#FFFCF3}
 .method .ph{color:#3d3a33;margin-left:auto}
 @media (max-width:860px){.cwrap{grid-template-columns:1fr}.cart .knight{display:none}}
 
 /* Footer */
 footer.site{background:var(--band);color:var(--band-fg);margin-top:clamp(56px,7vw,104px);padding-block:56px 32px}
-.fgrid2{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px}
+.fgrid2{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
 footer.site p{color:var(--band-muted);font-size:.9375rem;max-width:38ch;margin-top:16px}
 footer.site h4{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--y);margin-bottom:14px}
 footer.site ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
@@ -536,7 +541,7 @@ footer.site ul a:hover{color:var(--y)}
   <div class="wrap hbar">
     <a class="brand" href="#home" aria-label="ChessMasters home"><span id="hdrLogo"></span><span><em>Chess</em><b>Masters</b></span></a>
     <nav class="main" aria-label="Primary" id="nav"></nav>
-    <a class="btn btn-y btn-sm hcta" href="#schedule">Register for a Class</a>
+    <a class="btn btn-y btn-sm hcta" href="#schedule">Get Class Updates</a>
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
   </div>
 </header>
@@ -545,7 +550,7 @@ footer.site ul a:hover{color:var(--y)}
   <div class="panel" role="dialog" aria-modal="true" aria-label="Menu">
     <div class="ptop"><a class="brand" href="#home"><span id="drLogo"></span><span><em>Chess</em><b>Masters</b></span></a><button class="menu-btn" style="display:grid" data-close aria-label="Close menu"><svg class="i" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <nav id="dnav" aria-label="Mobile"></nav>
-    <div class="pfoot"><a class="btn btn-y btn-block" href="#schedule">Register for a Class</a><p class="cap muted" style="text-align:center">Live classes with Grandmasters and International Masters</p></div>
+    <div class="pfoot"><a class="btn btn-y btn-block" href="#schedule">Get Class Updates</a><p class="cap muted" style="text-align:center">Live classes with Grandmasters and International Masters</p></div>
   </div>
 </div>
 
@@ -557,6 +562,7 @@ footer.site ul a:hover{color:var(--y)}
       <div><a class="brand" href="#home" style="color:#FFFCF3"><span id="ftLogo"></span><span><em>Chess</em><b>Masters</b></span></a><p>Live chess masterclasses taught by Grandmasters and International Masters. Pick a topic, reserve a seat, learn from a master.</p></div>
       <div><h4>Explore</h4><ul><li><a href="#schedule">Class schedule</a></li><li><a href="#schedule-opening">Openings</a></li><li><a href="#schedule-endgame">Endgames</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#contact">Contact us</a></li><li><a href="#pricing">FAQ</a></li></ul></div>
+      <div><h4>Get in touch</h4><ul><li><a href="tel:+919940366435">+91 99403 66435</a></li><li><a href="https://wa.me/919940366435" target="_blank" rel="noopener">WhatsApp us</a></li></ul></div>
     </div>
     <div class="fbottom"><span>© 2026 ChessMasters</span><span class="tag">Learn from Masters. Play Like One.</span></div>
   </div>
@@ -593,50 +599,15 @@ const DATA = {
     {id:'c',title:'GM',name:'Master Name C',glyph:'♝',spec:'Tactics and calculation',intro:'Placeholder profile for a Grandmaster known for sharp calculation and combinational play.'},
     {id:'d',title:'IM',name:'Master Name D',glyph:'♚',spec:'Endgame technique',intro:'Placeholder profile for an International Master who teaches clean, practical endgame technique.'}
   ],
-  /* Sample sessions. status: open | soon | full | done. Times are stored in IST. */
-  classes:[
-    {id:'opening-e4-repertoire',title:'Building a Repertoire with 1.e4',topic:'opening',master:'b',level:'Beginner',start:'2026-11-07T17:00:00+05:30',mins:90,price:1499,seats:40,booked:26,status:'open',
-     desc:'A practical starting repertoire for White after 1.e4, built on clear plans rather than long memorised lines.',
-     goals:['Pick sound replies to 1...e5, 1...c5 and 1...e6','Understand the plan behind each move, not just the move order','Avoid the common traps in the first ten moves','Build a short study list to keep improving at home'],
-     who:'Players who know how the pieces move and want a reliable plan with White.',pre:'Knows the rules and basic checkmates. No rating needed.'},
-    {id:'middlegame-pawn-structures',title:'Pawn Structures and Plans',topic:'middlegame',master:'a',level:'Intermediate',start:'2026-11-08T18:00:00+05:30',mins:90,price:1999,seats:30,booked:30,status:'full',
-     desc:'How the pawn skeleton tells you where to play. Isolated, hanging and Carlsbad structures explained through model games.',
-     goals:['Read a position by its pawn structure','Choose the right side of the board to play on','Improve your worst piece with purpose','Plan minority attacks and central breaks'],
-     who:'Club players who reach decent middlegames but lose the thread after move 20.',pre:'Comfortable with basic tactics and opening principles.'},
-    {id:'endgame-rook-essentials',title:'Rook Endgames You Must Know',topic:'endgame',master:'d',level:'Intermediate',start:'2026-11-14T17:30:00+05:30',mins:75,price:1499,seats:40,booked:18,status:'open',
-     desc:'The Lucena and Philidor positions and the practical rules that win and save the most common endgame in chess.',
-     goals:['Win the Lucena position by building a bridge','Hold the Philidor defence with confidence','Activate the rook before pushing pawns','Know when a rook ending is a draw'],
-     who:'Players who reach rook endgames and are not sure of the plan.',pre:'Knows basic king and pawn endings.'},
-    {id:'tactics-candidate-moves',title:'Calculation: Candidate Moves and Checks',topic:'tactics',master:'c',level:'Advanced',start:'2026-11-15T18:00:00+05:30',mins:90,price:1999,seats:30,booked:22,status:'open',
-     desc:'A repeatable method for calculating: list forcing moves, check every candidate and verify the final position.',
-     goals:['Use checks, captures and threats as a first filter','Calculate three to five moves with accuracy','Spot defensive resources before you commit','Train calculation with a weekly routine'],
-     who:'Rated players who miss tactics in longer calculations.',pre:'Solves standard two-move tactics with ease.'},
-    {id:'tournament-first-rated-event',title:'Preparing for Your First Rated Event',topic:'tournament',master:'a',level:'Beginner',start:'2026-11-21T16:00:00+05:30',mins:60,price:999,seats:50,booked:12,status:'open',
-     desc:'Everything around the board: notation, clock use, the touch-move rule, nerves and recovering after a loss.',
-     goals:['Write a scoresheet in algebraic notation','Use the chess clock and increments well','Know the rules arbiters enforce most often','Build a simple pre-game routine'],
-     who:'Students playing their first rated or school tournament, and their parents.',pre:'None.'},
-    {id:'opening-meeting-the-sicilian',title:'Meeting the Sicilian as White',topic:'opening',master:'b',level:'Advanced',start:'2026-11-28T18:00:00+05:30',mins:90,price:1999,seats:30,booked:0,status:'soon',
-     desc:'Open Sicilian or anti-Sicilian? A choice explained by structure, with model games for each approach.',
-     goals:['Compare the Open Sicilian with the Alapin','Know the key pawn breaks for both sides','Prepare against the Najdorf and Dragon setups'],
-     who:'Players above 1600 who face 1...c5 often.',pre:'Has an existing 1.e4 repertoire.'},
-    {id:'endgame-king-and-pawn',title:'King and Pawn Endgames: Opposition',topic:'endgame',master:'d',level:'Beginner',start:'2026-12-05T17:00:00+05:30',mins:60,price:999,seats:50,booked:0,status:'soon',
-     desc:'The foundation of every endgame. Opposition, key squares and the rule of the square, taught with simple positions.',
-     goals:['Find the key squares in pawn endings','Take and keep the opposition','Use the rule of the square to count races'],
-     who:'Newer players and younger students.',pre:'Knows how the pieces move.'},
-    {id:'middlegame-attacking-the-king',title:'Attacking the Castled King',topic:'middlegame',master:'a',level:'Advanced',start:'2026-12-12T18:00:00+05:30',mins:90,price:1999,seats:30,booked:0,status:'soon',
-     desc:'When to launch a pawn storm, how to open lines and which piece sacrifices really work.',
-     goals:['Judge when an attack is justified','Open files against the king','Recognise the classic bishop and knight sacrifices'],
-     who:'Intermediate and advanced players.',pre:'Comfortable with standard tactical motifs.'},
-    {id:'tactics-pins-forks-skewers',title:'Pins, Forks and Skewers',topic:'tactics',master:'c',level:'Beginner',start:'2026-10-18T17:00:00+05:30',mins:60,price:999,seats:50,booked:50,status:'done',
-     desc:'The three tactical patterns that win the most material in junior games.',
-     goals:['Spot forks with knights and queens','Use and escape pins','Set up skewers on lines and diagonals'],
-     who:'Beginners and young students.',pre:'Knows how the pieces move.'}
-  ],
+  /* Classes. status: open | soon | full | done. Times are stored in IST.
+     Empty until the first schedule is final: the site then shows "coming soon" and a WhatsApp sign-up. */
+  classes:[],
   /* Pricing config. Leave price null to show "To be announced". */
+  contact:{phone:'+91 99403 66435',wa:'919940366435'},
   pricing:{
     intro:null,
     plans:[
-      {id:'single',glyph:'♙',name:'Single Masterclass',price:'From ₹999',note:'Sample price. Each class shows its own price.',feat:false,
+      {id:'single',glyph:'♙',name:'Single Masterclass',price:null,note:'Announced with the first class schedule.',feat:false,
        items:['One live class with a GM or IM','Ask the master questions during the session','Topic, level, date and length shown before you register']},
       {id:'pass',glyph:'♖',name:'Topic Pass',price:null,note:'Planned. Terms published before launch.',feat:true,tag:'Planned',
        items:['A series of classes on one topic','One registration for the whole series','Same master across the series where possible']},
@@ -675,12 +646,33 @@ const ICONS={
   copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
   alert:'<circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>',
   layers:'<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/>',
+  phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
   bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>'
 };
 const ic=(n,cls='')=>`<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 const crown='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18V8l5 5 4-7 4 7 5-5v10z"/></svg>';
 const tbadge=t=>`<span class="tbadge" title="${t==='GM'?'Grandmaster':'International Master'}">${crown}${t}</span>`;
 const inr=n=>'₹'+n.toLocaleString('en-IN');
+const waLink=(text='')=>`https://wa.me/${DATA.contact.wa}${text?'?text='+encodeURIComponent(text):''}`;
+const telLink=()=>'tel:'+DATA.contact.phone.replace(/\s/g,'');
+/* Opens WhatsApp with a ready-to-send message. Falls back to same-tab navigation if a pop-up is blocked. */
+function openWA(text){const u=waLink(text);const w=window.open(u,'_blank','noopener');if(!w)location.href=u;return u}
+function comingSoon(topic='all'){
+  return `<div class="empty soon-box"><span class="glyph" aria-hidden="true">${G('♔')}</span>
+    <h3>Our first masterclasses are being scheduled</h3>
+    <p class="muted" style="max-width:52ch">Dates, masters and prices will be announced here soon. Tell us which topic interests you and we will message you on WhatsApp as soon as registration opens.</p>
+    <form class="soon-form" id="notifyForm">
+      <span class="sel"><select class="inp" id="nTopic" aria-label="Topic you are interested in"><option value="all">Any topic</option>${DATA.topics.map(t=>`<option value="${t.id}" ${t.id===topic?'selected':''}>${t.name}</option>`).join('')}</select></span>
+      <button class="btn btn-y" type="submit">${ic('chat','sm')}Notify Me on WhatsApp</button>
+    </form>
+    <p class="cap muted">Opens WhatsApp with your request ready to send. Or call <a href="${telLink()}">${DATA.contact.phone}</a>.</p>
+  </div>`;
+}
+function bindNotify(){
+  const f=$('#notifyForm');if(!f)return;
+  f.onsubmit=e=>{e.preventDefault();const t=topicOf($('#nTopic').value);
+    openWA(`Hi ChessMasters, please notify me when registration opens${t?' for the '+t.name:''}.`)};
+}
 const topicOf=id=>DATA.topics.find(t=>t.id===id);
 const masterOf=id=>DATA.masters.find(m=>m.id===id);
 const classOf=id=>DATA.classes.find(c=>c.id===id);
@@ -862,9 +854,9 @@ function viewHome(){
 
   <section class="section rv" style="padding-top:0">
     <div class="wrap">
-      <div class="shead-row">${sectionHead('Upcoming live masterclasses','Your Next Great Move Starts Here.',`Times shown in ${tzShort()}. Seats are limited so every student can ask questions.`)}
+      <div class="shead-row">${sectionHead('Upcoming live masterclasses','Your Next Great Move Starts Here.',upcoming.length?`Times shown in ${tzShort()}. Seats are limited so every student can ask questions.`:'Seats will be limited so every student can ask questions.')}
         <a class="btn btn-o" href="#schedule">View Full Schedule ${ic('arrow','arrow')}</a></div>
-      <div class="cgrid stagger">${upcoming.map(masterclassCard).join('')}</div>
+      ${upcoming.length?`<div class="cgrid stagger">${upcoming.map(masterclassCard).join('')}</div>`:comingSoon()}
     </div>
   </section>
 
@@ -1001,6 +993,10 @@ function syncFilterUI(){
   ['master','level','when','status','sort'].forEach(k=>{const s=$('#f-'+k);if(s)s.value=F[k]});
 }
 function viewSchedule(){
+  if(!DATA.classes.length) return `<div class="view">
+  <section class="phero"><div class="wrap"><div class="shead"><span class="eyebrow">Class schedule</span><h1 style="font-size:clamp(2.25rem,1.5rem + 3vw,3.5rem)">Find Your Next Masterclass.</h1><p>Every listing will show the time, length, level and price, so you can decide without opening another page.</p></div></div></section>
+  <section style="padding-bottom:clamp(40px,5vw,72px)"><div class="wrap">${comingSoon(F.topic)}</div></section>
+  </div>`;
   const months=[...new Set(DATA.classes.map(c=>c.start.slice(0,7)))].sort();
   const mName=ym=>new Date(ym+'-15T00:00:00Z').toLocaleDateString('en-GB',{month:'long',year:'numeric',timeZone:'UTC'});
   return `<div class="view">
@@ -1115,32 +1111,32 @@ function viewRegister(c){
 function viewPricing(){
   const P=DATA.pricing,open=DATA.classes.filter(c=>c.status!=='done').sort((a,b)=>a.start.localeCompare(b.start));
   const faqs=[
-    ['How is a masterclass priced?','Each masterclass has its own price, shown on the class card and the class page before you register. Prices on this preview are samples.'],
-    ['How do I register?','Choose a class, open it and select Reserve My Seat. Fill in the short form and review the summary before you confirm.'],
+    ['How is a masterclass priced?','Each masterclass has its own price, shown on the class card and the class page before you register. Prices will be announced with the first class schedule.'],
+    ['How do I register?','Registration opens with our first class schedule. Use Notify Me on the Schedule page, or message us on WhatsApp, and we will let you know as soon as it opens.'],
     ['Can I cancel a registration?','The cancellation and refund policy will be published on this page before paid registrations open.'],
     ['How do students join the live class?','Classes run live online. Joining instructions are shared with registered students before the class starts.'],
     ['Are classes recorded?','Only when a class says so on its details page. Do not assume a recording is available.'],
     ['Can a parent register a child?','Yes. For students under 18, a parent or guardian enters their name and gives consent on the form.']];
   return `<div class="view">
-  <section class="phero"><div class="wrap"><div class="shead"><span class="eyebrow">Pricing</span><h1 style="font-size:clamp(2.25rem,1.5rem + 3vw,3.5rem)">World-Class Chess Learning. Clear Pricing.</h1><p>Pay per masterclass. You always see the price, master, date and length before you register.</p></div></div></section>
+  <section class="phero"><div class="wrap"><div class="shead"><span class="eyebrow">Pricing</span><h1 style="font-size:clamp(2.25rem,1.5rem + 3vw,3.5rem)">World-Class Chess Learning. Clear Pricing.</h1><p>Pay per masterclass. Prices will be announced with our first class schedule, and you will always see the price, master, date and length before you register.</p></div></div></section>
   <section style="padding-bottom:clamp(40px,5vw,72px)"><div class="wrap">
     ${P.intro?`<div class="alert ok" style="margin-bottom:24px">${ic('check')}<span>${esc(P.intro)}</span></div>`:''}
     <div class="pgrid stagger">${P.plans.map((p,i)=>`<article class="pcard ${p.feat?'feat':''}" style="--i:${i}">${p.tag?`<span class="ptag">${p.tag}</span>`:''}
       <span class="picon glyph" aria-hidden="true">${G(p.glyph)}</span><h3>${p.name}</h3>
       <div><div class="amount ${p.price?'':'tba'}">${p.price||'To be announced'}</div><p class="pnote">${p.note}</p></div>
       <ul>${p.items.map(x=>`<li>${ic('check','sm')}<span>${x}</span></li>`).join('')}</ul>
-      <a class="btn ${p.feat?'btn-y':'btn-o'} btn-block" href="#schedule">Browse Available Classes</a></article>`).join('')}</div>
+      <a class="btn ${p.feat?'btn-y':'btn-o'} btn-block" href="#schedule">${open.length?'Browse Available Classes':'Get Class Updates'}</a></article>`).join('')}</div>
   </div></section>
-  <section class="section rv" style="background:var(--bg2)"><div class="wrap">
+  ${open.length?`<section class="section rv" style="background:var(--bg2)"><div class="wrap">
     ${sectionHead('Prices by class','What each upcoming class costs.',`Sample prices in Indian rupees. Times in ${tzShort()}.`)}
     <div class="tablewrap"><table class="tnum"><thead><tr><th>Class</th><th>Master</th><th>Date</th><th>Length</th><th>Status</th><th style="text-align:right">Price</th></tr></thead><tbody>
       ${open.map(c=>{const m=masterOf(c.master);return `<tr><td><a href="#class-${c.id}">${esc(c.title)}</a></td><td>${m.title} ${esc(m.name)}</td><td>${fDate(c.start)}, ${fTime(c.start)}</td><td>${c.mins} min</td><td>${statusPill(c.status)}</td><td class="num">${inr(c.price)}</td></tr>`}).join('')}
     </tbody></table></div>
-  </div></section>
+  </div></section>`:''}
   <section class="section rv"><div class="wrap">
     ${sectionHead('Questions','Pricing and registration FAQ.')}
     <div class="faq">${faqs.map(([q,a],i)=>`<details ${i===0?'open':''}><summary>${q}<span class="pm" aria-hidden="true"></span></summary><p class="ans">${a}</p></details>`).join('')}</div>
-    <div style="margin-top:32px"><a class="btn btn-y" href="#schedule">Browse Available Classes ${ic('arrow','arrow')}</a></div>
+    <div style="margin-top:32px"><a class="btn btn-y" href="#schedule">${open.length?'Browse Available Classes':'Get Class Updates'} ${ic('arrow','arrow')}</a></div>
   </div></section>
   </div>`;
 }
@@ -1153,9 +1149,8 @@ function viewContact(){
       <span class="bubble">Not sure which class fits? Tell us the student's level.</span>
       <h2>Other ways to reach us</h2>
       <div class="methods">
-        <div class="method">${ic('mail')}<div><b>Email</b>Address to be added</div><span class="ph">Soon</span></div>
-        <div class="method">${ic('chat')}<div><b>WhatsApp</b>Verified number to be added</div><span class="ph">Soon</span></div>
-        <div class="method">${ic('globe')}<div><b>Social</b>Profiles to be added</div><span class="ph">Soon</span></div>
+        <a class="method" href="${telLink()}">${ic('phone')}<div><b>Phone</b><span class="tnum">${DATA.contact.phone}</span></div></a>
+        <a class="method" href="${waLink()}" target="_blank" rel="noopener">${ic('chat')}<div><b>WhatsApp</b><span class="tnum">${DATA.contact.phone}</span></div></a>
       </div>
       <span class="knight" aria-hidden="true">${G('♞')}</span>
     </div>
@@ -1163,12 +1158,11 @@ function viewContact(){
     <form class="formcard" id="cForm" novalidate>
       <h2>Send a message</h2><p class="muted" style="margin-bottom:24px">All fields are required.</p>
       <div class="fgrid">
-        <div class="field"><label for="cname">Name</label><input class="inp" id="cname" autocomplete="name"><span class="ferr">${ic('alert','sm')}Enter your name.</span></div>
-        <div class="field"><label for="cemail">Email</label><input class="inp" id="cemail" type="email" autocomplete="email" inputmode="email" placeholder="name@example.com"><span class="ferr">${ic('alert','sm')}Enter a valid email, like name@example.com.</span></div>
+        <div class="field full"><label for="cname">Name</label><input class="inp" id="cname" autocomplete="name"><span class="ferr">${ic('alert','sm')}Enter your name.</span></div>
         <div class="field full"><label for="csubj">Subject</label><span class="sel"><select class="inp" id="csubj"><option value="">Choose a subject</option><option>Choosing a class</option><option>Registration help</option><option>Pricing</option><option>Teaching with ChessMasters</option><option>Something else</option></select></span><span class="ferr">${ic('alert','sm')}Choose a subject.</span></div>
         <div class="field full"><label for="cmsg">Message</label><textarea class="inp" id="cmsg" placeholder="How can we help?"></textarea><span class="ferr">${ic('alert','sm')}Write a message of at least 10 characters.</span></div>
-        <div class="full"><button class="btn btn-y btn-block" type="submit" id="cBtn">Send Message ${ic('arrow','arrow')}</button></div>
-        <p class="full cap muted">Preview: messages are not sent anywhere yet.</p>
+        <div class="full"><button class="btn btn-y btn-block" type="submit" id="cBtn">${ic('chat','sm')}Send on WhatsApp</button></div>
+        <p class="full cap muted">Opens WhatsApp with your message ready to send to ${DATA.contact.phone}.</p>
       </div></form></div>
   </div></section>
   </div>`;
@@ -1224,13 +1218,13 @@ function bindRegister(c){
 function bindContact(){
   const form=$('#cForm');if(!form)return;
   $$('.inp',form).forEach(el=>el.addEventListener('input',()=>el.closest('.field').classList.remove('err')));
-  form.addEventListener('submit',async e=>{
+  form.addEventListener('submit',e=>{
     e.preventDefault();
-    const ok=[setErr('cname',$('#cname').value.trim().length<2),setErr('cemail',!emailOk($('#cemail').value)),setErr('csubj',!$('#csubj').value),setErr('cmsg',$('#cmsg').value.trim().length<10)];
+    const ok=[setErr('cname',$('#cname').value.trim().length<2),setErr('csubj',!$('#csubj').value),setErr('cmsg',$('#cmsg').value.trim().length<10)];
     if(ok.includes(false)){$('.field.err',form).querySelector('input,select,textarea').focus();return}
-    const b=$('#cBtn');b.disabled=true;b.innerHTML='<span class="spin" aria-hidden="true"></span>Sending';
-    await API.sendMessage({});
-    $('#contactArea').innerHTML=`<div class="formcard success" role="status"><span class="badge-ok">${ic('check')}</span><div><span class="ph">Demo confirmation</span><h2 style="margin-top:10px">Thanks, ${esc($('#cname').value.trim().split(' ')[0])}.</h2><p class="muted" style="margin-top:8px">Your message looks good. This preview is not connected to an inbox yet, so it was not sent. Once connected, replies go to ${esc($('#cemail').value.trim())}.</p></div><a class="btn btn-o" href="#schedule">Browse classes</a></div>`;
+    const name=$('#cname').value.trim();
+    const url=openWA(`Hi ChessMasters, I'm ${name}.\nSubject: ${$('#csubj').value}\n\n${$('#cmsg').value.trim()}`);
+    $('#contactArea').innerHTML=`<div class="formcard success" role="status"><span class="badge-ok">${ic('check')}</span><div><h2>Thanks, ${esc(name.split(' ')[0])}.</h2><p class="muted" style="margin-top:8px">WhatsApp has opened with your message ready. Press <b>Send</b> in WhatsApp to deliver it to us.</p></div><div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn btn-y" href="${url}" target="_blank" rel="noopener">${ic('chat','sm')}Open WhatsApp again</a><a class="btn btn-o" href="#home">Back to home</a></div></div>`;
   });
 }
 function bindSchedule(){
@@ -1242,7 +1236,7 @@ function bindSchedule(){
 }
 function bindTz(rerender){const s=$('#tzSel');if(s)s.onchange=e=>{TZ=e.target.value;store.set('cm-tz',TZ);rerender()}}
 function bindHome(){
-  mountHeroBoard();
+  mountHeroBoard();bindNotify();
   const st=$('#stage'),bgs=$$('.bgp');
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&matchMedia('(pointer:fine)').matches){
     const hero=$('.hero');hero.addEventListener('pointermove',e=>{const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;
@@ -1273,7 +1267,7 @@ function route(){
     else if(reg){html=viewRegister(c);document.title=`Register: ${c.title} | ChessMasters`;after=()=>{bindRegister(c)}}
     else{html=viewClass(c);document.title=`${c.title} | ChessMasters`;after=()=>{mbarFor(c);bindTz(()=>{lastHash=null;route()})}}
   } else {
-    const V={home:[viewHome,bindHome],about:[viewAbout,()=>{}],schedule:[viewSchedule,()=>{bindSchedule();bindTz(()=>{renderResults();})}],pricing:[viewPricing,()=>{}],contact:[viewContact,bindContact]}[h];
+    const V={home:[viewHome,bindHome],about:[viewAbout,()=>{}],schedule:[viewSchedule,()=>{if(!DATA.classes.length)return bindNotify();bindSchedule();bindTz(()=>{renderResults();})}],pricing:[viewPricing,()=>{}],contact:[viewContact,bindContact]}[h];
     if(!V){h='home';nav='home'}
     const [v,b]=V||[viewHome,bindHome];html=v();after=b;document.title=TITLES[h]||TITLES.home;
   }
