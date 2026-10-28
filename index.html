@@ -349,6 +349,13 @@ nav.main a:hover::after,nav.main a[aria-current="page"]::after{transform:scaleX(
 @media (max-width:760px){.row{grid-template-columns:64px minmax(0,1fr);gap:14px;padding:14px}.dtile{width:64px;height:76px;border-radius:12px}.dtile .d{font-size:1.5rem;margin-top:4px}.rside{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;text-align:left;border-top:1px dashed var(--line);padding-top:12px}}
 .empty{display:grid;justify-items:center;gap:12px;text-align:center;padding:48px 24px;border:2px dashed var(--line);border-radius:var(--r-lg)}
 .empty .glyph{font-size:3.5rem;opacity:.35}
+.wa-fab{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:45;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#25D366;color:#fff;box-shadow:0 8px 24px -6px rgba(21,21,21,.45);transition:transform .2s,box-shadow .2s}
+.wa-fab svg{width:32px;height:32px}
+.wa-fab:hover{transform:scale(1.07);box-shadow:0 12px 28px -6px rgba(21,21,21,.5)}
+.wa-fab:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (max-width:960px){.has-mbar .wa-fab{bottom:calc(96px + env(safe-area-inset-bottom,0px))}}
+@media (max-width:520px){.wa-fab{width:52px;height:52px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}.wa-fab svg{width:28px;height:28px}}
+@media print{.wa-fab{display:none}}
 .soon-form{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:8px;width:100%;max-width:560px}
 .soon-form .sel{flex:1 1 220px}
 .soon-form .btn{flex:0 1 auto}
@@ -562,12 +569,13 @@ footer.site ul a:hover{color:var(--y)}
       <div><a class="brand" href="#home" style="color:#FFFCF3"><span id="ftLogo"></span><span><em>Chess</em><b>Masters</b></span></a><p>Live chess masterclasses taught by Grandmasters and International Masters. Pick a topic, reserve a seat, learn from a master.</p></div>
       <div><h4>Explore</h4><ul><li><a href="#schedule">Class schedule</a></li><li><a href="#schedule-opening">Openings</a></li><li><a href="#schedule-endgame">Endgames</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#contact">Contact us</a></li><li><a href="#pricing">FAQ</a></li></ul></div>
-      <div><h4>Get in touch</h4><ul><li><a href="tel:+919940366435">+91 99403 66435</a></li><li><a href="https://wa.me/919940366435" target="_blank" rel="noopener">WhatsApp us</a></li></ul></div>
+      <div><h4>Get in touch</h4><ul><li><a href="tel:+919940366435">+91 99403 66435</a></li><li><a href="https://wa.me/919940366435" target="_blank" rel="noopener">WhatsApp us</a></li><li><a href="mailto:support@chessmaster.io">support@chessmaster.io</a></li></ul></div>
     </div>
     <div class="fbottom"><span>© 2026 ChessMasters</span><span class="tag">Learn from Masters. Play Like One.</span></div>
   </div>
 </footer>
 <div class="mbar" id="mbar" hidden></div>
+<a class="wa-fab" href="https://wa.me/919940366435" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" title="Chat with us on WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16.04 3C8.86 3 3.03 8.82 3.03 16c0 2.3.6 4.53 1.74 6.5L3 29l6.68-1.75A12.95 12.95 0 0 0 16.04 29C23.2 29 29 23.18 29 16S23.2 3 16.04 3Zm0 23.8c-1.98 0-3.92-.53-5.61-1.54l-.4-.24-3.97 1.04 1.06-3.86-.26-.4A10.76 10.76 0 0 1 5.2 16c0-5.97 4.86-10.83 10.84-10.83 5.97 0 10.8 4.86 10.8 10.83 0 5.98-4.83 10.8-10.8 10.8Zm5.94-8.1c-.33-.16-1.93-.95-2.23-1.06-.3-.11-.52-.16-.73.17-.22.32-.84 1.05-1.03 1.27-.19.22-.38.24-.71.08-.33-.16-1.38-.51-2.62-1.62-.97-.86-1.62-1.93-1.81-2.25-.19-.33-.02-.5.14-.66.15-.15.33-.38.49-.57.16-.19.22-.33.33-.55.11-.22.05-.41-.03-.57-.08-.16-.73-1.77-1.01-2.42-.26-.64-.53-.55-.73-.56h-.62c-.22 0-.57.08-.87.41-.3.33-1.14 1.11-1.14 2.71 0 1.6 1.17 3.14 1.33 3.36.16.22 2.3 3.5 5.56 4.91.78.34 1.38.54 1.86.69.78.25 1.49.21 2.05.13.63-.09 1.93-.79 2.2-1.55.27-.76.27-1.42.19-1.55-.08-.14-.3-.22-.62-.38Z"/></svg></a>
 
 <script>
 /* ============ DATA (replace with real data or an API) ============ */
@@ -603,7 +611,7 @@ const DATA = {
      Empty until the first schedule is final: the site then shows "coming soon" and a WhatsApp sign-up. */
   classes:[],
   /* Pricing config. Leave price null to show "To be announced". */
-  contact:{phone:'+91 99403 66435',wa:'919940366435'},
+  contact:{phone:'+91 99403 66435',wa:'919940366435',email:'support@chessmaster.io'},
   pricing:{
     intro:null,
     plans:[
@@ -1151,6 +1159,7 @@ function viewContact(){
       <div class="methods">
         <a class="method" href="${telLink()}">${ic('phone')}<div><b>Phone</b><span class="tnum">${DATA.contact.phone}</span></div></a>
         <a class="method" href="${waLink()}" target="_blank" rel="noopener">${ic('chat')}<div><b>WhatsApp</b><span class="tnum">${DATA.contact.phone}</span></div></a>
+        <a class="method" href="mailto:${DATA.contact.email}">${ic('mail')}<div><b>Email</b><span>${DATA.contact.email}</span></div></a>
       </div>
       <span class="knight" aria-hidden="true">${G('♞')}</span>
     </div>
