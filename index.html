@@ -562,7 +562,7 @@ footer.site ul a:hover{color:var(--y)}
       <div><a class="brand" href="#home" style="color:#FFFCF3"><span id="ftLogo"></span><span><em>Chess</em><b>Masters</b></span></a><p>Live chess masterclasses taught by Grandmasters and International Masters. Pick a topic, reserve a seat, learn from a master.</p></div>
       <div><h4>Explore</h4><ul><li><a href="#schedule">Class schedule</a></li><li><a href="#schedule-opening">Openings</a></li><li><a href="#schedule-endgame">Endgames</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#contact">Contact us</a></li><li><a href="#pricing">FAQ</a></li></ul></div>
-      <div><h4>Get in touch</h4><ul><li><a href="tel:+919940366435">+91 99403 66435</a></li><li><a href="https://wa.me/919940366435" target="_blank" rel="noopener">WhatsApp us</a></li></ul></div>
+      <div><h4>Get in touch</h4><ul><li><a href="tel:+919940366435">+91 99403 66435</a></li><li><a href="https://wa.me/919940366435" target="_blank" rel="noopener">WhatsApp us</a></li><li><a href="mailto:support@chessmaster.io">support@chessmaster.io</a></li></ul></div>
     </div>
     <div class="fbottom"><span>© 2026 ChessMasters</span><span class="tag">Learn from Masters. Play Like One.</span></div>
   </div>
@@ -603,7 +603,7 @@ const DATA = {
      Empty until the first schedule is final: the site then shows "coming soon" and a WhatsApp sign-up. */
   classes:[],
   /* Pricing config. Leave price null to show "To be announced". */
-  contact:{phone:'+91 99403 66435',wa:'919940366435'},
+  contact:{phone:'+91 99403 66435',wa:'919940366435',email:'support@chessmaster.io'},
   pricing:{
     intro:null,
     plans:[
@@ -1151,6 +1151,7 @@ function viewContact(){
       <div class="methods">
         <a class="method" href="${telLink()}">${ic('phone')}<div><b>Phone</b><span class="tnum">${DATA.contact.phone}</span></div></a>
         <a class="method" href="${waLink()}" target="_blank" rel="noopener">${ic('chat')}<div><b>WhatsApp</b><span class="tnum">${DATA.contact.phone}</span></div></a>
+        <a class="method" href="mailto:${DATA.contact.email}">${ic('mail')}<div><b>Email</b><span>${DATA.contact.email}</span></div></a>
       </div>
       <span class="knight" aria-hidden="true">${G('♞')}</span>
     </div>
