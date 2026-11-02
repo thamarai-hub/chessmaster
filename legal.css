@@ -1,0 +1,76 @@
+/* Shared styles for the standalone legal pages (/privacy, /terms). Tokens match index.html. */
+:root{
+  --y:#FFCC00; --ink:#151515; --bg:#FFFCF3; --bg2:#FFF3C4; --card:#FFFFFF; --fg:#151515; --muted:#5E5B54; --line:#EAE6DA;
+  --band:#151515; --band-fg:#FFFCF3; --band-muted:#B9B4A6; --band-line:#34312A;
+  --font:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  --cap:.8125rem;
+  color-scheme:light;
+  --gut:max(16px,env(safe-area-inset-left,0px));
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{overflow-x:clip}
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:clamp(1rem,.96rem + .2vw,1.0625rem);line-height:1.65;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+h1,h2,h3{margin:0;line-height:1.1;letter-spacing:-.025em;text-wrap:balance;font-weight:800}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--y);outline-offset:2px;box-shadow:0 0 0 5px var(--ink);border-radius:6px}
+.wrap{max-width:1200px;margin-inline:auto;padding-left:var(--gut);padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* Header */
+header.site{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+.hbar{display:flex;align-items:center;gap:24px;height:72px}
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:1.25rem;letter-spacing:-.03em}
+.brand svg{width:38px;height:38px;flex:none}
+.brand em{font-style:normal;font-weight:500}
+nav.main{display:flex;gap:4px;margin-left:auto}
+nav.main a{text-decoration:none;font-weight:600;font-size:.9375rem;padding:10px 14px;border-radius:999px}
+nav.main a:hover{background:var(--bg2)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;border-radius:999px;font-weight:700;font-size:.9063rem;text-decoration:none;border:2px solid var(--ink);background:var(--y);color:var(--ink);box-shadow:0 3px 0 var(--ink);white-space:nowrap;transition:transform .18s,box-shadow .18s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--ink)}
+@media (max-width:960px){nav.main{display:none}.hbar .btn{margin-left:auto}}
+@media (max-width:420px){.hbar .btn{padding:0 12px;font-size:.8438rem}}
+
+/* Document */
+.doc{padding-block:clamp(40px,6vw,80px) clamp(24px,4vw,48px)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:var(--cap);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.eyebrow::before{content:"";width:18px;height:18px;border-radius:5px;background:var(--y);box-shadow:inset 0 0 0 2px var(--ink)}
+.doc h1{font-size:clamp(2.25rem,1.5rem + 3vw,3.5rem);letter-spacing:-.035em;line-height:1.04;margin-top:16px}
+.doc .lead{color:var(--muted);font-size:1.0625rem;max-width:62ch;margin-top:16px}
+.doc .updated{font-size:var(--cap);color:var(--muted);margin-top:12px}
+.dgrid{display:grid;grid-template-columns:240px minmax(0,1fr);gap:clamp(32px,5vw,64px);margin-top:clamp(32px,4vw,56px);align-items:start}
+.toc{position:sticky;top:96px;font-size:.875rem}
+.toc b{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.toc ol{margin:0;padding:0 0 0 18px;display:grid;gap:6px;color:var(--muted)}
+.toc a{text-decoration:none}
+.toc a:hover{color:var(--fg);text-decoration:underline}
+.body{max-width:72ch}
+.body section{padding-bottom:28px;margin-bottom:28px;border-bottom:1px solid var(--line)}
+.body section:last-child{border-bottom:0}
+.body h2{font-size:clamp(1.3125rem,1.2rem + .5vw,1.625rem);margin-bottom:12px}
+.body p+p,.body p+ul,.body ul+p{margin-top:12px}
+.body ul{margin:0;padding-left:22px;display:grid;gap:6px}
+.body a{text-decoration-thickness:1px;text-underline-offset:3px}
+.body address{font-style:normal}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-top:12px}
+.todo{background:var(--bg2);border:2px dashed var(--ink);border-radius:16px;padding:16px 20px}
+.todo b{display:block;margin-bottom:4px}
+@media (max-width:860px){.dgrid{grid-template-columns:1fr}.toc{position:static;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px}}
+
+/* Footer */
+footer.site{background:var(--band);color:var(--band-fg);margin-top:clamp(40px,6vw,80px);padding-block:40px calc(104px + env(safe-area-inset-bottom,0px))}
+.fbottom{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 24px;font-size:.8125rem;color:var(--band-muted)}
+.fbottom a{color:var(--band-fg);text-decoration:none}
+.fbottom a:hover{color:var(--y)}
+.flinks{display:flex;gap:20px;font-weight:600}
+.fbrand{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center;padding-bottom:24px;margin-bottom:24px;border-bottom:1px solid var(--band-line)}
+.fbrand .brand{color:var(--band-fg)}
+.fbrand .tag{color:var(--y);font-weight:700;font-size:.8125rem}
+
+/* Floating WhatsApp button (same as index.html) */
+.wa-fab{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:45;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#25D366;color:#fff;box-shadow:0 8px 24px -6px rgba(21,21,21,.45);transition:transform .2s,box-shadow .2s}
+.wa-fab svg{width:32px;height:32px}
+.wa-fab:hover{transform:scale(1.07)}
+.wa-fab:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+@media (max-width:520px){.wa-fab{width:52px;height:52px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}.wa-fab svg{width:28px;height:28px}}
+@media print{header.site,.wa-fab,.toc,footer.site .fbrand{display:none}footer.site{background:none;color:#000}.fbottom,.fbottom a{color:#000}}
