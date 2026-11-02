@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ChessMasters</title>
+<title>ChessMaster</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="ChessMasters: live chess masterclasses taught by Grandmasters and International Masters. Openings, middlegames, endgames, tactics and tournament preparation.">
+<meta name="description" content="ChessMaster: live chess masterclasses taught by Grandmasters and International Masters. Openings, middlegames, endgames, tactics and tournament preparation.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23FFCC00'/%3E%3Cpath d='M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z' fill='%23151515'/%3E%3Ccircle cx='10' cy='10.5' r='2.4' fill='%23151515'/%3E%3Ccircle cx='24' cy='8' r='2.4' fill='%23151515'/%3E%3Ccircle cx='38' cy='10.5' r='2.4' fill='%23151515'/%3E%3Crect x='10' y='38.5' width='28' height='3' rx='1.5' fill='%23151515'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -552,7 +552,7 @@ footer.site p.tag{color:var(--y);font-weight:700;font-size:.8125rem;margin-top:1
 <body>
 <header class="site" id="hdr">
   <div class="wrap hbar">
-    <a class="brand" href="#home" aria-label="ChessMasters home"><span id="hdrLogo"></span><span><em>Chess</em><b>Masters</b></span></a>
+    <a class="brand" href="#home" aria-label="ChessMaster home"><span id="hdrLogo"></span><span><em>Chess</em><b>Master</b></span></a>
     <nav class="main" aria-label="Primary" id="nav"></nav>
     <a class="btn btn-y btn-sm hcta" href="#schedule">Get Class Updates</a>
     <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
@@ -561,7 +561,7 @@ footer.site p.tag{color:var(--y);font-weight:700;font-size:.8125rem;margin-top:1
 <div class="drawer" id="drawer" aria-hidden="true">
   <div class="scrim" data-close></div>
   <div class="panel" role="dialog" aria-modal="true" aria-label="Menu">
-    <div class="ptop"><a class="brand" href="#home"><span id="drLogo"></span><span><em>Chess</em><b>Masters</b></span></a><button class="menu-btn" style="display:grid" data-close aria-label="Close menu"><svg class="i" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <div class="ptop"><a class="brand" href="#home"><span id="drLogo"></span><span><em>Chess</em><b>Master</b></span></a><button class="menu-btn" style="display:grid" data-close aria-label="Close menu"><svg class="i" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
     <nav id="dnav" aria-label="Mobile"></nav>
     <div class="pfoot"><a class="btn btn-y btn-block" href="#schedule">Get Class Updates</a><p class="cap muted" style="text-align:center">Live classes with Grandmasters and International Masters</p></div>
   </div>
@@ -572,7 +572,7 @@ footer.site p.tag{color:var(--y);font-weight:700;font-size:.8125rem;margin-top:1
 <footer class="site">
   <div class="wrap">
     <div class="fgrid2">
-      <div><a class="brand" href="#home" style="color:#FFFCF3"><span id="ftLogo"></span><span><em>Chess</em><b>Masters</b></span></a><p>Live chess masterclasses taught by Grandmasters and International Masters. Pick a topic, reserve a seat, learn from a master.</p><p class="tag">Learn from Masters. Play Like One.</p></div>
+      <div><a class="brand" href="#home" style="color:#FFFCF3"><span id="ftLogo"></span><span><em>Chess</em><b>Master</b></span></a><p>Live chess masterclasses taught by Grandmasters and International Masters. Pick a topic, reserve a seat, learn from a master.</p><p class="tag">Learn from Masters. Play Like One.</p></div>
       <div><h4>Explore</h4><ul><li><a href="#schedule">Class schedule</a></li><li><a href="#schedule-opening">Openings</a></li><li><a href="#schedule-endgame">Endgames</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#contact">Contact us</a></li><li><a href="#pricing">FAQ</a></li></ul></div>
       <div><h4>Get in touch</h4><ul><li><a href="tel:+919940366435">+91 99403 66435</a></li><li><a href="https://wa.me/919940366435" target="_blank" rel="noopener">WhatsApp us</a></li><li><a href="mailto:support@chessmaster.io">support@chessmaster.io</a></li></ul></div>
@@ -685,7 +685,7 @@ function comingSoon(topic='all'){
 function bindNotify(){
   const f=$('#notifyForm');if(!f)return;
   f.onsubmit=e=>{e.preventDefault();const t=topicOf($('#nTopic').value);
-    openWA(`Hi ChessMasters, please notify me when registration opens${t?' for the '+t.name:''}.`)};
+    openWA(`Hi ChessMaster, please notify me when registration opens${t?' for the '+t.name:''}.`)};
 }
 const topicOf=id=>DATA.topics.find(t=>t.id===id);
 const masterOf=id=>DATA.masters.find(m=>m.id===id);
@@ -697,10 +697,10 @@ const lvlBars=n=>`<i aria-hidden="true">${[1,2,3].map(k=>`<b class="${k<=n?'on':
 
 /* Logo: crown-M mark. Editable SVG. */
 function logoMark(fill='#FFCC00',ink='#151515',size=48){
-  return `<svg viewBox="0 0 48 48" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ChessMasters"><rect width="48" height="48" rx="12" fill="${fill}"/><path d="M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z" fill="${ink}"/><circle cx="10" cy="10.5" r="2.4" fill="${ink}"/><circle cx="24" cy="8" r="2.4" fill="${ink}"/><circle cx="38" cy="10.5" r="2.4" fill="${ink}"/><rect x="10" y="38.5" width="28" height="3" rx="1.5" fill="${ink}"/></svg>`;
+  return `<svg viewBox="0 0 48 48" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ChessMaster"><rect width="48" height="48" rx="12" fill="${fill}"/><path d="M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z" fill="${ink}"/><circle cx="10" cy="10.5" r="2.4" fill="${ink}"/><circle cx="24" cy="8" r="2.4" fill="${ink}"/><circle cx="38" cy="10.5" r="2.4" fill="${ink}"/><rect x="10" y="38.5" width="28" height="3" rx="1.5" fill="${ink}"/></svg>`;
 }
 function logoFull(tile='#FFCC00',mark='#151515',text='#151515'){
-  return `<svg viewBox="0 0 252 48" width="252" height="48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ChessMasters"><rect width="48" height="48" rx="12" fill="${tile}"/><path d="M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z" fill="${mark}"/><circle cx="10" cy="10.5" r="2.4" fill="${mark}"/><circle cx="24" cy="8" r="2.4" fill="${mark}"/><circle cx="38" cy="10.5" r="2.4" fill="${mark}"/><rect x="10" y="38.5" width="28" height="3" rx="1.5" fill="${mark}"/><text x="60" y="33" font-family="Inter, Arial, sans-serif" font-size="26" letter-spacing="-0.8" fill="${text}"><tspan font-weight="500">Chess</tspan><tspan font-weight="800">Masters</tspan></text></svg>`;
+  return `<svg viewBox="0 0 238 48" width="238" height="48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ChessMaster"><rect width="48" height="48" rx="12" fill="${tile}"/><path d="M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z" fill="${mark}"/><circle cx="10" cy="10.5" r="2.4" fill="${mark}"/><circle cx="24" cy="8" r="2.4" fill="${mark}"/><circle cx="38" cy="10.5" r="2.4" fill="${mark}"/><rect x="10" y="38.5" width="28" height="3" rx="1.5" fill="${mark}"/><text x="60" y="33" font-family="Inter, Arial, sans-serif" font-size="26" letter-spacing="-0.8" fill="${text}"><tspan font-weight="500">Chess</tspan><tspan font-weight="800">Master</tspan></text></svg>`;
 }
 
 /* Timezone and dates */
@@ -823,7 +823,7 @@ function viewHome(){
 
   <section class="section rv" style="padding-top:clamp(24px,3vw,40px)">
     <div class="wrap">
-      ${sectionHead('Why learn from a master','Great Moves Start with Great Mentors.','Titled players have already solved the problems you meet at the board. In a ChessMasters class they show you how they think, move by move.')}
+      ${sectionHead('Why learn from a master','Great Moves Start with Great Mentors.','Titled players have already solved the problems you meet at the board. In a ChessMaster class they show you how they think, move by move.')}
       <div class="bgrid stagger">
         ${[['award','Learn from GMs &amp; IMs','Gain insights directly from accomplished chess professionals.','♔'],
            ['target','Topic-Focused Masterclasses','Learn openings, middlegame strategy, endgames, and more. One clear theme per class.','♗'],
@@ -876,7 +876,7 @@ function viewHome(){
 
   <section class="section rv" style="background:var(--bg2)">
     <div class="wrap">
-      ${sectionHead('How ChessMasters works','Three Simple Moves to Learn from the Best.')}
+      ${sectionHead('How ChessMaster works','Three Simple Moves to Learn from the Best.')}
       <div class="steps">
         ${[['♘','Explore Classes','Discover upcoming chess masterclasses by topic, master, or skill level.'],
            ['♖','Reserve Your Seat','Choose your class and register using a simple form. You see the full summary first.'],
@@ -901,8 +901,8 @@ function viewHome(){
 
 function viewAbout(){
   return `<div class="view">
-  <section class="phero"><div class="wrap"><div class="shead"><span class="eyebrow">About ChessMasters</span><h1 style="font-size:clamp(2.25rem,1.5rem + 3vw,3.5rem)">A New Way to Learn Chess. Straight from the Masters.</h1>
-    <p>ChessMasters connects aspiring players with Grandmasters and International Masters through focused, live classes. Each class takes one topic and goes deep, with the master explaining their thinking and taking questions.</p></div></div></section>
+  <section class="phero"><div class="wrap"><div class="shead"><span class="eyebrow">About ChessMaster</span><h1 style="font-size:clamp(2.25rem,1.5rem + 3vw,3.5rem)">A New Way to Learn Chess. Straight from the Masters.</h1>
+    <p>ChessMaster connects aspiring players with Grandmasters and International Masters through focused, live classes. Each class takes one topic and goes deep, with the master explaining their thinking and taking questions.</p></div></div></section>
 
   <section class="section" style="padding-top:clamp(16px,2vw,24px)"><div class="wrap agrid">
     <div><span class="eyebrow">Our vision</span><p class="quote" style="margin-top:20px">Every chess player deserves the chance to learn from someone who has mastered the game.</p></div>
@@ -912,7 +912,7 @@ function viewAbout(){
     </div></div></section>
 
   <section class="section rv" style="background:var(--bg2)"><div class="wrap">
-    ${sectionHead('What makes ChessMasters different','Focused classes, titled teachers, clear choices.')}
+    ${sectionHead('What makes ChessMaster different','Focused classes, titled teachers, clear choices.')}
     <div class="bgrid stagger">
       ${[['award','Titled instructors only','Every class is taught by a FIDE Grandmaster or International Master.'],
          ['layers','One topic per class','No mixed lessons. Openings, middlegames, endgames, tactics or tournament play.'],
@@ -1112,7 +1112,7 @@ function viewRegister(c){
         <div class="field"><label for="phone">Phone number *</label><div class="phone"><span class="sel"><select class="inp" id="cc" name="cc" aria-label="Country code"><option value="+91">IN +91</option><option value="+1">US +1</option><option value="+44">UK +44</option><option value="+971">AE +971</option><option value="+65">SG +65</option><option value="+61">AU +61</option></select></span><input class="inp" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="98765 43210"></div><span class="ferr">${ic('alert','sm')}Enter a phone number with 6 to 14 digits.</span></div>
         <div class="field full"><label for="cls">Selected class</label><input class="inp" id="cls" readonly value="${esc(c.title)} · ${m.title} ${esc(m.name)} · ${fDate(c.start)}"></div>
         <div class="field full" id="gcWrap" hidden><label class="chk"><input type="checkbox" id="gconsent"><span><b>I am the student's parent or legal guardian</b> and I agree to them taking part in this live online class.</span></label><span class="ferr">${ic('alert','sm')}A parent or guardian must give consent for students under 18.</span></div>
-        <div class="field full"><label class="chk"><input type="checkbox" id="consent"><span><b>I agree to ChessMasters using these details</b> to manage this registration and send class information. Details are not shared for marketing.</span></label><span class="ferr">${ic('alert','sm')}Please agree so we can process the registration.</span></div>
+        <div class="field full"><label class="chk"><input type="checkbox" id="consent"><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information. Details are not shared for marketing.</span></label><span class="ferr">${ic('alert','sm')}Please agree so we can process the registration.</span></div>
         <div class="full alert" role="note">${ic('info')}<span>This is a preview. Submitting shows a demo confirmation only. No seat is reserved and no payment is taken.</span></div>
         <div class="full"><button class="btn btn-y btn-block" id="regBtn" type="submit">Reserve My Seat ${ic('arrow','arrow')}</button></div>
       </div></form>`}
@@ -1174,7 +1174,7 @@ function viewContact(){
       <h2>Send a message</h2><p class="muted" style="margin-bottom:24px">All fields are required.</p>
       <div class="fgrid">
         <div class="field full"><label for="cname">Name</label><input class="inp" id="cname" autocomplete="name"><span class="ferr">${ic('alert','sm')}Enter your name.</span></div>
-        <div class="field full"><label for="csubj">Subject</label><span class="sel"><select class="inp" id="csubj"><option value="">Choose a subject</option><option>Choosing a class</option><option>Registration help</option><option>Pricing</option><option>Teaching with ChessMasters</option><option>Something else</option></select></span><span class="ferr">${ic('alert','sm')}Choose a subject.</span></div>
+        <div class="field full"><label for="csubj">Subject</label><span class="sel"><select class="inp" id="csubj"><option value="">Choose a subject</option><option>Choosing a class</option><option>Registration help</option><option>Pricing</option><option>Teaching with ChessMaster</option><option>Something else</option></select></span><span class="ferr">${ic('alert','sm')}Choose a subject.</span></div>
         <div class="field full"><label for="cmsg">Message</label><textarea class="inp" id="cmsg" placeholder="How can we help?"></textarea><span class="ferr">${ic('alert','sm')}Write a message of at least 10 characters.</span></div>
         <div class="full"><button class="btn btn-y btn-block" type="submit" id="cBtn">${ic('chat','sm')}Send on WhatsApp</button></div>
         <p class="full cap muted">Opens WhatsApp with your message ready to send to ${DATA.contact.phone}.</p>
@@ -1238,7 +1238,7 @@ function bindContact(){
     const ok=[setErr('cname',$('#cname').value.trim().length<2),setErr('csubj',!$('#csubj').value),setErr('cmsg',$('#cmsg').value.trim().length<10)];
     if(ok.includes(false)){$('.field.err',form).querySelector('input,select,textarea').focus();return}
     const name=$('#cname').value.trim();
-    const url=openWA(`Hi ChessMasters, I'm ${name}.\nSubject: ${$('#csubj').value}\n\n${$('#cmsg').value.trim()}`);
+    const url=openWA(`Hi ChessMaster, I'm ${name}.\nSubject: ${$('#csubj').value}\n\n${$('#cmsg').value.trim()}`);
     $('#contactArea').innerHTML=`<div class="formcard success" role="status"><span class="badge-ok">${ic('check')}</span><div><h2>Thanks, ${esc(name.split(' ')[0])}.</h2><p class="muted" style="margin-top:8px">WhatsApp has opened with your message ready. Press <b>Send</b> in WhatsApp to deliver it to us.</p></div><div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn btn-y" href="${url}" target="_blank" rel="noopener">${ic('chat','sm')}Open WhatsApp again</a><a class="btn btn-o" href="#home">Back to home</a></div></div>`;
   });
 }
@@ -1263,7 +1263,7 @@ function bindHome(){
 }
 
 /* ============ ROUTER ============ */
-const TITLES={home:'ChessMasters | Live Chess Masterclasses with GMs and IMs',about:'About | ChessMasters',schedule:'Class Schedule | ChessMasters',pricing:'Pricing | ChessMasters',contact:'Contact Us | ChessMasters'};
+const TITLES={home:'ChessMaster | Live Chess Masterclasses with GMs and IMs',about:'About | ChessMaster',schedule:'Class Schedule | ChessMaster',pricing:'Pricing | ChessMaster',contact:'Contact Us | ChessMaster'};
 let lastHash=null;
 function route(){
   let h=(location.hash||'#home').slice(1);
@@ -1278,9 +1278,9 @@ function route(){
   } else if(h==='schedule'&&lastHash&&!lastHash.startsWith('class-')&&!lastHash.startsWith('register-')){Object.assign(F,DEF)}
   if(h.startsWith('class-')||h.startsWith('register-')){
     const reg=h.startsWith('register-'),c=classOf(h.slice(reg?9:6));nav='schedule';
-    if(!c){html=`<div class="view"><section class="section"><div class="wrap"><div class="empty"><span class="glyph">${G('♚')}</span><h1 style="font-size:2rem">Class not found</h1><p class="muted">It may have been removed from the schedule.</p><a class="btn btn-y" href="#schedule">See the schedule</a></div></div></section></div>`;document.title='Not found | ChessMasters'}
-    else if(reg){html=viewRegister(c);document.title=`Register: ${c.title} | ChessMasters`;after=()=>{bindRegister(c)}}
-    else{html=viewClass(c);document.title=`${c.title} | ChessMasters`;after=()=>{mbarFor(c);bindTz(()=>{lastHash=null;route()})}}
+    if(!c){html=`<div class="view"><section class="section"><div class="wrap"><div class="empty"><span class="glyph">${G('♚')}</span><h1 style="font-size:2rem">Class not found</h1><p class="muted">It may have been removed from the schedule.</p><a class="btn btn-y" href="#schedule">See the schedule</a></div></div></section></div>`;document.title='Not found | ChessMaster'}
+    else if(reg){html=viewRegister(c);document.title=`Register: ${c.title} | ChessMaster`;after=()=>{bindRegister(c)}}
+    else{html=viewClass(c);document.title=`${c.title} | ChessMaster`;after=()=>{mbarFor(c);bindTz(()=>{lastHash=null;route()})}}
   } else {
     const V={home:[viewHome,bindHome],about:[viewAbout,()=>{}],schedule:[viewSchedule,()=>{if(!DATA.classes.length)return bindNotify();bindSchedule();bindTz(()=>{renderResults();})}],pricing:[viewPricing,()=>{}],contact:[viewContact,bindContact]}[h];
     if(!V){h='home';nav='home'}
