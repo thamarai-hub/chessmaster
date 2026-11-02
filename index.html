@@ -393,7 +393,7 @@ nav.main a:hover::after,nav.main a[aria-current="page"]::after{transform:scaleX(
 @media (max-width:960px){.dgrid{grid-template-columns:1fr}.side{position:static}
   .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border-top:1px solid var(--line);box-shadow:0 -8px 24px -12px rgba(21,21,21,.25);padding:12px var(--gut-r) calc(12px + env(safe-area-inset-bottom,0px)) var(--gut);transform:translateY(0);transition:transform .3s}
   .mbar.hide{transform:translateY(110%)}
-  .has-mbar footer.site{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}}
+  .has-mbar footer.site{padding-bottom:calc(176px + env(safe-area-inset-bottom,0px))}}
 @media (max-width:560px){.twocol{grid-template-columns:1fr}.mpanel{grid-template-columns:1fr}}
 
 /* Forms */
@@ -521,7 +521,13 @@ footer.site ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 footer.site ul a{text-decoration:none;color:var(--band-fg);display:inline-block;padding:6px 0;font-weight:500}
 footer.site ul a:hover{color:var(--y)}
 .fbottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:40px;padding-top:24px;border-top:1px solid var(--band-line);font-size:.8125rem;color:var(--band-muted)}
-.fbottom .tag{color:var(--y);font-weight:700}
+.fbottom{align-items:center}
+.fbottom a{color:var(--band-fg);text-decoration:none}
+.fbottom a:hover{color:var(--y)}
+.flinks{display:flex;gap:20px;font-weight:600}
+/* Leave room under the footer so the floating WhatsApp button never covers the last links */
+footer.site{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+footer.site p.tag{color:var(--y);font-weight:700;font-size:.8125rem;margin-top:12px}
 @media (max-width:760px){.fgrid2{grid-template-columns:1fr 1fr}.fgrid2>div:first-child{grid-column:1/-1}}
 
 /* View transitions and reveal */
@@ -566,12 +572,12 @@ footer.site ul a:hover{color:var(--y)}
 <footer class="site">
   <div class="wrap">
     <div class="fgrid2">
-      <div><a class="brand" href="#home" style="color:#FFFCF3"><span id="ftLogo"></span><span><em>Chess</em><b>Masters</b></span></a><p>Live chess masterclasses taught by Grandmasters and International Masters. Pick a topic, reserve a seat, learn from a master.</p></div>
+      <div><a class="brand" href="#home" style="color:#FFFCF3"><span id="ftLogo"></span><span><em>Chess</em><b>Masters</b></span></a><p>Live chess masterclasses taught by Grandmasters and International Masters. Pick a topic, reserve a seat, learn from a master.</p><p class="tag">Learn from Masters. Play Like One.</p></div>
       <div><h4>Explore</h4><ul><li><a href="#schedule">Class schedule</a></li><li><a href="#schedule-opening">Openings</a></li><li><a href="#schedule-endgame">Endgames</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
       <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#contact">Contact us</a></li><li><a href="#pricing">FAQ</a></li></ul></div>
       <div><h4>Get in touch</h4><ul><li><a href="tel:+919940366435">+91 99403 66435</a></li><li><a href="https://wa.me/919940366435" target="_blank" rel="noopener">WhatsApp us</a></li><li><a href="mailto:support@chessmaster.io">support@chessmaster.io</a></li></ul></div>
     </div>
-    <div class="fbottom"><span>© 2026 ChessMasters</span><span class="tag">Learn from Masters. Play Like One.</span></div>
+    <div class="fbottom"><span>© 2026 Shortcastle Technologies Private Limited · No. 14, Sabari Salai, Madipakkam, Chennai, Tamil Nadu 600091 · <a href="mailto:support@chessmaster.io">support@chessmaster.io</a></span><span class="flinks"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></span></div>
   </div>
 </footer>
 <div class="mbar" id="mbar" hidden></div>
