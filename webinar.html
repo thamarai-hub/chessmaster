@@ -486,12 +486,12 @@ function viewDetails(){
   return stepper(1)+`<h2 tabindex="-1">Register now</h2><p class="sub" id="feeSub">${feeLine()}</p>
   ${errBox()}
   <form id="regForm" novalidate class="fgrid">
-    <div class="field full"><label for="full_name">Your full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="full_name" required autocomplete="name" value="${esc(r.full_name||'')}"><span class="ferr">Enter your full name.</span></div>
+    <div class="field full"><span class="lab" id="whoL">Who will attend? <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="whoL"><label><input type="radio" name="attendee" value="self" required ${r.attendee==='self'?'checked':''}>Me</label><label><input type="radio" name="attendee" value="child" ${r.attendee==='child'?'checked':''}>My child</label></div><span class="ferr">Choose one option.</span></div>
+    <div class="field full"><label for="full_name"><span id="nameL">Your full name</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="full_name" required autocomplete="name" value="${esc(r.full_name||'')}"><span class="ferr" id="nameErr">Enter your full name.</span></div>
     <div class="field full"><label for="email">Email <span class="req" aria-hidden="true">*</span></label><input class="inp" id="email" required type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" value="${esc(r.email||'')}"><span class="ferr">Enter a valid email, like name@example.com.</span></div>
     <div class="field full"><label for="country">Country <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="country" required autocomplete="off">${opt(COUNTRIES,r.country,'Choose your country')}</select></span><span class="ferr">Choose your country.</span></div>
     <div class="field full" id="stateWrap" hidden><label for="state">State <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="state" required>${opt(STATES.map(x=>[x,x]),r.state,'Choose your state')}</select></span><span class="ferr">Choose your state.</span></div>
     <div class="field full"><label for="phone">WhatsApp number <span class="req" aria-hidden="true">*</span></label><div class="phone"><input class="inp" id="cc" required type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" required type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr">Enter your WhatsApp number with its country code.</span></div>
-    <div class="field full"><span class="lab" id="whoL">Who will attend? <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="whoL"><label><input type="radio" name="attendee" value="self" required ${r.attendee==='self'?'checked':''}>Me</label><label><input type="radio" name="attendee" value="child" ${r.attendee==='child'?'checked':''}>My child</label></div><span class="ferr">Choose one option.</span></div>
     <div class="field full" id="childWrap" hidden><label for="child_name">Child's full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="child_name" required autocomplete="off" value="${esc(r.child_name||'')}"><span class="ferr">Enter your child's full name.</span></div>
     <div class="field"><label for="age"><span id="ageL">Age</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the age.</span></div>
     <div class="field"><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
@@ -568,6 +568,8 @@ function bindDetails(){
     $('#stateWrap').hidden=!payInRupees();
     $('#childWrap').hidden=!child;
     $('#guardianWrap').hidden=!child;
+    $('#nameL').textContent=child?"Parent's full name":'Your full name';
+    $('#nameErr').textContent=child?"Enter the parent's full name.":'Enter your full name.';
     $('#ageL').textContent=child?"Child's age":self?'Your age':'Age';
     $('#genderL').textContent=child?"Child's gender":self?'Your gender':'Gender';
     renderFacts();$('#feeSub').innerHTML=feeLine();
