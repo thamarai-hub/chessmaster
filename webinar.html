@@ -279,7 +279,7 @@ const pixelEnabled=()=>!!META_PIXEL_ID&&HOOKS.mode!=='stub';
 const needsConsent=(tz=browserZone())=>!US_ZONE.test(tz);
 function storedConsent(){if(consentChoice)return consentChoice;try{return localStorage.getItem(CONSENT_KEY)}catch(e){return null}}
 function saveConsent(v){consentChoice=v;try{localStorage.setItem(CONSENT_KEY,v)}catch(e){}}
-const adConsent=()=>pixelEnabled()&&(!needsConsent()||storedConsent()==='yes');
+const adConsent=()=>pixelEnabled()&&storedConsent()!=='no'&&(!needsConsent()||storedConsent()==='yes');
 function startPixel(){
   if(window.fbq||!adConsent())return;
   const f=window.fbq=function(){f.callMethod?f.callMethod.apply(f,arguments):f.queue.push(arguments)};
@@ -301,27 +301,27 @@ function firePurchase(){
   fbq('track','Purchase',{value:v,currency:c},{eventID:eid});
 }
 function cookie(n){const m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):''}
-/* Extra fields for the server event. Empty without consent. */
+/* Fields for CM - Workflow's server event. Without browser.ua the server skips the event, so a visitor who declined sends none. */
 function adFields(){
   if(!adConsent())return{ad_consent:false};
   const clid=q.get('fbclid');
-  return{ad_consent:true,fbp:cookie('_fbp'),fbc:cookie('_fbc')||(clid?'fb.1.'+Date.now()+'.'+clid:''),page_url:location.origin+location.pathname};
+  return{ad_consent:true,browser:{ua:navigator.userAgent,url:location.href,fbp:cookie('_fbp'),fbc:cookie('_fbc')||(clid?'fb.1.'+Date.now()+'.'+clid:'')}};
 }
 function showConsent(){
   if($('#ckb'))return;
   const b=document.createElement('div');b.className='ckb';b.id='ckb';b.setAttribute('role','region');b.setAttribute('aria-label','Cookies');
   b.innerHTML=`<p>We use cookies to measure how our ads perform. See our <a href="/privacy#tracking">Privacy Policy</a>.</p><div><button type="button" class="btn" id="ckNo">No thanks</button><button type="button" class="btn btn-y" id="ckYes">Accept</button></div>`;
   document.body.append(b);
-  const had=storedConsent()==='yes';
+  const had=!!window.fbq;
   $('#ckYes').onclick=()=>{saveConsent('yes');b.remove();startPixel()};
   $('#ckNo').onclick=()=>{saveConsent('no');b.remove();if(had)location.reload()};
 }
 function initConsent(){
-  if(!pixelEnabled()||!needsConsent()){startPixel();return}
+  if(!pixelEnabled())return;
   $('#ckLink').hidden=false;
   $('#ckLink').onclick=e=>{e.preventDefault();showConsent()};
-  if(storedConsent()==='yes')startPixel();
-  else if(!storedConsent())showConsent();
+  if(adConsent())startPixel();
+  else if(needsConsent()&&!storedConsent())showConsent();
 }
 
 /* Facts: same dates and amounts as bot/pricing.js. Price dates turn over in IST. */
