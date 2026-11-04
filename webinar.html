@@ -268,10 +268,10 @@ const HOOKS={
   track(name,data){adEvent(name,data)}
 };
 
-/* Meta browser pixel. Dataset ID from CMS-543; empty keeps it off, and it never runs in preview mode.
+/* Meta browser pixel. Dataset ID from CMS-543. It never runs while HOOKS.mode is 'stub' (preview).
    No form details go to Meta from the page (autoConfig off). Purchase uses eid from the return URL so it
    matches CM - Workflow's server event. No token or secret belongs in this file. */
-const META_PIXEL_ID='';
+const META_PIXEL_ID='1679421333977086';
 const CONSENT_KEY='cm_ad_consent';
 const US_ZONE=/^(America\/(New_York|Detroit|Kentucky\/.+|Indiana\/.+|Chicago|Menominee|North_Dakota\/.+|Denver|Boise|Phoenix|Los_Angeles|Anchorage|Juneau|Sitka|Metlakatla|Yakutat|Nome|Adak)|Pacific\/Honolulu)$/;
 let consentChoice=null;
