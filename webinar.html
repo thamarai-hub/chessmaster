@@ -31,7 +31,7 @@
 .hero h1 mark{background:linear-gradient(transparent 12%,var(--y) 12%,var(--y) 92%,transparent 92%);color:inherit;padding-inline:.12em;margin-inline:-.12em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .coach{font-size:clamp(1.125rem,1rem + .5vw,1.375rem);font-weight:700;margin-top:16px}
 .lead{color:var(--muted);font-size:1.0625rem;max-width:52ch;margin-top:8px}
-.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin-top:24px;background:var(--ink);border:2px solid var(--ink);border-radius:16px}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:24px;background:var(--ink);border:2px solid var(--ink);border-radius:16px}
 .fact{background:var(--card);padding:14px 16px;min-width:0}
 .fact:first-child{border-radius:14px 0 0 14px}
 .fact:last-child{border-radius:0 14px 14px 0}
@@ -41,6 +41,18 @@
 .fact .sel{display:inline-block;position:relative;margin-top:4px;max-width:100%}
 .fact select{appearance:none;-webkit-appearance:none;border:0;background:none;font:inherit;font-size:.8125rem;font-weight:600;text-decoration:underline;text-underline-offset:3px;color:var(--fg);padding:2px 16px 2px 0;cursor:pointer;max-width:100%;field-sizing:content}
 .fact .sel::after{content:"";position:absolute;right:3px;top:50%;width:6px;height:6px;border-right:1.5px solid var(--fg);border-bottom:1.5px solid var(--fg);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.ladder{margin-top:20px}
+.ladder h2{font-size:1rem;letter-spacing:-.01em}
+.ladder ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;list-style:none;margin:10px 0 0;padding:0}
+.ladder li{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px 12px 12px;text-align:center;min-width:0}
+.ladder b{display:block;font-size:clamp(1.375rem,1.2rem + .8vw,1.75rem);line-height:1.1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ladder span{display:block;font-size:.8125rem;color:var(--muted);margin-top:4px}
+.ladder li[data-now]{background:var(--y);border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink)}
+.ladder li[data-now] span{color:var(--ink);font-weight:600}
+.ladder li[data-now] i{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--y);font-style:normal;font-size:.6875rem;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.ladder li[data-past]{background:none;opacity:.6}
+.ladder li[data-past] b{text-decoration:line-through;text-decoration-thickness:2px}
+.ladder small{display:block;font-size:.75rem;color:var(--muted);margin-top:8px}
 .photo{position:relative;margin:28px 0 0;max-width:560px}
 .photo img{display:block;width:100%;height:auto;aspect-ratio:880/842;object-fit:cover;object-position:50% 20%;border-radius:20px;border:2px solid var(--ink);box-shadow:8px 8px 0 var(--y)}
 .photo figcaption{position:absolute;left:16px;bottom:16px;background:var(--ink);color:var(--y);font-weight:800;font-size:.9375rem;padding:6px 12px;border-radius:10px}
@@ -54,7 +66,7 @@
 .steps li[data-on]{border-color:var(--ink);color:var(--fg)}
 .fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
 .full{grid-column:1/-1}
-.field{display:grid;gap:6px;min-width:0;align-content:start}
+.field{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;min-width:0;align-content:start}
 .field>label,.field>.lab{font-size:.8125rem;font-weight:700}
 .inp{width:100%;min-height:48px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font:inherit;font-size:1rem;color:var(--fg)}
 .inp:hover{border-color:var(--muted)}
@@ -170,8 +182,8 @@ footer.site{margin-top:0}
       <div class="facts">
         <div class="fact"><small>Date</small><b data-date></b></div>
         <div class="fact"><small>Time</small><b data-time></b><label class="sel"><select id="tzSel" aria-label="Show the time for"></select></label></div>
-        <div class="fact"><small>Fee</small><b data-price></b><span data-price-note></span></div>
       </div>
+      <div class="ladder" id="ladder"></div>
       <figure class="photo">
         <img src="/gm-shyam-sundar.jpg" width="880" height="842" alt="GM Shyam Sundar at a chess board" fetchpriority="high">
         <figcaption>GM Shyam Sundar</figcaption>
@@ -254,9 +266,9 @@ const HOOKS={
 const EVENT_KEY='webinar-2026-11-19';
 const START=new Date('2026-11-19T20:00:00+05:30'),END=new Date('2026-11-19T21:00:00+05:30');
 const TIERS=[
-  {until:'2026-11-10T23:59:59+05:30',USD:6,INR:499,note:'Early bird till 10 Nov'},
-  {until:'2026-11-15T23:59:59+05:30',USD:10,INR:749,note:'Till 15 Nov'},
-  {until:'2026-11-19T20:00:00+05:30',USD:15,INR:999,note:''}
+  {until:'2026-11-10T23:59:59+05:30',USD:6,INR:499,note:'Early bird till 10 Nov',when:'Till 10 Nov',starts:''},
+  {until:'2026-11-15T23:59:59+05:30',USD:10,INR:749,note:'Till 15 Nov',when:'11 to 15 Nov',starts:'11 Nov'},
+  {until:'2026-11-19T20:00:00+05:30',USD:15,INR:999,note:'',when:'From 16 Nov',starts:'16 Nov'}
 ];
 const MARKETS={
   uk:{label:'United Kingdom',time:'2:30–3:30 PM UK time',country:'GB'},
@@ -314,7 +326,14 @@ function renderFacts(){
   $$('[data-time]').forEach(e=>e.textContent=time);
   const india=market==='in';
   $$('[data-price]').forEach(e=>e.textContent=tier?(india?'₹'+tier.INR+' incl. GST':'$'+tier.USD):'Registration closed');
-  $$('[data-price-note]').forEach(e=>e.textContent=tier?tier.note:'');
+  const now=TIERS.indexOf(tier);
+  $('#ladder').hidden=!tier;
+  if(tier)$('#ladder').innerHTML=`<h2>The fee goes up with time</h2><ol>${TIERS.map((t,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':''}<b>${india?'₹'+t.INR:'$'+t.USD}</b><span>${t.when}</span></li>`).join('')}</ol>${india?'<small>Fees include GST.</small>':''}`;
+}
+/* "Goes up to $10 on 11 Nov", or nothing on the last fee. */
+function nextFee(india){
+  const next=TIERS[TIERS.indexOf(tier)+1];
+  return next?`<br>Goes up to ${india?'₹'+next.INR:'$'+next.USD} on ${next.starts}.`:'';
 }
 $('#tzSel').innerHTML=(local?['local']:[]).concat(['uk','et','ct','mt','pt']).concat(market==='in'||market==='ae'?[market]:[])
   .map(k=>`<option value="${k}">${k==='local'?'My time':MARKETS[k].label}</option>`).join('');
@@ -382,7 +401,7 @@ const opt=(arr,val,ph)=>`<option value="">${ph}</option>`+arr.map(([v,l])=>`<opt
 
 function viewDetails(){
   const r=state.reg,cc=r.cc||(COUNTRIES.find(c=>c[0]===r.country)||[])[2]||'';
-  return stepper(1)+`<h2 tabindex="-1">Register now</h2><p class="sub">Fee: <b>$${tier.USD}</b>${tier.note?' · '+tier.note:''}</p>
+  return stepper(1)+`<h2 tabindex="-1">Register now</h2><p class="sub">Fee: <b>$${tier.USD}</b>${tier.note?' · '+tier.note:''}${nextFee(false)}</p>
   ${errBox()}
   <form id="regForm" novalidate class="fgrid">
     <div class="field full"><label for="full_name">Your full name</label><input class="inp" id="full_name" autocomplete="name" value="${esc(r.full_name||'')}"><span class="ferr">Enter your full name.</span></div>
@@ -434,7 +453,7 @@ function viewDone(){
 }
 function viewWa(){
   const india=market==='in';
-  return `<h2 tabindex="-1">Register on WhatsApp</h2><p class="sub">Fee: <b>${india?'₹'+tier.INR+' incl. GST':'$'+tier.USD}</b>${tier.note?' · '+tier.note:''}</p>
+  return `<h2 tabindex="-1">Register on WhatsApp</h2><p class="sub">Fee: <b>${india?'₹'+tier.INR+' incl. GST':'$'+tier.USD}</b>${tier.note?' · '+tier.note:''}${nextFee(india)}</p>
   <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>
   <button class="link" id="useForm" style="justify-self:start;font-size:.875rem">Not in India or the UAE? Use the form</button></div>`;
 }
