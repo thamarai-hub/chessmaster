@@ -412,7 +412,7 @@ function viewDetails(){
     <div class="field full" data-rest><label for="phone">WhatsApp number <span class="req" aria-hidden="true">*</span></label><div class="phone"><input class="inp" id="cc" required type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" required type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr">Enter your WhatsApp number with its country code.</span></div>
     <div class="field full" data-rest><span class="lab" id="whoL">Who will attend? <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="whoL"><label><input type="radio" name="attendee" value="self" required ${r.attendee==='self'?'checked':''}>Me</label><label><input type="radio" name="attendee" value="child" ${r.attendee==='child'?'checked':''}>My child</label></div><span class="ferr">Choose one option.</span></div>
     <div class="field full" id="childWrap" hidden><label for="child_name">Child's full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="child_name" required autocomplete="off" value="${esc(r.child_name||'')}"><span class="ferr">Enter your child's full name.</span></div>
-    <div class="field" data-rest><label for="age">Attendee's age <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the attendee's age.</span></div>
+    <div class="field" data-rest><label for="age"><span id="ageL">Age</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the age.</span></div>
     <div class="field" data-rest><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
     <div class="field full" id="guardianWrap" hidden><label class="chk"><input type="checkbox" id="guardian" required ${r.guardian?'checked':''}><span><b>I am the student's parent or legal guardian</b> and I agree to them taking part in this live online class. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">A parent or guardian must give consent for students under 18.</span></div>
     <div class="field full" data-rest><label class="chk"><input type="checkbox" id="consent" required ${r.consent?'checked':''}><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information on WhatsApp and email. I accept the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">Please agree so we can process the registration.</span></div>
@@ -486,6 +486,7 @@ function bindDetails(){
     $$('[data-rest]',f).forEach(e=>e.hidden=wa);
     $('#childWrap').hidden=wa||!child;
     $('#guardianWrap').hidden=wa||!child;
+    $('#ageL').textContent=child?"Child's age":$('input[name=attendee][value=self]').checked?'Your age':'Age';
   };
   $('#country').addEventListener('change',e=>{
     const c=COUNTRIES.find(x=>x[0]===e.target.value);
@@ -508,7 +509,7 @@ function bindDetails(){
     if(setErr($('input[name=attendee]'),!attendee))bad.push('attendee');
     if(attendee==='child'&&setErr($('#child_name'),v('child_name').length<2))bad.push('child_name');
     const under18Self=attendee==='self'&&age<18;
-    $('#ageErr').textContent=under18Self?'A parent or guardian must register anyone under 18. Choose "My child".':"Enter the attendee's age.";
+    $('#ageErr').textContent=under18Self?'A parent or guardian must register anyone under 18. Choose "My child".':attendee==='child'?"Enter your child's age.":attendee==='self'?'Enter your age.':'Enter the age.';
     if(setErr($('#age'),!(age>=3&&age<=120)||under18Self))bad.push('age');
     if(setErr($('#level'),!v('level')))bad.push('level');
     if(attendee==='child'&&setErr($('#guardian'),!$('#guardian').checked))bad.push('guardian');
