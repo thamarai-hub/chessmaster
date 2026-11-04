@@ -75,6 +75,7 @@
 .field .sel select{appearance:none;-webkit-appearance:none;padding-right:34px;font-weight:500}
 .field .sel::after{content:"";position:absolute;right:15px;top:50%;width:8px;height:8px;border-right:2px solid var(--fg);border-bottom:2px solid var(--fg);transform:translateY(-70%) rotate(45deg);pointer-events:none}
 .field.err .inp{border-color:var(--bad)}
+.req{color:var(--bad);font-weight:700}
 .ferr{display:none;font-size:.8125rem;font-weight:600;color:var(--bad)}
 .field.err .ferr{display:block}
 .phone{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px}
@@ -345,7 +346,7 @@ const FINE_POINTER=matchMedia('(hover:hover) and (pointer:fine)').matches;
 let openDropdown=null,dropId=0;
 function enhanceSelect(sel,link){
   if(!FINE_POINTER)return;
-  const wrap=sel.parentElement,name=sel.getAttribute('aria-label')||(sel.id&&$(`label[for="${sel.id}"]`)||{}).textContent||'';
+  const wrap=sel.parentElement,name=sel.getAttribute('aria-label')||((sel.id&&$(`label[for="${sel.id}"]`)||{}).textContent||'').replace(/\s*\*$/,'');
   const btn=document.createElement('button'),list=document.createElement('ul'),id='cs'+(++dropId);
   btn.type='button';btn.className=link?'csb csb-link':'csb inp';
   btn.setAttribute('aria-haspopup','listbox');btn.setAttribute('aria-expanded','false');
@@ -404,17 +405,17 @@ function viewDetails(){
   return stepper(1)+`<h2 tabindex="-1">Register now</h2><p class="sub">Fee: <b>$${tier.USD}</b>${tier.note?' · '+tier.note:''}${nextFee(false)}</p>
   ${errBox()}
   <form id="regForm" novalidate class="fgrid">
-    <div class="field full"><label for="full_name">Your full name</label><input class="inp" id="full_name" autocomplete="name" value="${esc(r.full_name||'')}"><span class="ferr">Enter your full name.</span></div>
-    <div class="field full"><label for="email">Email</label><input class="inp" id="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" value="${esc(r.email||'')}"><span class="ferr">Enter a valid email, like name@example.com.</span></div>
-    <div class="field full"><label for="country">Country</label><span class="sel"><select class="inp" id="country" autocomplete="off">${opt(COUNTRIES,r.country,'Choose your country')}</select></span><span class="ferr">Choose your country.</span></div>
+    <div class="field full"><label for="full_name">Your full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="full_name" required autocomplete="name" value="${esc(r.full_name||'')}"><span class="ferr">Enter your full name.</span></div>
+    <div class="field full"><label for="email">Email <span class="req" aria-hidden="true">*</span></label><input class="inp" id="email" required type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" value="${esc(r.email||'')}"><span class="ferr">Enter a valid email, like name@example.com.</span></div>
+    <div class="field full"><label for="country">Country <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="country" required autocomplete="off">${opt(COUNTRIES,r.country,'Choose your country')}</select></span><span class="ferr">Choose your country.</span></div>
     <div class="full" id="waSwitch" hidden><p class="note" style="margin-bottom:10px">For India and the UAE, registration is on WhatsApp.</p><a class="btn btn-lg btn-wa" href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a></div>
-    <div class="field full" data-rest><label for="phone">WhatsApp number</label><div class="phone"><input class="inp" id="cc" type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr">Enter your WhatsApp number with its country code.</span></div>
-    <div class="field full" data-rest><span class="lab" id="whoL">Who will attend?</span><div class="seg" role="radiogroup" aria-labelledby="whoL"><label><input type="radio" name="attendee" value="self" ${r.attendee==='self'?'checked':''}>Me</label><label><input type="radio" name="attendee" value="child" ${r.attendee==='child'?'checked':''}>My child</label></div><span class="ferr">Choose one option.</span></div>
-    <div class="field full" id="childWrap" hidden><label for="child_name">Child's full name</label><input class="inp" id="child_name" autocomplete="off" value="${esc(r.child_name||'')}"><span class="ferr">Enter your child's full name.</span></div>
-    <div class="field" data-rest><label for="age">Attendee's age</label><input class="inp" id="age" type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the attendee's age.</span></div>
-    <div class="field" data-rest><label for="level">Chess level</label><span class="sel"><select class="inp" id="level">${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
-    <div class="field full" id="guardianWrap" hidden><label class="chk"><input type="checkbox" id="guardian" ${r.guardian?'checked':''}><span><b>I am the student's parent or legal guardian</b> and I agree to them taking part in this live online class.</span></label><span class="ferr">A parent or guardian must give consent for students under 18.</span></div>
-    <div class="field full" data-rest><label class="chk"><input type="checkbox" id="consent" ${r.consent?'checked':''}><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information on WhatsApp and email. I accept the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.</span></label><span class="ferr">Please agree so we can process the registration.</span></div>
+    <div class="field full" data-rest><label for="phone">WhatsApp number <span class="req" aria-hidden="true">*</span></label><div class="phone"><input class="inp" id="cc" required type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" required type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr">Enter your WhatsApp number with its country code.</span></div>
+    <div class="field full" data-rest><span class="lab" id="whoL">Who will attend? <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="whoL"><label><input type="radio" name="attendee" value="self" required ${r.attendee==='self'?'checked':''}>Me</label><label><input type="radio" name="attendee" value="child" ${r.attendee==='child'?'checked':''}>My child</label></div><span class="ferr">Choose one option.</span></div>
+    <div class="field full" id="childWrap" hidden><label for="child_name">Child's full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="child_name" required autocomplete="off" value="${esc(r.child_name||'')}"><span class="ferr">Enter your child's full name.</span></div>
+    <div class="field" data-rest><label for="age">Attendee's age <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the attendee's age.</span></div>
+    <div class="field" data-rest><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
+    <div class="field full" id="guardianWrap" hidden><label class="chk"><input type="checkbox" id="guardian" required ${r.guardian?'checked':''}><span><b>I am the student's parent or legal guardian</b> and I agree to them taking part in this live online class. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">A parent or guardian must give consent for students under 18.</span></div>
+    <div class="field full" data-rest><label class="chk"><input type="checkbox" id="consent" required ${r.consent?'checked':''}><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information on WhatsApp and email. I accept the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">Please agree so we can process the registration.</span></div>
     <div class="full" data-rest><button class="btn btn-lg btn-y" type="submit" ${state.busy?'disabled':''}>${state.busy?'Sending code…':'Continue'}</button></div>
   </form>`;
 }
@@ -424,7 +425,7 @@ function viewOtp(){
   ${errBox()}
   <form id="otpForm" novalidate class="stack">
     ${stub('Preview: no code was sent. Enter any 6 digits (000000 shows the wrong-code message).')}
-    <div class="field"><label for="code">Code</label><input class="inp otp" id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*"><span class="ferr">Enter the 6-digit code.</span></div>
+    <div class="field"><label for="code">Code <span class="req" aria-hidden="true">*</span></label><input class="inp otp" id="code" required inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*"><span class="ferr">Enter the 6-digit code.</span></div>
     <button class="btn btn-lg btn-y" type="submit" ${state.busy?'disabled':''}>${state.busy?'Checking…':'Confirm'}</button>
     <div class="row"><button type="button" class="link" id="editBtn">Change my details</button><button type="button" class="link" id="resendBtn" ${left?'disabled':''}>${left?'Send again in '+left+'s':'Send the code again'}</button></div>
   </form>`;
