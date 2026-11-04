@@ -254,7 +254,7 @@ footer.site{margin-top:0}
    While mode is 'stub' the page shows the preview bar and makes no network call.
    The backend must work out the price itself; the price on this page is display only.
 
-   startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,phone,event_key,utm,ad_consent,...}
+   startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,phone,event_key,utm,ad_consent,...}
                        -> {ok:true} or {ok:false,error:'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
    verifyOtp(p)        p: {phone,code}
                        -> {ok:true,reg_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
@@ -495,6 +495,8 @@ function viewDetails(){
     <div class="field full" id="childWrap" hidden><label for="child_name">Child's full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="child_name" required autocomplete="off" value="${esc(r.child_name||'')}"><span class="ferr">Enter your child's full name.</span></div>
     <div class="field"><label for="age"><span id="ageL">Age</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the age.</span></div>
     <div class="field"><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
+    <div class="field full"><span class="lab" id="fideQ"><span id="fideL">Do you have a FIDE ID or rating?</span> <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="fideQ"><label><input type="radio" name="has_fide" value="yes" required ${r.has_fide==='yes'?'checked':''}>Yes</label><label><input type="radio" name="has_fide" value="no" ${r.has_fide==='no'?'checked':''}>No</label></div><span class="ferr">Choose one option.</span></div>
+    <div class="field full" id="fideWrap" hidden><label for="fide">FIDE ID or rating <span class="req" aria-hidden="true">*</span></label><input class="inp" id="fide" required inputmode="numeric" autocomplete="off" maxlength="10" value="${esc(r.fide||'')}"><span class="ferr">Enter the FIDE ID or rating, in numbers only.</span></div>
     <div class="field full"><label for="gender"><span id="genderL">Gender</span> <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="gender" required>${opt(GENDERS,r.gender,'Choose gender')}</select></span><span class="ferr">Choose an option.</span></div>
     <div class="field full" id="guardianWrap" hidden><label class="chk"><input type="checkbox" id="guardian" required ${r.guardian?'checked':''}><span><b>I am the student's parent or legal guardian</b> and I agree to them taking part in this live online class. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">A parent or guardian must give consent for students under 18.</span></div>
     <div class="field full"><label class="chk"><input type="checkbox" id="consent" required ${r.consent?'checked':''}><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information on WhatsApp and email. We may send you one reminder about this class if you don't finish registering. I accept the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">Please agree so we can process the registration.</span></div>
@@ -571,6 +573,8 @@ function bindDetails(){
     $('#nameL').textContent=child?"Parent's full name":'Your full name';
     $('#nameErr').textContent=child?"Enter the parent's full name.":'Enter your full name.';
     $('#ageL').textContent=child?"Child's age":self?'Your age':'Age';
+    $('#fideL').textContent=child?'Does your child have a FIDE ID or rating?':'Do you have a FIDE ID or rating?';
+    $('#fideWrap').hidden=!$('input[name=has_fide][value=yes]').checked;
     $('#genderL').textContent=child?"Child's gender":self?'Your gender':'Gender';
     renderFacts();$('#feeSub').innerHTML=feeLine();
   };
@@ -585,7 +589,7 @@ function bindDetails(){
     if(e.target.value.replace(/\D/g,'').replace(/^00/,'')==='91'&&sel.value!=='IN'){sel.value='IN';sel.csRefresh&&sel.csRefresh();sel.dispatchEvent(new Event('change',{bubbles:true}))}
     else sync();
   });
-  $$('input[name=attendee]').forEach(i=>i.addEventListener('change',()=>{i.closest('.field').classList.remove('err');sync()}));
+  $$('input[name=attendee],input[name=has_fide]').forEach(i=>i.addEventListener('change',()=>{i.closest('.field').classList.remove('err');sync()}));
   $$('.inp',f).forEach(i=>i.addEventListener('input',()=>i.closest('.field').classList.remove('err')));
   sync();
   f.addEventListener('submit',async ev=>{
@@ -606,12 +610,15 @@ function bindDetails(){
     $('#ageErr').textContent=under18Self?'A parent or guardian must register anyone under 18. Choose "My child".':attendee==='child'?"Enter your child's age.":attendee==='self'?'Enter your age.':'Enter the age.';
     if(setErr($('#age'),!(age>=3&&age<=120)||under18Self))bad.push('age');
     if(setErr($('#level'),!v('level')))bad.push('level');
+    const hasFide=($('input[name=has_fide]:checked')||{}).value||'';
+    if(setErr($('input[name=has_fide]'),!hasFide))bad.push('has_fide');
+    if(hasFide==='yes'&&setErr($('#fide'),!/^\d{3,10}$/.test(v('fide'))))bad.push('fide');
     if(setErr($('#gender'),!v('gender')))bad.push('gender');
     if(attendee==='child'&&setErr($('#guardian'),!$('#guardian').checked))bad.push('guardian');
     if(setErr($('#consent'),!$('#consent').checked))bad.push('consent');
-    state.reg={full_name:v('full_name'),email:v('email'),country:isIN?'IN':v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),
+    state.reg={full_name:v('full_name'),email:v('email'),country:isIN?'IN':v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),has_fide:hasFide,fide:hasFide==='yes'?v('fide'):'',
       cc,national:v('phone'),phone:'+'+cc.replace(/\D/g,'').replace(/^00/,'')+digits,guardian:$('#guardian').checked,consent:$('#consent').checked};
-    if(bad.length){const first=$('#'+bad[0])||$('input[name=attendee]');if(first)((first.closest('.sel')||first).querySelector('.csb')||first).focus();return}
+    if(bad.length){const first=$('#'+bad[0])||$('input[name='+bad[0]+']');if(first)((first.closest('.sel')||first).querySelector('.csb')||first).focus();return}
     state.busy=true;state.error='';render();
     const res=await safe(()=>HOOKS.startOtp(payload()));
     state.busy=false;
