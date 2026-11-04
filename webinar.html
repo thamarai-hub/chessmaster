@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Win Tournaments with Perfect Opening Play | ChessMaster</title>
+<meta name="description" content="Live online masterclass with GM Shyam Sundar on Thu, 19 Nov. Open to all ages and levels.">
+<link rel="canonical" href="https://chessmaster.io/webinar">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23FFCC00'/%3E%3Cpath d='M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z' fill='%23151515'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="/legal.css">
+<style>
+:root{--bad:#B42318;--ok:#15803D;--ok-bg:#E7F6EC}
+[hidden]{display:none!important}
+.preview{background:var(--ink);color:var(--y);font-size:.8125rem;font-weight:600;text-align:center;padding:8px 16px}
+.hbar .btn{margin-left:auto}
+.btn-y{cursor:pointer;font-family:inherit}
+.btn-lg{min-height:52px;width:100%;font-size:1rem;padding:0 22px}
+.btn[disabled]{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-wa{background:#25D366;color:var(--ink)}
+.link{background:none;border:0;padding:0;font:inherit;font-weight:600;color:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* Hero */
+.hero{padding-block:clamp(28px,5vw,64px) clamp(32px,5vw,64px);background:linear-gradient(180deg,var(--bg2),var(--bg) 62%)}
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:clamp(28px,5vw,64px);align-items:start}
+.hero h1{font-size:clamp(2.25rem,1.35rem + 3.5vw,3.75rem);letter-spacing:-.04em;line-height:1.03;margin-top:14px}
+.hero h1 mark{background:linear-gradient(transparent 12%,var(--y) 12%,var(--y) 92%,transparent 92%);color:inherit;padding-inline:.12em;margin-inline:-.12em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.coach{font-size:clamp(1.125rem,1rem + .5vw,1.375rem);font-weight:700;margin-top:16px}
+.lead{color:var(--muted);font-size:1.0625rem;max-width:52ch;margin-top:8px}
+.facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;margin-top:24px;background:var(--ink);border:2px solid var(--ink);border-radius:16px}
+.fact{background:var(--card);padding:14px 16px;min-width:0}
+.fact:first-child{border-radius:14px 0 0 14px}
+.fact:last-child{border-radius:0 14px 14px 0}
+.fact small{display:block;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fact b{display:block;font-size:1.125rem;line-height:1.25;letter-spacing:-.015em;margin-top:4px;font-variant-numeric:tabular-nums}
+.fact span{display:block;font-size:.8125rem;color:var(--muted);margin-top:4px}
+.fact .sel{display:inline-block;position:relative;margin-top:4px;max-width:100%}
+.fact select{appearance:none;-webkit-appearance:none;border:0;background:none;font:inherit;font-size:.8125rem;font-weight:600;text-decoration:underline;text-underline-offset:3px;color:var(--fg);padding:2px 16px 2px 0;cursor:pointer;max-width:100%;field-sizing:content}
+.fact .sel::after{content:"";position:absolute;right:3px;top:50%;width:6px;height:6px;border-right:1.5px solid var(--fg);border-bottom:1.5px solid var(--fg);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.ladder{margin-top:20px}
+.ladder h2{font-size:1rem;letter-spacing:-.01em}
+.ladder ol{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;list-style:none;margin:10px 0 0;padding:0}
+.ladder li{position:relative;background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px 12px 12px;text-align:center;min-width:0}
+.ladder b{display:block;font-size:clamp(1.375rem,1.2rem + .8vw,1.75rem);line-height:1.1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ladder span{display:block;font-size:.8125rem;color:var(--muted);margin-top:4px}
+.ladder li[data-now]{background:var(--y);border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink)}
+.ladder li[data-now] span{color:var(--ink);font-weight:600}
+.ladder li[data-now] i{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--y);font-style:normal;font-size:.6875rem;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.ladder li[data-past]{background:none;opacity:.6}
+.ladder li[data-past] b{text-decoration:line-through;text-decoration-thickness:2px}
+.ladder small{display:block;font-size:.75rem;color:var(--muted);margin-top:8px}
+.photo{position:relative;margin:28px 0 0;max-width:560px}
+.photo img{display:block;width:100%;height:auto;aspect-ratio:880/842;object-fit:cover;object-position:50% 20%;border-radius:20px;border:2px solid var(--ink);box-shadow:8px 8px 0 var(--y)}
+.photo figcaption{position:absolute;left:16px;bottom:16px;background:var(--ink);color:var(--y);font-weight:800;font-size:.9375rem;padding:6px 12px;border-radius:10px}
+
+/* Registration card */
+.rcard{position:sticky;top:96px;background:var(--card);border:2px solid var(--ink);border-radius:20px;padding:clamp(20px,3vw,28px);box-shadow:0 6px 0 var(--ink);scroll-margin-top:96px}
+.rcard h2{font-size:1.5rem;outline:none}
+.rcard .sub{color:var(--muted);font-size:.9375rem;margin-top:6px}
+.steps{display:flex;gap:6px;list-style:none;margin:0 0 18px;padding:0;font-size:.75rem;font-weight:700;color:var(--muted)}
+.steps li{flex:1;border-top:4px solid var(--line);padding-top:6px}
+.steps li[data-on]{border-color:var(--ink);color:var(--fg)}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.full{grid-column:1/-1}
+.field{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;min-width:0;align-content:start}
+.field>label,.field>.lab{font-size:.8125rem;font-weight:700}
+.inp{width:100%;min-height:48px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);font:inherit;font-size:1rem;color:var(--fg)}
+.inp:hover{border-color:var(--muted)}
+.inp:focus{outline:none;border-color:var(--fg);box-shadow:0 0 0 4px color-mix(in srgb,var(--y) 55%,transparent)}
+.sel{position:relative;display:block}
+.field .sel select{appearance:none;-webkit-appearance:none;padding-right:34px;font-weight:500}
+.field .sel::after{content:"";position:absolute;right:15px;top:50%;width:8px;height:8px;border-right:2px solid var(--fg);border-bottom:2px solid var(--fg);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.field.err .inp{border-color:var(--bad)}
+.req{color:var(--bad);font-weight:700}
+.ferr{display:none;font-size:.8125rem;font-weight:600;color:var(--bad)}
+.field.err .ferr{display:block}
+.phone{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg label{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);font-weight:600;font-size:.9375rem;cursor:pointer}
+.seg label:has(input:checked){border-color:var(--ink);background:var(--bg2)}
+.seg input,.chk input{accent-color:#151515;width:20px;height:20px;flex:none;margin:0}
+.chk{display:grid;grid-template-columns:20px 1fr;gap:12px;align-items:start;font-size:.875rem;line-height:1.5;cursor:pointer}
+.note{font-size:.8125rem;color:var(--muted);line-height:1.5}
+.stubnote{background:var(--bg2);border:2px dashed var(--ink);border-radius:12px;padding:10px 12px;font-size:.8125rem;font-weight:600}
+.alert{background:#FDECEA;border-radius:12px;padding:10px 12px;color:var(--bad);font-size:.875rem;font-weight:600}
+.sum{list-style:none;margin:18px 0 0;padding:0;border-top:1px solid var(--line)}
+.sum li{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line);font-size:.9375rem}
+.sum li span:first-child{color:var(--muted);flex:none}
+.sum li span:last-child{font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
+.sum li.total span{font-size:1.125rem;font-weight:800;color:var(--fg)}
+.stack{display:grid;gap:14px;margin-top:18px}
+.otp{font-size:1.5rem;font-weight:700;letter-spacing:.3em;text-align:center;font-variant-numeric:tabular-nums}
+.row{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:.875rem}
+.tick{width:52px;height:52px;border-radius:50%;background:var(--ok-bg);color:var(--ok);display:grid;place-items:center;margin-bottom:14px}
+
+/* Site-styled dropdown (mouse devices; touch devices keep the native picker) */
+.sel select.cs-native{position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none}
+.csb{display:block;width:100%;text-align:left;cursor:pointer;font:inherit;color:var(--fg);font-size:1rem;font-weight:500;padding-right:34px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.csb[data-empty]{color:var(--muted)}
+.csb-link{background:none;border:0;width:auto;padding:2px 16px 2px 0;font-size:.8125rem;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.csl{position:absolute;z-index:30;left:0;top:calc(100% + 6px);min-width:100%;max-height:280px;overflow-y:auto;margin:0;padding:6px;list-style:none;background:var(--card);border:2px solid var(--ink);border-radius:14px;box-shadow:0 4px 0 var(--ink);outline:none}
+.csl[data-up]{top:auto;bottom:calc(100% + 6px)}
+.csl[data-end]{left:auto;right:0}
+.fact .csl{min-width:190px}
+.csl li{padding:9px 12px;border-radius:9px;font-size:.9375rem;font-weight:500;line-height:1.3;cursor:pointer;white-space:nowrap}
+.csl li[data-active]{background:var(--bg2)}
+.csl li[aria-selected="true"]{background:var(--y);font-weight:700}
+
+/* Sections */
+.sec{padding-block:clamp(40px,6vw,72px)}
+.sec h2{font-size:clamp(1.75rem,1.4rem + 1.5vw,2.5rem);letter-spacing:-.03em}
+.how{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.5vw,28px);list-style:none;margin:28px 0 0;padding:0;counter-reset:s}
+.how li{counter-increment:s;border-top:2px solid var(--ink);padding-top:14px}
+.how li::before{content:counter(s);display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--y);box-shadow:inset 0 0 0 2px var(--ink);font-weight:800;font-size:.875rem;margin-bottom:12px}
+.how b{display:block;font-size:1.0625rem;line-height:1.3}
+.how span{display:block;color:var(--muted);font-size:.9375rem;margin-top:6px;line-height:1.5}
+.faqs{border-top:1px solid var(--line);margin-top:24px;max-width:760px}
+.faqs details{border-bottom:1px solid var(--line)}
+.faqs summary{cursor:pointer;font-weight:700;padding:16px 28px 16px 0;list-style:none;position:relative}
+.faqs summary::-webkit-details-marker{display:none}
+.faqs summary::after{content:"+";position:absolute;right:4px;top:12px;font-size:1.375rem;font-weight:500}
+.faqs details[open] summary::after{content:"\2013"}
+.faqs p{padding-bottom:16px;color:var(--muted);max-width:64ch}
+.band{background:var(--band);color:var(--band-fg)}
+.band .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.band p{color:var(--band-muted);margin-top:6px}
+.band .btn{flex:none;width:auto}
+footer.site{margin-top:0}
+
+.ckb{position:fixed;left:16px;bottom:16px;z-index:60;width:min(420px,calc(100% - 32px));background:var(--card);border:2px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink);padding:16px;font-size:.875rem;line-height:1.5}
+.ckb>div{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.ckb .btn{cursor:pointer;font-family:inherit;box-shadow:none}
+.ckb #ckNo{background:var(--card)}
+
+/* Mobile register bar */
+.mbar{display:none}
+@media (max-width:960px){
+  .hgrid{grid-template-columns:minmax(0,1fr);row-gap:0}
+  .hgrid>div:first-child{display:contents}
+  .hero .eyebrow{justify-self:start}
+  .rcard{position:static;order:1;margin-top:24px}
+  .photo{order:2}
+  .photo{max-width:none}
+  .photo img{aspect-ratio:4/3}
+  .mbar{display:flex;align-items:center;justify-content:space-between;gap:16px;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:2px solid var(--ink);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));transition:transform .2s}
+  .mbar[data-off]{transform:translateY(110%)}
+  .mbar b{display:block;font-size:1.125rem;line-height:1.2}
+  .mbar small{color:var(--muted);font-size:.75rem}
+  .mbar .btn{flex:none}
+  .mbar:not([data-off])~.wa-fab{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .how{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){
+  .facts{grid-template-columns:minmax(0,1fr)}
+  .fact:first-child{border-radius:14px 14px 0 0}
+  .fact:last-child{border-radius:0 0 14px 14px}
+  .fact{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:12px}
+  .fact small{grid-row:1/3;padding-top:4px}
+  .fact b{margin-top:0}
+  .fact span,.fact .sel{grid-column:2}
+  .fact .sel{justify-self:start}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .how{grid-template-columns:minmax(0,1fr)}
+  .band .btn{width:100%}
+  .brand{font-size:1.125rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="preview" id="previewBar" hidden>Preview. No code is sent, no payment is taken and no seat is reserved.</div>
+<header class="site">
+  <div class="wrap hbar">
+    <a class="brand" href="/" aria-label="ChessMaster home"><svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#FFCC00"/><path d="M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z" fill="#151515"/><circle cx="10" cy="10.5" r="2.4" fill="#151515"/><circle cx="24" cy="8" r="2.4" fill="#151515"/><circle cx="38" cy="10.5" r="2.4" fill="#151515"/><rect x="10" y="38.5" width="28" height="3" rx="1.5" fill="#151515"/></svg><span><em>Chess</em><b>Master</b></span></a>
+    <a class="btn" href="#register" data-cta>Register now</a>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap hgrid">
+    <div>
+      <span class="eyebrow">Live online masterclass</span>
+      <h1>Win Tournaments with <mark>Perfect Opening Play</mark></h1>
+      <p class="coach">with GM Shyam Sundar</p>
+      <p class="lead">Learn how strong opening preparation helps you score better in tournaments. Open to all ages and levels.</p>
+      <div class="facts">
+        <div class="fact"><small>Date</small><b data-date></b></div>
+        <div class="fact"><small>Time</small><b data-time></b><label class="sel"><select id="tzSel" aria-label="Show the time for"></select></label></div>
+      </div>
+      <div class="ladder" id="ladder"></div>
+      <figure class="photo">
+        <img src="/gm-shyam-sundar.jpg" width="880" height="842" alt="GM Shyam Sundar at a chess board" fetchpriority="high">
+        <figcaption>GM Shyam Sundar</figcaption>
+      </figure>
+    </div>
+    <div class="rcard" id="register" aria-live="polite"></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <ol class="how">
+      <li><b>Fill in your details</b><span>It takes about a minute.</span></li>
+      <li><b>Confirm your WhatsApp number</b><span>Enter the code we send you on WhatsApp.</span></li>
+      <li><b>Pay on a secure page</b><span>Your place is confirmed once payment is complete.</span></li>
+      <li><b>Get your login details</b><span>We email them after you pay. You can also get them on WhatsApp.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="sec" style="padding-top:0">
+  <div class="wrap">
+    <h2>Questions</h2>
+    <div class="faqs">
+      <details><summary>When is the masterclass?</summary><p><span data-date></span>, <span data-time></span>. It runs for about 60 minutes.</p></details>
+      <details><summary>Who can join?</summary><p>It's open to all ages and levels.</p></details>
+      <details><summary>How do I join on the day?</summary><p>The masterclass is live online. We email your login details after you pay, and you can also get them on WhatsApp.</p></details>
+      <details><summary>Can I register my child?</summary><p>Yes. Choose "My child" on the form. A parent or guardian must register anyone under 18. Each registration is for one person.</p></details>
+      <details><summary>Which currency do I pay in?</summary><p id="curFaq"></p></details>
+      <details><summary>I have another question</summary><p>Email us at <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="sec band">
+  <div class="wrap">
+    <div><h2>Win Tournaments with Perfect Opening Play</h2><p><span data-date></span> · <span data-time></span> · Live online</p></div>
+    <a class="btn btn-lg" href="#register" data-cta>Register now</a>
+  </div>
+</section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fbrand"><a class="brand" href="/"><svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#FFCC00"/><path d="M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z" fill="#151515"/><circle cx="10" cy="10.5" r="2.4" fill="#151515"/><circle cx="24" cy="8" r="2.4" fill="#151515"/><circle cx="38" cy="10.5" r="2.4" fill="#151515"/><rect x="10" y="38.5" width="28" height="3" rx="1.5" fill="#151515"/></svg><span><em>Chess</em><b>Master</b></span></a><span class="tag">Learn from Masters. Play Like One.</span></div>
+    <div class="fbottom">
+      <span>© 2026 Shortcastle Technologies Private Limited · No. 14, Sabari Salai, Madipakkam, Chennai, Tamil Nadu 600091 · <a href="mailto:support@chessmaster.io">support@chessmaster.io</a></span>
+      <span class="flinks"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a><a href="#" id="ckLink" hidden>Cookie settings</a></span>
+    </div>
+  </div>
+</footer>
+<div class="mbar" id="mbar"><div><b data-price></b><small data-date></small></div><a class="btn" href="#register" data-cta>Register now</a></div>
+<a class="wa-fab" href="https://wa.me/919940366435" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp" title="Chat with us on WhatsApp"><svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16.04 3C8.86 3 3.03 8.82 3.03 16c0 2.3.6 4.53 1.74 6.5L3 29l6.68-1.75A12.95 12.95 0 0 0 16.04 29C23.2 29 29 23.18 29 16S23.2 3 16.04 3Zm0 23.8c-1.98 0-3.92-.53-5.61-1.54l-.4-.24-3.97 1.04 1.06-3.86-.26-.4A10.76 10.76 0 0 1 5.2 16c0-5.97 4.86-10.83 10.84-10.83 5.97 0 10.8 4.86 10.8 10.83 0 5.98-4.83 10.8-10.8 10.8Zm5.94-8.1c-.33-.16-1.93-.95-2.23-1.06-.3-.11-.52-.16-.73.17-.22.32-.84 1.05-1.03 1.27-.19.22-.38.24-.71.08-.33-.16-1.38-.51-2.62-1.62-.97-.86-1.62-1.93-1.81-2.25-.19-.33-.02-.5.14-.66.15-.15.33-.38.49-.57.16-.19.22-.33.33-.55.11-.22.05-.41-.03-.57-.08-.16-.73-1.77-1.01-2.42-.26-.64-.53-.55-.73-.56h-.62c-.22 0-.57.08-.87.41-.3.33-1.14 1.11-1.14 2.71 0 1.6 1.17 3.14 1.33 3.36.16.22 2.3 3.5 5.56 4.91.78.34 1.38.54 1.86.69.78.25 1.49.21 2.05.13.63-.09 1.93-.79 2.2-1.55.27-.76.27-1.42.19-1.55-.08-.14-.3-.22-.62-.38Z"/></svg></a>
+
+<script>
+/* ---------------------------------------------------------------------------
+   Backend hooks to CM - Workflow's endpoints; the page calls nothing else. No secrets belong here.
+   The backend must work out the price itself; the price on this page is display only.
+
+   startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,phone,event_key,utm,ad_consent,...}
+                       -> {ok:true} or {ok:false,error:'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
+   verifyOtp(p)        p: {phone,code}
+                       -> {ok:true,reg_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
+   startPayment(p)     p: {reg_id}
+                       -> {ok:true,url} (the page then opens url) or {ok:false,error:'closed'|'failed'}
+   track(name,data)    sends the Meta browser events below. Off until META_PIXEL_ID is set.
+--------------------------------------------------------------------------- */
+const HOOKS={
+  mode:'live',
+  post:async(url,body)=>(await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json(),
+  startOtp(reg){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-send-3f9a61c2',reg)},
+  verifyOtp(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-check-b27e40d8',p)},
+  startPayment(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-web-pay-71c4e9a0',p)},
+  track(name,data){adEvent(name,data)}
+};
+
+/* Meta browser pixel. Dataset ID from CMS-543. It never runs while HOOKS.mode is 'stub' (preview).
+   No form details go to Meta from the page (autoConfig off). Purchase uses eid from the return URL so it
+   matches CM - Workflow's server event. No token or secret belongs in this file. */
+const META_PIXEL_ID='1679421333977086';
+const CONSENT_KEY='cm_ad_consent';
+const US_ZONE=/^(America\/(New_York|Detroit|Kentucky\/.+|Indiana\/.+|Chicago|Menominee|North_Dakota\/.+|Denver|Boise|Phoenix|Los_Angeles|Anchorage|Juneau|Sitka|Metlakatla|Yakutat|Nome|Adak)|Pacific\/Honolulu)$/;
+let consentChoice=null;
+const pixelEnabled=()=>!!META_PIXEL_ID&&HOOKS.mode!=='stub';
+const needsConsent=(tz=browserZone())=>!US_ZONE.test(tz);
+function storedConsent(){if(consentChoice)return consentChoice;try{return localStorage.getItem(CONSENT_KEY)}catch(e){return null}}
+function saveConsent(v){consentChoice=v;try{localStorage.setItem(CONSENT_KEY,v)}catch(e){}}
+const adConsent=()=>pixelEnabled()&&storedConsent()!=='no'&&(!needsConsent()||storedConsent()==='yes');
+function startPixel(){
+  if(window.fbq||!adConsent())return;
+  const f=window.fbq=function(){f.callMethod?f.callMethod.apply(f,arguments):f.queue.push(arguments)};
+  f.push=f;f.loaded=true;f.version='2.0';f.queue=[];
+  const t=document.createElement('script');t.async=true;t.src='https://connect.facebook.net/en_US/fbevents.js';document.head.append(t);
+  fbq('set','autoConfig',false,META_PIXEL_ID);fbq('init',META_PIXEL_ID);fbq('track','PageView');
+  firePurchase();
+}
+function adEvent(name,data){
+  if(!window.fbq||!adConsent())return;
+  if(name==='otp_confirmed')fbq('track','Lead');
+  if(name==='payment_started')fbq('track','InitiateCheckout',data);
+}
+function firePurchase(){
+  const eid=q.get('eid')||RZP_ID,v=Number(q.get('v')),c=q.get('c')||'USD';
+  if(!PAID||!eid||!(v>0)||!/^[A-Z]{3}$/.test(c)||!window.fbq)return;
+  const key='cm_purchase_'+eid;
+  try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
+  fbq('track','Purchase',{value:v,currency:c},{eventID:eid});
+}
+function cookie(n){const m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):''}
+/* Fields for CM - Workflow's server event. No ad_consent means no server event. */
+function adFields(){
+  if(!adConsent())return{ad_consent:false};
+  const clid=q.get('fbclid');
+  return{ad_consent:true,fbp:cookie('_fbp'),fbc:cookie('_fbc')||(clid?'fb.1.'+Date.now()+'.'+clid:''),page_url:location.origin+location.pathname};
+}
+function showConsent(){
+  if($('#ckb'))return;
+  const b=document.createElement('div');b.className='ckb';b.id='ckb';b.setAttribute('role','region');b.setAttribute('aria-label','Cookies');
+  b.innerHTML=`<p>We use cookies to measure how our ads perform. See our <a href="/privacy#tracking">Privacy Policy</a>.</p><div><button type="button" class="btn" id="ckNo">No thanks</button><button type="button" class="btn btn-y" id="ckYes">Accept</button></div>`;
+  document.body.append(b);
+  const had=!!window.fbq;
+  $('#ckYes').onclick=()=>{saveConsent('yes');b.remove();startPixel()};
+  $('#ckNo').onclick=()=>{saveConsent('no');b.remove();if(had)location.reload()};
+}
+function initConsent(){
+  if(!pixelEnabled())return;
+  $('#ckLink').hidden=false;
+  $('#ckLink').onclick=e=>{e.preventDefault();showConsent()};
+  if(adConsent())startPixel();
+  else if(needsConsent()&&!storedConsent())showConsent();
+}
+
+/* Facts: same dates and amounts as bot/pricing.js. Price dates turn over in IST. */
+const EVENT_KEY='webinar-2026-11-19';
+const START=new Date('2026-11-19T20:00:00+05:30'),END=new Date('2026-11-19T21:00:00+05:30');
+const TIERS=[
+  {until:'2026-11-10T23:59:59+05:30',USD:6,INR:499,note:'Early bird till 10 Nov',when:'Till 10 Nov',starts:''},
+  {until:'2026-11-15T23:59:59+05:30',USD:10,INR:749,note:'Till 15 Nov',when:'11 to 15 Nov',starts:'11 Nov'},
+  {until:'2026-11-19T20:00:00+05:30',USD:15,INR:999,note:'',when:'From 16 Nov',starts:'16 Nov'}
+];
+const MARKETS={
+  uk:{label:'United Kingdom',time:'2:30–3:30 PM UK time',country:'GB'},
+  et:{label:'US Eastern',time:'9:30–10:30 AM ET',country:'US'},
+  ct:{label:'US Central',time:'8:30–9:30 AM CT',country:'US'},
+  mt:{label:'US Mountain',time:'7:30–8:30 AM MT',country:'US'},
+  pt:{label:'US Pacific',time:'6:30–7:30 AM PT',country:'US'},
+  in:{label:'India',time:'8–9 PM IST',country:'IN'},
+  ae:{label:'UAE',time:'6:30–7:30 PM UAE time',country:'AE'}
+};
+const WA_REGISTER='https://wa.me/13642058191?text='+encodeURIComponent("Hi! I'd like to register for GM Shyam Sundar's masterclass.");
+const WA_LOGIN='https://wa.me/13642058191?text='+encodeURIComponent("Hi! I've paid. Please send my login.");
+const LEVELS=[['foundation','Foundation (new to chess)'],['beginner','Beginner (knows the moves)'],['improver','Improver (plays full games)'],['intermediate','Intermediate (knows tactics)'],['skilled','Skilled (plays regularly)'],['advanced','Advanced (plays tournaments)'],['expert','Expert (rated, trains hard)']];
+const GENDERS=[['male','Male'],['female','Female'],['prefer_not_to_say','Prefer not to say']];
+const STATES=['Andaman and Nicobar Islands','Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chandigarh','Chhattisgarh','Dadra and Nagar Haveli and Daman and Diu','Delhi','Goa','Gujarat','Haryana','Himachal Pradesh','Jammu and Kashmir','Jharkhand','Karnataka','Kerala','Ladakh','Lakshadweep','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Puducherry','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal'];
+const WA_HELP='https://wa.me/13642058191';
+const COUNTRIES=[['GB','United Kingdom','+44'],['US','United States','+1'],['AE','United Arab Emirates','+971'],['IN','India','+91'],['OTHER','Other country','']];
+
+const q=new URLSearchParams(location.search);
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* ?now=2026-11-12 tests the fee dates, in preview mode only. */
+const NOW=HOOKS.mode==='stub'&&q.get('now')?new Date(q.get('now')+'T12:00:00+05:30'):new Date();
+const tier=TIERS.find(t=>NOW<=new Date(t.until));
+
+/* The reader's own time: ?tz=uk|et|ct|mt|pt|in|ae (for ad links), else from the browser. */
+function browserZone(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){return ''}}
+function offsetMin(tz,d){
+  const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric'}).formatToParts(d).map(x=>[x.type,x.value]));
+  return Math.round((Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute)-d.getTime())/6e4);
+}
+function detectMarket(tz){
+  if(q.get('tz')&&MARKETS[q.get('tz')])return q.get('tz');
+  if(/^(Europe\/(London|Belfast|Jersey|Guernsey|Isle_of_Man)|GB)$/.test(tz))return 'uk';
+  if(/^Asia\/(Kolkata|Calcutta)$/.test(tz))return 'in';
+  if(tz==='Asia/Dubai')return 'ae';
+  if(/^(America|US)\//.test(tz)){
+    const m={'-300':'et','-360':'ct','-420':'mt','-480':'pt'}[offsetMin(tz,START)];
+    if(m)return m;
+  }
+  return tz?'local':'uk';
+}
+function localFacts(tz){
+  const t=d=>new Intl.DateTimeFormat('en-US',{timeZone:tz,hour:'numeric',minute:'2-digit'}).format(d).replace(':00','').replace(/\s/g,' ');
+  const a=t(START),b=t(END),ap=/ (AM|PM)$/;
+  const same=a.match(ap)&&b.match(ap)&&a.match(ap)[1]===b.match(ap)[1];
+  return{date:new Intl.DateTimeFormat('en-GB',{timeZone:tz,weekday:'short',day:'numeric',month:'short'}).format(START).replace(/^(\w+),? /,'$1, '),
+         time:(same?a.replace(ap,''):a)+'–'+b+' your time'};
+}
+const zone=browserZone();
+let market=detectMarket(zone);
+const local=market==='local'||zone?(()=>{try{return localFacts(zone)}catch(e){return null}})():null;
+if(market==='local'&&!local)market='uk';
+
+function renderFacts(){
+  const isLocal=market==='local';
+  const date=isLocal?local.date:'Thu, 19 Nov',time=isLocal?local.time:MARKETS[market].time;
+  $$('[data-date]').forEach(e=>e.textContent=date);
+  $$('[data-time]').forEach(e=>e.textContent=time);
+  const india=payInRupees();
+  $$('[data-price]').forEach(e=>e.textContent=tier?(india?'₹'+tier.INR+' incl. GST':'$'+tier.USD):'Registration closed');
+  const now=TIERS.indexOf(tier);
+  $('#ladder').hidden=!tier;
+  if(tier)$('#ladder').innerHTML=`<h2>The fee goes up with time</h2><ol>${TIERS.map((t,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':''}<b>${india?'₹'+t.INR:'$'+t.USD}</b><span>${t.when}</span></li>`).join('')}</ol>${india?'<small>Fees include GST.</small>':''}`;
+  $('#curFaq').textContent=(india?'Indian rupees, including GST.':'US dollars.')+" You pay on our payment provider's secure page, so we don't see or store your card, UPI or bank details.";
+}
+/* India and any +91 number pay in rupees. Display only: the server sets the price. */
+function payInRupees(){return state.reg.country==='IN'||(state.reg.cc||'').replace(/\D/g,'').replace(/^00/,'')==='91'}
+const feeLabel=(t,india)=>india?'₹'+t.INR:'$'+t.USD;
+function feeLine(){
+  const india=payInRupees();
+  return `Fee: <b>${feeLabel(tier,india)}${india?' incl. GST':''}</b>${tier.note?' · '+tier.note:''}${nextFee(india)}`;
+}
+/* "Goes up to $10 on 11 Nov", or nothing on the last fee. */
+function nextFee(india){
+  const next=TIERS[TIERS.indexOf(tier)+1];
+  return next?`<br>Goes up to ${india?'₹'+next.INR:'$'+next.USD} on ${next.starts}.`:'';
+}
+$('#tzSel').innerHTML=(local?['local']:[]).concat(['uk','et','ct','mt','pt','in','ae'])
+  .map(k=>`<option value="${k}">${k==='local'?'My time':MARKETS[k].label}</option>`).join('');
+$('#tzSel').value=market;
+$('#tzSel').addEventListener('change',e=>{market=e.target.value;renderFacts()});
+
+/* Native selects stay the source of value; this only replaces how they look on mouse devices. */
+const FINE_POINTER=matchMedia('(hover:hover) and (pointer:fine)').matches;
+let openDropdown=null,dropId=0;
+function enhanceSelect(sel,link){
+  if(!FINE_POINTER)return;
+  const wrap=sel.parentElement,name=sel.getAttribute('aria-label')||((sel.id&&$(`label[for="${sel.id}"]`)||{}).textContent||'').replace(/\s*\*$/,'');
+  const btn=document.createElement('button'),list=document.createElement('ul'),id='cs'+(++dropId);
+  btn.type='button';btn.className=link?'csb csb-link':'csb inp';
+  btn.setAttribute('aria-haspopup','listbox');btn.setAttribute('aria-expanded','false');
+  list.className='csl';list.id=id;list.setAttribute('role','listbox');list.setAttribute('aria-label',name);list.tabIndex=-1;list.hidden=true;
+  list.innerHTML=[...sel.options].filter(o=>o.value).map((o,i)=>`<li role="option" id="${id}-${i}" data-v="${esc(o.value)}">${esc(o.textContent)}</li>`).join('');
+  const lis=[...list.children];let active=0;
+  const show=()=>{const o=sel.options[sel.selectedIndex];btn.textContent=o?o.textContent:'';btn.toggleAttribute('data-empty',!sel.value);
+    btn.setAttribute('aria-label',name+': '+btn.textContent);
+    lis.forEach(l=>l.setAttribute('aria-selected',String(l.dataset.v===sel.value)))};
+  const mark=i=>{active=Math.max(0,Math.min(lis.length-1,i));lis.forEach((l,n)=>l.toggleAttribute('data-active',n===active));list.setAttribute('aria-activedescendant',lis[active].id);lis[active].scrollIntoView({block:'nearest'})};
+  const close=focus=>{list.hidden=true;btn.setAttribute('aria-expanded','false');openDropdown=null;if(focus)btn.focus()};
+  const open=()=>{
+    if(openDropdown)openDropdown(false);
+    list.hidden=false;btn.setAttribute('aria-expanded','true');openDropdown=close;
+    const r=btn.getBoundingClientRect(),below=innerHeight-r.bottom;
+    list.toggleAttribute('data-up',below<list.offsetHeight+16&&r.top>below);
+    list.removeAttribute('data-end');
+    const edge=(btn.closest('.rcard')||document.documentElement).getBoundingClientRect().right;
+    list.toggleAttribute('data-end',list.getBoundingClientRect().right>edge-8);
+    mark(Math.max(0,lis.findIndex(l=>l.dataset.v===sel.value)));list.focus({preventScroll:true});
+  };
+  const pick=i=>{const v=lis[i].dataset.v,changed=v!==sel.value;sel.value=v;show();close(true);if(changed)sel.dispatchEvent(new Event('change',{bubbles:true}))};
+  btn.addEventListener('click',()=>list.hidden?open():close(false));
+  btn.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();open()}});
+  list.addEventListener('click',e=>{const l=e.target.closest('li');if(l)pick(lis.indexOf(l))});
+  list.addEventListener('mousemove',e=>{const l=e.target.closest('li');if(l&&lis.indexOf(l)!==active)mark(lis.indexOf(l))});
+  list.addEventListener('keydown',e=>{
+    const k=e.key;
+    if(k==='ArrowDown'){e.preventDefault();mark(active+1)}
+    else if(k==='ArrowUp'){e.preventDefault();mark(active-1)}
+    else if(k==='Home'){e.preventDefault();mark(0)}
+    else if(k==='End'){e.preventDefault();mark(lis.length-1)}
+    else if(k==='Enter'||k===' '){e.preventDefault();pick(active)}
+    else if(k==='Escape'){e.preventDefault();close(true)}
+    else if(k==='Tab')close(false);
+  });
+  sel.classList.add('cs-native');sel.tabIndex=-1;sel.setAttribute('aria-hidden','true');
+  sel.addEventListener('focus',()=>btn.focus());
+  sel.csRefresh=show;
+  wrap.append(btn,list);show();
+}
+document.addEventListener('pointerdown',e=>{if(openDropdown&&!e.target.closest('.csl,.csb'))openDropdown(false)});
+
+/* Registration card */
+/* Razorpay adds its own link ID and status to the return URL. URL values only steer this screen and the pixel; the server decides who has paid. */
+const RZP_ID=q.get('razorpay_payment_link_id'),RZP_STATUS=q.get('razorpay_payment_link_status');
+const PAID=q.get('paid')==='1'&&(!RZP_ID||RZP_STATUS==='paid');
+const PAY_FAILED=q.get('paid')==='1'&&!PAID;
+const state={step:PAID?'paid':(!tier?'closed':'details'),error:PAY_FAILED?"Your payment didn't go through. Please try again, or email support@chessmaster.io.":'',reg:{country:market==='local'||!MARKETS[market]?'':MARKETS[market].country},busy:false,resendAt:0};
+const utm={};q.forEach((v,k)=>{if(/^utm_|^fbclid$/.test(k))utm[k]=v.slice(0,200)});
+
+function stepper(n){
+  return `<ol class="steps" aria-label="Step ${n} of 3">${['Details','Confirm','Pay'].map((s,i)=>`<li ${i<n?'data-on':''}>${s}</li>`).join('')}</ol>`;
+}
+const stub=html=>HOOKS.mode==='stub'?`<p class="stubnote">${html}</p>`:'';
+const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}${state.error===errorText('phone_taken')?` <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>.`:state.error===errorText('india_whatsapp')?` <a href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>.`:''}</p>`:'';
+const opt=(arr,val,ph)=>`<option value="">${ph}</option>`+arr.map(([v,l])=>`<option value="${v}" ${v===val?'selected':''}>${esc(l)}</option>`).join('');
+
+function viewDetails(){
+  const r=state.reg,cc=r.cc||(COUNTRIES.find(c=>c[0]===r.country)||[])[2]||'';
+  return stepper(1)+`<h2 tabindex="-1">Register now</h2><p class="sub" id="feeSub">${feeLine()}</p>
+  ${errBox()}
+  <form id="regForm" novalidate class="fgrid">
+    <div class="field full"><span class="lab" id="whoL">Who will attend? <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="whoL"><label><input type="radio" name="attendee" value="self" required ${r.attendee==='self'?'checked':''}>Me</label><label><input type="radio" name="attendee" value="child" ${r.attendee==='child'?'checked':''}>My child</label></div><span class="ferr">Choose one option.</span></div>
+    <div class="field full"><label for="full_name"><span id="nameL">Your full name</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="full_name" required autocomplete="name" value="${esc(r.full_name||'')}"><span class="ferr" id="nameErr">Enter your full name.</span></div>
+    <div class="field full"><label for="email">Email <span class="req" aria-hidden="true">*</span></label><input class="inp" id="email" required type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" value="${esc(r.email||'')}"><span class="ferr">Enter a valid email, like name@example.com.</span></div>
+    <div class="field full"><label for="country">Country <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="country" required autocomplete="off">${opt(COUNTRIES,r.country,'Choose your country')}</select></span><span class="ferr">Choose your country.</span></div>
+    <div class="field full" id="stateWrap" hidden><label for="state">State <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="state" required>${opt(STATES.map(x=>[x,x]),r.state,'Choose your state')}</select></span><span class="ferr">Choose your state.</span></div>
+    <div class="field full"><label for="phone">WhatsApp number <span class="req" aria-hidden="true">*</span></label><div class="phone"><input class="inp" id="cc" required type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" required type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr">Enter your WhatsApp number with its country code.</span></div>
+    <div class="field full" id="childWrap" hidden><label for="child_name">Child's full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="child_name" required autocomplete="off" value="${esc(r.child_name||'')}"><span class="ferr">Enter your child's full name.</span></div>
+    <div class="field"><label for="age"><span id="ageL">Age</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the age.</span></div>
+    <div class="field"><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
+    <div class="field full"><span class="lab" id="fideQ"><span id="fideL">Do you have a FIDE ID or rating?</span> <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="fideQ"><label><input type="radio" name="has_fide" value="yes" required ${r.has_fide==='yes'?'checked':''}>Yes</label><label><input type="radio" name="has_fide" value="no" ${r.has_fide==='no'?'checked':''}>No</label></div><span class="ferr">Choose one option.</span></div>
+    <div class="field full" id="fideWrap" hidden><label for="fide">FIDE ID or rating <span class="req" aria-hidden="true">*</span></label><input class="inp" id="fide" required inputmode="numeric" autocomplete="off" maxlength="10" value="${esc(r.fide||'')}"><span class="ferr">Enter the FIDE ID or rating, in numbers only.</span></div>
+    <div class="field full"><label for="gender"><span id="genderL">Gender</span> <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="gender" required>${opt(GENDERS,r.gender,'Choose gender')}</select></span><span class="ferr">Choose an option.</span></div>
+    <div class="field full" id="guardianWrap" hidden><label class="chk"><input type="checkbox" id="guardian" required ${r.guardian?'checked':''}><span><b>I am the student's parent or legal guardian</b> and I agree to them taking part in this live online class. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">A parent or guardian must give consent for students under 18.</span></div>
+    <div class="field full"><label class="chk"><input type="checkbox" id="consent" required ${r.consent?'checked':''}><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information on WhatsApp and email. We may send you one reminder about this class if you don't finish registering. I accept the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">Please agree so we can process the registration.</span></div>
+    <div class="full"><button class="btn btn-lg btn-y" type="submit" ${state.busy?'disabled':''}>${state.busy?'Sending code…':'Continue'}</button></div>
+  </form>`;
+}
+function viewOtp(){
+  const left=Math.max(0,Math.ceil((state.resendAt-Date.now())/1000));
+  return stepper(2)+`<h2 tabindex="-1">Confirm your WhatsApp number</h2><p class="sub">We sent a 6-digit code to <b>${esc(state.reg.phone)}</b> on WhatsApp.</p>
+  ${errBox()}
+  <form id="otpForm" novalidate class="stack">
+    ${stub('Preview: no code was sent. Enter any 6 digits (000000 shows the wrong-code message).')}
+    <div class="field"><label for="code">Code <span class="req" aria-hidden="true">*</span></label><input class="inp otp" id="code" required inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*"><span class="ferr">Enter the 6-digit code.</span></div>
+    <button class="btn btn-lg btn-y" type="submit" ${state.busy?'disabled':''}>${state.busy?'Checking…':'Confirm'}</button>
+    <div class="row"><button type="button" class="link" id="editBtn">Change my details</button><button type="button" class="link" id="resendBtn" ${left?'disabled':''}>${left?'Send again in '+left+'s':'Send the code again'}</button></div>
+  </form>`;
+}
+function viewPay(){
+  const r=state.reg;
+  return stepper(3)+`<h2 tabindex="-1">Pay to confirm your place</h2><p class="sub">Your number is confirmed.</p>
+  ${errBox()}
+  <ul class="sum">
+    <li><span>Masterclass</span><span>Win Tournaments with Perfect Opening Play</span></li>
+    <li><span>Coach</span><span>GM Shyam Sundar</span></li>
+    <li><span>When</span><span>${esc($('[data-date]').textContent)}, ${esc($('[data-time]').textContent)}</span></li>
+    <li><span>Attending</span><span>${esc(r.attendee==='child'?r.child_name:r.full_name)}</span></li>
+    <li class="total"><span>Fee</span><span>${feeLabel(tier,payInRupees())}${payInRupees()?' incl. GST':''}</span></li>
+  </ul>
+  <div class="stack">
+    ${stub('Preview: no payment is taken.')}
+    <button class="btn btn-lg btn-y" id="payBtn" ${state.busy?'disabled':''}>${state.busy?'Opening payment page…':'Pay '+feeLabel(tier,payInRupees())}</button>
+    <p class="note">You pay on our payment provider's secure page. We don't see or store your card, UPI or bank details.${payInRupees()?'':' Your card statement will show CHESSMETHOD.'}</p>
+  </div>`;
+}
+function viewDone(){
+  return `<div class="tick" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+  <h2 tabindex="-1">End of the preview</h2><p class="sub">On the live page, this button opens the payment page. After payment, we email the login details, and they're also available on WhatsApp.</p>
+  <div class="stack">${stub('Preview: nothing was saved or sent.')}<button class="btn btn-lg" id="restartBtn">Start again</button></div>`;
+}
+/* The login goes by email at once. The WhatsApp button is the backup: WhatsApp can't message a buyer until they message the number. */
+function viewPaid(){
+  let email='';try{email=sessionStorage.getItem('cm_email')||''}catch(e){}
+  return `<h2 tabindex="-1">You're almost done</h2><p class="sub">Your login is on its way to ${email?'<b>'+esc(email)+'</b>':'your email'}. It can take up to a minute. If you don't see it, check your spam folder.</p>
+  <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_LOGIN}" target="_blank" rel="noopener">Get my login on WhatsApp</a>
+  <p class="note">Need help? <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a> or email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></div>`;
+}
+function viewClosed(){
+  return `<h2 tabindex="-1">Registration has closed</h2><p class="sub">Questions? Email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p>`;
+}
+const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,closed:viewClosed,paid:viewPaid};
+
+let lastStep=null,timer=null;
+function render(){
+  const box=$('#register');
+  box.innerHTML=VIEWS[state.step]();
+  if(lastStep&&lastStep!==state.step){const h=$('h2',box);h&&h.focus({preventScroll:true});box.scrollIntoView({block:'nearest'})}
+  lastStep=state.step;
+  clearTimeout(timer);
+  if(state.step==='details'){$$('select',box).forEach(s=>enhanceSelect(s));bindDetails()}
+  if(state.step==='otp')bindOtp();
+  if(state.step==='pay')$('#payBtn').onclick=pay;
+  if(state.step==='done')$('#restartBtn').onclick=()=>{state.step='details';state.reg={country:state.reg.country};state.error='';render()};
+}
+function setErr(el,on){el.closest('.field').classList.toggle('err',on);return on}
+
+function bindDetails(){
+  const f=$('#regForm');
+  const sync=()=>{
+    const child=$('input[name=attendee][value=child]').checked,self=$('input[name=attendee][value=self]').checked;
+    state.reg.country=$('#country').value;state.reg.cc=$('#cc').value;
+    $('#stateWrap').hidden=!payInRupees();
+    $('#childWrap').hidden=!child;
+    $('#guardianWrap').hidden=!child;
+    $('#nameL').textContent=child?"Parent's full name":'Your full name';
+    $('#nameErr').textContent=child?"Enter the parent's full name.":'Enter your full name.';
+    $('#ageL').textContent=child?"Child's age":self?'Your age':'Age';
+    $('#fideL').textContent=child?'Does your child have a FIDE ID or rating?':'Do you have a FIDE ID or rating?';
+    $('#fideWrap').hidden=!$('input[name=has_fide][value=yes]').checked;
+    $('#genderL').textContent=child?"Child's gender":self?'Your gender':'Gender';
+    renderFacts();$('#feeSub').innerHTML=feeLine();
+  };
+  $('#country').addEventListener('change',e=>{
+    const c=COUNTRIES.find(x=>x[0]===e.target.value);
+    if(c&&c[2])$('#cc').value=c[2];else if(c)$('#cc').value='';
+    setErr(e.target,false);sync();
+  });
+  /* The +91 rule: a +91 number is India, whichever country was picked. */
+  $('#cc').addEventListener('input',e=>{
+    const sel=$('#country');
+    if(e.target.value.replace(/\D/g,'').replace(/^00/,'')==='91'&&sel.value!=='IN'){sel.value='IN';sel.csRefresh&&sel.csRefresh();sel.dispatchEvent(new Event('change',{bubbles:true}))}
+    else sync();
+  });
+  $$('input[name=attendee],input[name=has_fide]').forEach(i=>i.addEventListener('change',()=>{i.closest('.field').classList.remove('err');sync()}));
+  $$('.inp',f).forEach(i=>i.addEventListener('input',()=>i.closest('.field').classList.remove('err')));
+  sync();
+  f.addEventListener('submit',async ev=>{
+    ev.preventDefault();
+    if(state.busy)return;
+    const v=id=>$('#'+id).value.trim(),attendee=($('input[name=attendee]:checked')||{}).value||'';
+    const cc=v('cc'),digits=v('phone').replace(/\D/g,'').replace(/^0+/,''),age=parseInt(v('age'),10);
+    const bad=[];
+    if(setErr($('#full_name'),v('full_name').length<2))bad.push('full_name');
+    if(setErr($('#email'),!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email'))))bad.push('email');
+    if(setErr($('#country'),!v('country')))bad.push('country');
+    const isIN=v('country')==='IN'||cc.replace(/\D/g,'').replace(/^00/,'')==='91';
+    if(isIN&&setErr($('#state'),!v('state')))bad.push('state');
+    if(setErr($('#phone'),!/^\+?\d{1,4}$/.test(cc)||digits.length<6||digits.length>14))bad.push('phone');
+    if(setErr($('input[name=attendee]'),!attendee))bad.push('attendee');
+    if(attendee==='child'&&setErr($('#child_name'),v('child_name').length<2))bad.push('child_name');
+    const under18Self=attendee==='self'&&age<18;
+    $('#ageErr').textContent=under18Self?'A parent or guardian must register anyone under 18. Choose "My child".':attendee==='child'?"Enter your child's age.":attendee==='self'?'Enter your age.':'Enter the age.';
+    if(setErr($('#age'),!(age>=3&&age<=120)||under18Self))bad.push('age');
+    if(setErr($('#level'),!v('level')))bad.push('level');
+    const hasFide=($('input[name=has_fide]:checked')||{}).value||'';
+    if(setErr($('input[name=has_fide]'),!hasFide))bad.push('has_fide');
+    if(hasFide==='yes'&&setErr($('#fide'),!/^\d{3,10}$/.test(v('fide'))))bad.push('fide');
+    if(setErr($('#gender'),!v('gender')))bad.push('gender');
+    if(attendee==='child'&&setErr($('#guardian'),!$('#guardian').checked))bad.push('guardian');
+    if(setErr($('#consent'),!$('#consent').checked))bad.push('consent');
+    state.reg={full_name:v('full_name'),email:v('email'),country:isIN?'IN':v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),has_fide:hasFide,fide:hasFide==='yes'?v('fide'):'',
+      cc,national:v('phone'),phone:'+'+cc.replace(/\D/g,'').replace(/^00/,'')+digits,guardian:$('#guardian').checked,consent:$('#consent').checked};
+    if(bad.length){const first=$('#'+bad[0])||$('input[name='+bad[0]+']');if(first)((first.closest('.sel')||first).querySelector('.csb')||first).focus();return}
+    state.busy=true;state.error='';render();
+    const res=await safe(()=>HOOKS.startOtp(payload()));
+    state.busy=false;
+    if(res.ok){state.step='otp';state.resendAt=Date.now()+60000;HOOKS.track('otp_sent',{country:state.reg.country})}
+    else state.error=errorText(res.error);
+    render();
+  });
+}
+function payload(){const{cc,national,guardian,consent,...r}=state.reg;return{...r,event_key:EVENT_KEY,utm,...adFields()}}
+function bindOtp(){
+  const left=state.resendAt-Date.now();
+  if(left>0)bindOtpTick();
+  $('#code').focus();
+  $('#code').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'');e.target.closest('.field').classList.remove('err')});
+  $('#editBtn').onclick=()=>{state.step='details';state.error='';render()};
+  $('#resendBtn').onclick=async()=>{
+    const res=await safe(()=>HOOKS.startOtp(payload()));
+    state.error=res.ok?'':errorText(res.error);state.resendAt=Date.now()+60000;render();
+  };
+  $('#otpForm').addEventListener('submit',async ev=>{
+    ev.preventDefault();
+    if(state.busy)return;
+    const code=$('#code').value;
+    if(setErr($('#code'),!/^\d{6}$/.test(code)))return;
+    state.busy=true;state.error='';render();
+    const res=await safe(()=>HOOKS.verifyOtp({phone:state.reg.phone,code}));
+    state.busy=false;
+    if(res.ok){state.regId=res.reg_id;state.step='pay';HOOKS.track('otp_confirmed',{})}
+    else state.error=errorText(res.error);
+    render();
+  });
+}
+function bindOtpTick(){
+  timer=setTimeout(()=>{const b=$('#resendBtn');if(!b)return;const s=Math.ceil((state.resendAt-Date.now())/1000);b.disabled=s>0;b.textContent=s>0?'Send again in '+s+'s':'Send the code again';if(s>0)bindOtpTick()},1000);
+}
+async function pay(){
+  if(state.busy)return;
+  state.busy=true;state.error='';render();
+  const res=await safe(()=>HOOKS.startPayment({reg_id:state.regId}));
+  state.busy=false;
+  if(res.ok&&res.url){
+    const inr=payInRupees();
+    HOOKS.track('payment_started',{value:inr?tier.INR:tier.USD,currency:inr?'INR':'USD'});
+    try{sessionStorage.setItem('cm_email',state.reg.email)}catch(e){}
+    location.href=res.url;return;
+  }
+  if(res.ok){state.step='done';render();return}
+  if(res.error==='closed'){state.step='closed';render();return}
+  state.error=errorText(res.error);render();
+}
+async function safe(fn){try{return await fn()}catch(e){return{ok:false,error:'failed'}}}
+function errorText(code){
+  return{
+    wrong_code:"That code isn't right. Please check it and try again.",
+    expired:'That code has expired. Please ask for a new one.',
+    rate_limited:'Too many tries. Please wait a few minutes and try again.',
+    india_whatsapp:'For India and the UAE, registration is on WhatsApp.', /* until the india_page switch */
+    phone_taken:'This WhatsApp number is already registered.'
+  }[code]||'Something went wrong. Please try again, or email support@chessmaster.io.';
+}
+
+/* Mobile register bar: hidden while the card is on screen, and when closed. */
+if('IntersectionObserver'in window){
+  new IntersectionObserver(es=>{$('#mbar').toggleAttribute('data-off',es[0].isIntersecting||!tier||PAID)},{rootMargin:'0px 0px -80px 0px'}).observe($('#register'));
+}
+if(!tier||PAID)$$('[data-cta]').forEach(a=>a.hidden=true);
+if(PAID)$('#mbar').hidden=true;
+if(HOOKS.mode==='stub')$('#previewBar').hidden=false;
+renderFacts();
+enhanceSelect($('#tzSel'),true);
+render();
+if(PAID)$('#register').scrollIntoView({block:'center'});
+HOOKS.track('page_view',{market});
+initConsent();
+</script>
+</body>
+</html>
