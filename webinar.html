@@ -669,18 +669,15 @@ let deliveryRun=0;
 async function watchDelivery(checkId){
   const run=++deliveryRun;
   if(!checkId)return;
-  const end=Date.now()+30000;
+  const end=Date.now()+60000;
   while(Date.now()<end){
-    await new Promise(r=>setTimeout(r,4000));
+    await new Promise(r=>setTimeout(r,5000));
     if(run!==deliveryRun||state.step!=='otp')return;
     const res=await safe(()=>HOOKS.codeStatus({check_id:checkId}));
     if(run!==deliveryRun||state.step!=='otp')return;
     if(!res.ok||state.busy)continue;
     if(res.status==='delivered')return;
-    if(res.status==='failed'){
-      showPhoneError(res.not_on_whatsapp?"This number isn't on WhatsApp. Please check it.":"We couldn't deliver the code. Please check your number and try again.");
-      return;
-    }
+    if(res.not_on_whatsapp===true){showPhoneError("We couldn't reach this number on WhatsApp. Please check it.");return}
   }
 }
 function bindOtpTick(){
