@@ -252,7 +252,8 @@ footer.site{margin-top:0}
    The backend must work out the price itself; the price on this page is display only.
 
    startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,phone,event_key,utm,ad_consent,...}
-                       -> {ok:true} or {ok:false,error:'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
+                       -> {ok:true,check_id} or {ok:false,error:'invalid_number'|'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
+   codeStatus(p)       p: {check_id}. -> {ok:true,status:'pending'|'delivered'|'failed',not_on_whatsapp}
    verifyOtp(p)        p: {phone,code}
                        -> {ok:true,reg_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
    startPayment(p)     p: {reg_id}
@@ -263,6 +264,7 @@ const HOOKS={
   mode:'live',
   post:async(url,body)=>(await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json(),
   startOtp(reg){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-send-3f9a61c2',reg)},
+  codeStatus(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-status-6d10e7b4',p)},
   verifyOtp(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-check-b27e40d8',p)},
   startPayment(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-web-pay-71c4e9a0',p)},
   track(name,data){adEvent(name,data)}
@@ -625,10 +627,10 @@ function bindDetails(){
     state.busy=true;state.error='';render();
     const res=await safe(()=>HOOKS.startOtp(payload()));
     state.busy=false;
-    if(res.ok){state.step='otp';state.resendAt=Date.now()+60000;HOOKS.track('otp_sent',{country:state.reg.country})}
+    if(res.ok){state.step='otp';state.resendAt=Date.now()+60000;HOOKS.track('otp_sent',{country:state.reg.country});watchDelivery(res.check_id)}
     else if(res.error!=='invalid_number')state.error=errorText(res.error);
     render();
-    if(res.error==='invalid_number'){setErr($('#phone'),true);$('#phoneErr').textContent=errorText(res.error);$('#phone').focus()}
+    if(res.error==='invalid_number')showPhoneError(errorText(res.error));
   });
 }
 function payload(){const{cc,national,guardian,consent,...r}=state.reg;return{...r,event_key:EVENT_KEY,utm,...adFields()}}
@@ -640,7 +642,10 @@ function bindOtp(){
   $('#editBtn').onclick=()=>{state.step='details';state.error='';render()};
   $('#resendBtn').onclick=async()=>{
     const res=await safe(()=>HOOKS.startOtp(payload()));
-    state.error=res.ok?'':errorText(res.error);state.resendAt=Date.now()+60000;render();
+    state.resendAt=Date.now()+60000;
+    if(res.error==='invalid_number'){showPhoneError(errorText(res.error));return}
+    state.error=res.ok?'':errorText(res.error);render();
+    if(res.ok)watchDelivery(res.check_id);
   };
   $('#otpForm').addEventListener('submit',async ev=>{
     ev.preventDefault();
@@ -654,6 +659,26 @@ function bindOtp(){
     else state.error=errorText(res.error);
     render();
   });
+}
+function showPhoneError(msg){
+  state.step='details';state.error='';render();
+  setErr($('#phone'),true);$('#phoneErr').textContent=msg;$('#phone').focus();
+}
+/* Background check after a code is sent. It never blocks code entry: no ID, a failed call or no answer changes nothing. */
+let deliveryRun=0;
+async function watchDelivery(checkId){
+  const run=++deliveryRun;
+  if(!checkId)return;
+  const end=Date.now()+60000;
+  while(Date.now()<end){
+    await new Promise(r=>setTimeout(r,5000));
+    if(run!==deliveryRun||state.step!=='otp')return;
+    const res=await safe(()=>HOOKS.codeStatus({check_id:checkId}));
+    if(run!==deliveryRun||state.step!=='otp')return;
+    if(!res.ok||state.busy)continue;
+    if(res.status==='delivered')return;
+    if(res.not_on_whatsapp===true){showPhoneError("We couldn't reach this number on WhatsApp. Please check it.");return}
+  }
 }
 function bindOtpTick(){
   timer=setTimeout(()=>{const b=$('#resendBtn');if(!b)return;const s=Math.ceil((state.resendAt-Date.now())/1000);b.disabled=s>0;b.textContent=s>0?'Send again in '+s+'s':'Send the code again';if(s>0)bindOtpTick()},1000);
