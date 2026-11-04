@@ -446,7 +446,7 @@ function viewPay(){
   <div class="stack">
     ${stub('Preview: no payment is taken.')}
     <button class="btn btn-lg btn-y" id="payBtn" ${state.busy?'disabled':''}>${state.busy?'Opening payment page…':'Pay $'+tier.USD}</button>
-    <p class="note">You pay on our payment provider's secure page. We don't see or store your card details.</p>
+    <p class="note">You pay on our payment provider's secure page. We don't see or store your card details. Your card statement will show CHESSMETHOD.</p>
   </div>`;
 }
 function viewDone(){
