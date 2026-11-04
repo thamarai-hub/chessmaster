@@ -139,8 +139,11 @@ footer.site{margin-top:0}
 /* Mobile register bar */
 .mbar{display:none}
 @media (max-width:960px){
-  .hgrid{grid-template-columns:minmax(0,1fr)}
-  .rcard{position:static}
+  .hgrid{grid-template-columns:minmax(0,1fr);row-gap:0}
+  .hgrid>div:first-child{display:contents}
+  .hero .eyebrow{justify-self:start}
+  .rcard{position:static;order:1;margin-top:24px}
+  .photo{order:2}
   .photo{max-width:none}
   .photo img{aspect-ratio:4/3}
   .mbar{display:flex;align-items:center;justify-content:space-between;gap:16px;position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--card);border-top:2px solid var(--ink);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));transition:transform .2s}
@@ -206,7 +209,7 @@ footer.site{margin-top:0}
       <li><b>Fill in your details</b><span>It takes about a minute.</span></li>
       <li><b>Confirm your WhatsApp number</b><span>Enter the code we send you on WhatsApp.</span></li>
       <li><b>Pay on a secure page</b><span>Your place is confirmed once payment is complete.</span></li>
-      <li><b>Get your login details</b><span>We send them on WhatsApp after you pay.</span></li>
+      <li><b>Get your login details</b><span>We email them after you pay. You can also get them on WhatsApp.</span></li>
     </ol>
   </div>
 </section>
@@ -217,9 +220,9 @@ footer.site{margin-top:0}
     <div class="faqs">
       <details><summary>When is the masterclass?</summary><p><span data-date></span>, <span data-time></span>. It runs for about 60 minutes.</p></details>
       <details><summary>Who can join?</summary><p>It's open to all ages and levels.</p></details>
-      <details><summary>How do I join on the day?</summary><p>The masterclass is live online. We send your login details on WhatsApp after you pay.</p></details>
+      <details><summary>How do I join on the day?</summary><p>The masterclass is live online. We email your login details after you pay, and you can also get them on WhatsApp.</p></details>
       <details><summary>Can I register my child?</summary><p>Yes. Choose "My child" on the form. A parent or guardian must register anyone under 18. Each registration is for one person.</p></details>
-      <details><summary>Which currency do I pay in?</summary><p>US dollars. You pay on our payment provider's secure page, so we don't see or store your card details.</p></details>
+      <details><summary>Which currency do I pay in?</summary><p id="curFaq"></p></details>
       <details><summary>I have another question</summary><p>Email us at <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></details>
     </div>
   </div>
@@ -251,7 +254,7 @@ footer.site{margin-top:0}
    While mode is 'stub' the page shows the preview bar and makes no network call.
    The backend must work out the price itself; the price on this page is display only.
 
-   startOtp(reg)       reg: {full_name,email,country,attendee,child_name,age,level,phone,event_key,utm}
+   startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,phone,event_key,utm,ad_consent,...}
                        -> {ok:true} or {ok:false,error:'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
    verifyOtp(p)        p: {phone,code}
                        -> {ok:true,reg_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
@@ -294,8 +297,8 @@ function adEvent(name,data){
   if(name==='payment_started')fbq('track','InitiateCheckout',data);
 }
 function firePurchase(){
-  const eid=q.get('eid'),v=Number(q.get('v')),c=q.get('c')||'USD';
-  if(q.get('paid')!=='1'||!eid||!(v>0)||!/^[A-Z]{3}$/.test(c)||!window.fbq)return;
+  const eid=q.get('eid')||RZP_ID,v=Number(q.get('v')),c=q.get('c')||'USD';
+  if(!PAID||!eid||!(v>0)||!/^[A-Z]{3}$/.test(c)||!window.fbq)return;
   const key='cm_purchase_'+eid;
   try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
   fbq('track','Purchase',{value:v,currency:c},{eventID:eid});
@@ -344,6 +347,9 @@ const MARKETS={
 const WA_REGISTER='https://wa.me/13642058191?text='+encodeURIComponent("Hi! I'd like to register for GM Shyam Sundar's masterclass.");
 const WA_LOGIN='https://wa.me/13642058191?text='+encodeURIComponent("Hi! I've paid. Please send my login.");
 const LEVELS=[['foundation','Foundation (new to chess)'],['beginner','Beginner (knows the moves)'],['improver','Improver (plays full games)'],['intermediate','Intermediate (knows tactics)'],['skilled','Skilled (plays regularly)'],['advanced','Advanced (plays tournaments)'],['expert','Expert (rated, trains hard)']];
+const GENDERS=[['male','Male'],['female','Female'],['prefer_not_to_say','Prefer not to say']];
+const STATES=['Andaman and Nicobar Islands','Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chandigarh','Chhattisgarh','Dadra and Nagar Haveli and Daman and Diu','Delhi','Goa','Gujarat','Haryana','Himachal Pradesh','Jammu and Kashmir','Jharkhand','Karnataka','Kerala','Ladakh','Lakshadweep','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Puducherry','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal'];
+const WA_HELP='https://wa.me/13642058191';
 const COUNTRIES=[['GB','United Kingdom','+44'],['US','United States','+1'],['AE','United Arab Emirates','+971'],['IN','India','+91'],['OTHER','Other country','']];
 
 const q=new URLSearchParams(location.search);
@@ -387,21 +393,29 @@ function renderFacts(){
   const date=isLocal?local.date:'Thu, 19 Nov',time=isLocal?local.time:MARKETS[market].time;
   $$('[data-date]').forEach(e=>e.textContent=date);
   $$('[data-time]').forEach(e=>e.textContent=time);
-  const india=market==='in';
+  const india=payInRupees();
   $$('[data-price]').forEach(e=>e.textContent=tier?(india?'₹'+tier.INR+' incl. GST':'$'+tier.USD):'Registration closed');
   const now=TIERS.indexOf(tier);
   $('#ladder').hidden=!tier;
   if(tier)$('#ladder').innerHTML=`<h2>The fee goes up with time</h2><ol>${TIERS.map((t,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':''}<b>${india?'₹'+t.INR:'$'+t.USD}</b><span>${t.when}</span></li>`).join('')}</ol>${india?'<small>Fees include GST.</small>':''}`;
+  $('#curFaq').textContent=(india?'Indian rupees, including GST.':'US dollars.')+" You pay on our payment provider's secure page, so we don't see or store your card, UPI or bank details.";
+}
+/* India and any +91 number pay in rupees. Display only: the server sets the price. */
+function payInRupees(){return state.reg.country==='IN'||(state.reg.cc||'').replace(/\D/g,'')==='91'}
+const feeLabel=(t,india)=>india?'₹'+t.INR:'$'+t.USD;
+function feeLine(){
+  const india=payInRupees();
+  return `Fee: <b>${feeLabel(tier,india)}${india?' incl. GST':''}</b>${tier.note?' · '+tier.note:''}${nextFee(india)}`;
 }
 /* "Goes up to $10 on 11 Nov", or nothing on the last fee. */
 function nextFee(india){
   const next=TIERS[TIERS.indexOf(tier)+1];
   return next?`<br>Goes up to ${india?'₹'+next.INR:'$'+next.USD} on ${next.starts}.`:'';
 }
-$('#tzSel').innerHTML=(local?['local']:[]).concat(['uk','et','ct','mt','pt']).concat(market==='in'||market==='ae'?[market]:[])
+$('#tzSel').innerHTML=(local?['local']:[]).concat(['uk','et','ct','mt','pt','in','ae'])
   .map(k=>`<option value="${k}">${k==='local'?'My time':MARKETS[k].label}</option>`).join('');
 $('#tzSel').value=market;
-$('#tzSel').addEventListener('change',e=>{market=e.target.value;renderFacts();if(state.step==='wa'&&market!=='in'&&market!=='ae'){state.step='details';render()}});
+$('#tzSel').addEventListener('change',e=>{market=e.target.value;renderFacts()});
 
 /* Native selects stay the source of value; this only replaces how they look on mouse devices. */
 const FINE_POINTER=matchMedia('(hover:hover) and (pointer:fine)').matches;
@@ -447,39 +461,44 @@ function enhanceSelect(sel,link){
   });
   sel.classList.add('cs-native');sel.tabIndex=-1;sel.setAttribute('aria-hidden','true');
   sel.addEventListener('focus',()=>btn.focus());
+  sel.csRefresh=show;
   wrap.append(btn,list);show();
 }
 document.addEventListener('pointerdown',e=>{if(openDropdown&&!e.target.closest('.csl,.csb'))openDropdown(false)});
 
 /* Registration card */
-const PAID=q.get('paid')==='1';
-const state={step:PAID?'paid':(!tier?'closed':(market==='in'||market==='ae')?'wa':'details'),reg:{country:market==='local'||!MARKETS[market]?'':MARKETS[market].country},busy:false,error:'',resendAt:0};
+/* Razorpay adds its own link ID and status to the return URL. URL values only steer this screen and the pixel; the server decides who has paid. */
+const RZP_ID=q.get('razorpay_payment_link_id'),RZP_STATUS=q.get('razorpay_payment_link_status');
+const PAID=q.get('paid')==='1'&&(!RZP_ID||RZP_STATUS==='paid');
+const PAY_FAILED=q.get('paid')==='1'&&!PAID;
+const state={step:PAID?'paid':(!tier?'closed':'details'),error:PAY_FAILED?"Your payment didn't go through. Please try again, or email support@chessmaster.io.":'',reg:{country:market==='local'||!MARKETS[market]?'':MARKETS[market].country},busy:false,resendAt:0};
 const utm={};q.forEach((v,k)=>{if(/^utm_|^fbclid$/.test(k))utm[k]=v.slice(0,200)});
 
 function stepper(n){
   return `<ol class="steps" aria-label="Step ${n} of 3">${['Details','Confirm','Pay'].map((s,i)=>`<li ${i<n?'data-on':''}>${s}</li>`).join('')}</ol>`;
 }
 const stub=html=>HOOKS.mode==='stub'?`<p class="stubnote">${html}</p>`:'';
-const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}</p>`:'';
+const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}${state.error===errorText('phone_taken')?` <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>.`:''}</p>`:'';
 const opt=(arr,val,ph)=>`<option value="">${ph}</option>`+arr.map(([v,l])=>`<option value="${v}" ${v===val?'selected':''}>${esc(l)}</option>`).join('');
 
 function viewDetails(){
   const r=state.reg,cc=r.cc||(COUNTRIES.find(c=>c[0]===r.country)||[])[2]||'';
-  return stepper(1)+`<h2 tabindex="-1">Register now</h2><p class="sub">Fee: <b>$${tier.USD}</b>${tier.note?' · '+tier.note:''}${nextFee(false)}</p>
+  return stepper(1)+`<h2 tabindex="-1">Register now</h2><p class="sub" id="feeSub">${feeLine()}</p>
   ${errBox()}
   <form id="regForm" novalidate class="fgrid">
     <div class="field full"><label for="full_name">Your full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="full_name" required autocomplete="name" value="${esc(r.full_name||'')}"><span class="ferr">Enter your full name.</span></div>
     <div class="field full"><label for="email">Email <span class="req" aria-hidden="true">*</span></label><input class="inp" id="email" required type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" value="${esc(r.email||'')}"><span class="ferr">Enter a valid email, like name@example.com.</span></div>
     <div class="field full"><label for="country">Country <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="country" required autocomplete="off">${opt(COUNTRIES,r.country,'Choose your country')}</select></span><span class="ferr">Choose your country.</span></div>
-    <div class="full" id="waSwitch" hidden><p class="note" style="margin-bottom:10px">For India and the UAE, registration is on WhatsApp.</p><a class="btn btn-lg btn-wa" href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a></div>
-    <div class="field full" data-rest><label for="phone">WhatsApp number <span class="req" aria-hidden="true">*</span></label><div class="phone"><input class="inp" id="cc" required type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" required type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr">Enter your WhatsApp number with its country code.</span></div>
-    <div class="field full" data-rest><span class="lab" id="whoL">Who will attend? <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="whoL"><label><input type="radio" name="attendee" value="self" required ${r.attendee==='self'?'checked':''}>Me</label><label><input type="radio" name="attendee" value="child" ${r.attendee==='child'?'checked':''}>My child</label></div><span class="ferr">Choose one option.</span></div>
+    <div class="field full" id="stateWrap" hidden><label for="state">State <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="state" required>${opt(STATES.map(x=>[x,x]),r.state,'Choose your state')}</select></span><span class="ferr">Choose your state.</span></div>
+    <div class="field full"><label for="phone">WhatsApp number <span class="req" aria-hidden="true">*</span></label><div class="phone"><input class="inp" id="cc" required type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" required type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr">Enter your WhatsApp number with its country code.</span></div>
+    <div class="field full"><span class="lab" id="whoL">Who will attend? <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="whoL"><label><input type="radio" name="attendee" value="self" required ${r.attendee==='self'?'checked':''}>Me</label><label><input type="radio" name="attendee" value="child" ${r.attendee==='child'?'checked':''}>My child</label></div><span class="ferr">Choose one option.</span></div>
     <div class="field full" id="childWrap" hidden><label for="child_name">Child's full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="child_name" required autocomplete="off" value="${esc(r.child_name||'')}"><span class="ferr">Enter your child's full name.</span></div>
-    <div class="field" data-rest><label for="age"><span id="ageL">Age</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the age.</span></div>
-    <div class="field" data-rest><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
+    <div class="field"><label for="age"><span id="ageL">Age</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the age.</span></div>
+    <div class="field"><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
+    <div class="field full"><label for="gender"><span id="genderL">Gender</span> <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="gender" required>${opt(GENDERS,r.gender,'Choose gender')}</select></span><span class="ferr">Choose an option.</span></div>
     <div class="field full" id="guardianWrap" hidden><label class="chk"><input type="checkbox" id="guardian" required ${r.guardian?'checked':''}><span><b>I am the student's parent or legal guardian</b> and I agree to them taking part in this live online class. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">A parent or guardian must give consent for students under 18.</span></div>
-    <div class="field full" data-rest><label class="chk"><input type="checkbox" id="consent" required ${r.consent?'checked':''}><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information on WhatsApp and email. I accept the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">Please agree so we can process the registration.</span></div>
-    <div class="full" data-rest><button class="btn btn-lg btn-y" type="submit" ${state.busy?'disabled':''}>${state.busy?'Sending code…':'Continue'}</button></div>
+    <div class="field full"><label class="chk"><input type="checkbox" id="consent" required ${r.consent?'checked':''}><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information on WhatsApp and email. We may send you one reminder about this class if you don't finish registering. I accept the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">Please agree so we can process the registration.</span></div>
+    <div class="full"><button class="btn btn-lg btn-y" type="submit" ${state.busy?'disabled':''}>${state.busy?'Sending code…':'Continue'}</button></div>
   </form>`;
 }
 function viewOtp(){
@@ -502,32 +521,27 @@ function viewPay(){
     <li><span>Coach</span><span>GM Shyam Sundar</span></li>
     <li><span>When</span><span>${esc($('[data-date]').textContent)}, ${esc($('[data-time]').textContent)}</span></li>
     <li><span>Attending</span><span>${esc(r.attendee==='child'?r.child_name:r.full_name)}</span></li>
-    <li class="total"><span>Fee</span><span>$${tier.USD}</span></li>
+    <li class="total"><span>Fee</span><span>${feeLabel(tier,payInRupees())}${payInRupees()?' incl. GST':''}</span></li>
   </ul>
   <div class="stack">
     ${stub('Preview: no payment is taken.')}
-    <button class="btn btn-lg btn-y" id="payBtn" ${state.busy?'disabled':''}>${state.busy?'Opening payment page…':'Pay $'+tier.USD}</button>
-    <p class="note">You pay on our payment provider's secure page. We don't see or store your card details. Your card statement will show CHESSMETHOD.</p>
+    <button class="btn btn-lg btn-y" id="payBtn" ${state.busy?'disabled':''}>${state.busy?'Opening payment page…':'Pay '+feeLabel(tier,payInRupees())}</button>
+    <p class="note">You pay on our payment provider's secure page. We don't see or store your card, UPI or bank details.${payInRupees()?'':' Your card statement will show CHESSMETHOD.'}</p>
   </div>`;
 }
 function viewDone(){
   return `<div class="tick" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
-  <h2 tabindex="-1">End of the preview</h2><p class="sub">On the live page, this button opens the payment page. After payment, we send the login details on WhatsApp.</p>
+  <h2 tabindex="-1">End of the preview</h2><p class="sub">On the live page, this button opens the payment page. After payment, we email the login details, and they're also available on WhatsApp.</p>
   <div class="stack">${stub('Preview: nothing was saved or sent.')}<button class="btn btn-lg" id="restartBtn">Start again</button></div>`;
 }
-/* WhatsApp can't send the login until the buyer messages the number, so this button is required. */
+/* The login goes by email at once. The WhatsApp button is the backup: WhatsApp can't message a buyer until they message the number. */
 function viewPaid(){
-  return `<h2 tabindex="-1">One last step</h2><p class="sub">Tap the button and send the message. We'll reply on WhatsApp with your login once your payment is confirmed.</p>
+  let email='';try{email=sessionStorage.getItem('cm_email')||''}catch(e){}
+  return `<h2 tabindex="-1">You're almost done</h2><p class="sub">Your login is on its way to ${email?'<b>'+esc(email)+'</b>':'your email'}. It can take up to a minute. If you don't see it, check your spam folder.</p>
   <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_LOGIN}" target="_blank" rel="noopener">Get my login on WhatsApp</a>
-  <p class="note">Questions? Email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></div>`;
+  <p class="note">Need help? <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a> or email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></div>`;
 }
-function viewWa(){
-  const india=market==='in';
-  return `<h2 tabindex="-1">Register on WhatsApp</h2><p class="sub">Fee: <b>${india?'₹'+tier.INR+' incl. GST':'$'+tier.USD}</b>${tier.note?' · '+tier.note:''}${nextFee(india)}</p>
-  <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>
-  <button class="link" id="useForm" style="justify-self:start;font-size:.875rem">Not in India or the UAE? Use the form</button></div>`;
-}
-/* Every +91 number registers on WhatsApp and pays in rupees, whichever country it picked. */
+/* Only until CM - Workflow's india_page switch; remove this screen right after it. */
 function viewWaOnly(){
   return `<h2 tabindex="-1">Register on WhatsApp</h2><p class="sub">For India and the UAE, registration is on WhatsApp.</p>
   <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>
@@ -536,7 +550,7 @@ function viewWaOnly(){
 function viewClosed(){
   return `<h2 tabindex="-1">Registration has closed</h2><p class="sub">Questions? Email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p>`;
 }
-const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,wa:viewWa,closed:viewClosed,paid:viewPaid,waOnly:viewWaOnly};
+const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,closed:viewClosed,paid:viewPaid,waOnly:viewWaOnly};
 
 let lastStep=null,timer=null;
 function render(){
@@ -550,24 +564,31 @@ function render(){
   if(state.step==='pay')$('#payBtn').onclick=pay;
   if(state.step==='done')$('#restartBtn').onclick=()=>{state.step='details';state.reg={country:state.reg.country};state.error='';render()};
   if(state.step==='waOnly')$('#editBtn').onclick=()=>{state.step='details';render()};
-  if(state.step==='wa')$('#useForm').onclick=()=>{state.step='details';state.reg.country='';render()};
 }
 function setErr(el,on){el.closest('.field').classList.toggle('err',on);return on}
 
 function bindDetails(){
   const f=$('#regForm');
   const sync=()=>{
-    const c=$('#country').value,wa=c==='IN'||c==='AE',child=$('input[name=attendee][value=child]').checked;
-    $('#waSwitch').hidden=!wa;
-    $$('[data-rest]',f).forEach(e=>e.hidden=wa);
-    $('#childWrap').hidden=wa||!child;
-    $('#guardianWrap').hidden=wa||!child;
-    $('#ageL').textContent=child?"Child's age":$('input[name=attendee][value=self]').checked?'Your age':'Age';
+    const child=$('input[name=attendee][value=child]').checked,self=$('input[name=attendee][value=self]').checked;
+    state.reg.country=$('#country').value;state.reg.cc=$('#cc').value;
+    $('#stateWrap').hidden=state.reg.country!=='IN';
+    $('#childWrap').hidden=!child;
+    $('#guardianWrap').hidden=!child;
+    $('#ageL').textContent=child?"Child's age":self?'Your age':'Age';
+    $('#genderL').textContent=child?"Child's gender":self?'Your gender':'Gender';
+    renderFacts();$('#feeSub').innerHTML=feeLine();
   };
   $('#country').addEventListener('change',e=>{
     const c=COUNTRIES.find(x=>x[0]===e.target.value);
     if(c&&c[2])$('#cc').value=c[2];else if(c)$('#cc').value='';
     setErr(e.target,false);sync();
+  });
+  /* The +91 rule: a +91 number is India, whichever country was picked. */
+  $('#cc').addEventListener('input',e=>{
+    const sel=$('#country');
+    if(e.target.value.replace(/\D/g,'')==='91'&&sel.value!=='IN'){sel.value='IN';sel.csRefresh&&sel.csRefresh();sel.dispatchEvent(new Event('change',{bubbles:true}))}
+    else sync();
   });
   $$('input[name=attendee]').forEach(i=>i.addEventListener('change',()=>{i.closest('.field').classList.remove('err');sync()}));
   $$('.inp',f).forEach(i=>i.addEventListener('input',()=>i.closest('.field').classList.remove('err')));
@@ -581,6 +602,8 @@ function bindDetails(){
     if(setErr($('#full_name'),v('full_name').length<2))bad.push('full_name');
     if(setErr($('#email'),!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email'))))bad.push('email');
     if(setErr($('#country'),!v('country')))bad.push('country');
+    const isIN=v('country')==='IN';
+    if(isIN&&setErr($('#state'),!v('state')))bad.push('state');
     if(setErr($('#phone'),!/^\+?\d{1,4}$/.test(cc)||digits.length<6||digits.length>14))bad.push('phone');
     if(setErr($('input[name=attendee]'),!attendee))bad.push('attendee');
     if(attendee==='child'&&setErr($('#child_name'),v('child_name').length<2))bad.push('child_name');
@@ -588,9 +611,10 @@ function bindDetails(){
     $('#ageErr').textContent=under18Self?'A parent or guardian must register anyone under 18. Choose "My child".':attendee==='child'?"Enter your child's age.":attendee==='self'?'Enter your age.':'Enter the age.';
     if(setErr($('#age'),!(age>=3&&age<=120)||under18Self))bad.push('age');
     if(setErr($('#level'),!v('level')))bad.push('level');
+    if(setErr($('#gender'),!v('gender')))bad.push('gender');
     if(attendee==='child'&&setErr($('#guardian'),!$('#guardian').checked))bad.push('guardian');
     if(setErr($('#consent'),!$('#consent').checked))bad.push('consent');
-    state.reg={full_name:v('full_name'),email:v('email'),country:v('country'),attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),
+    state.reg={full_name:v('full_name'),email:v('email'),country:v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),
       cc,national:v('phone'),phone:'+'+cc.replace(/\D/g,'')+digits,guardian:$('#guardian').checked,consent:$('#consent').checked};
     if(bad.length){const first=$('#'+bad[0])||$('input[name=attendee]');if(first)((first.closest('.sel')||first).querySelector('.csb')||first).focus();return}
     state.busy=true;state.error='';render();
@@ -634,7 +658,12 @@ async function pay(){
   state.busy=true;state.error='';render();
   const res=await safe(()=>HOOKS.startPayment({reg_id:state.regId}));
   state.busy=false;
-  if(res.ok&&res.url){HOOKS.track('payment_started',{value:tier.USD,currency:'USD'});location.href=res.url;return}
+  if(res.ok&&res.url){
+    const inr=payInRupees();
+    HOOKS.track('payment_started',{value:inr?tier.INR:tier.USD,currency:inr?'INR':'USD'});
+    try{sessionStorage.setItem('cm_email',state.reg.email)}catch(e){}
+    location.href=res.url;return;
+  }
   if(res.ok){state.step='done';render();return}
   if(res.error==='closed'){state.step='closed';render();return}
   state.error=errorText(res.error);render();
@@ -645,7 +674,7 @@ function errorText(code){
     wrong_code:"That code isn't right. Please check it and try again.",
     expired:'That code has expired. Please ask for a new one.',
     rate_limited:'Too many tries. Please wait a few minutes and try again.',
-    phone_taken:'This WhatsApp number is already registered. Please email support@chessmaster.io for help.'
+    phone_taken:'This WhatsApp number is already registered.'
   }[code]||'Something went wrong. Please try again, or email support@chessmaster.io.';
 }
 
