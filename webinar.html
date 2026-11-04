@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Win Tournaments with Perfect Opening Play | ChessMaster</title>
 <meta name="description" content="Live online masterclass with GM Shyam Sundar on Thu, 19 Nov. Open to all ages and levels.">
-<!-- Remove noindex when the real hooks are in and the page goes live. -->
-<meta name="robots" content="noindex">
 <link rel="canonical" href="https://chessmaster.io/webinar">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23FFCC00'/%3E%3Cpath d='M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z' fill='%23151515'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -250,8 +248,7 @@ footer.site{margin-top:0}
 
 <script>
 /* ---------------------------------------------------------------------------
-   Backend hooks. CM - Workflow replaces these; the page calls nothing else.
-   While mode is 'stub' the page shows the preview bar and makes no network call.
+   Backend hooks to CM - Workflow's endpoints; the page calls nothing else. No secrets belong here.
    The backend must work out the price itself; the price on this page is display only.
 
    startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,phone,event_key,utm,ad_consent,...}
@@ -263,11 +260,11 @@ footer.site{margin-top:0}
    track(name,data)    sends the Meta browser events below. Off until META_PIXEL_ID is set.
 --------------------------------------------------------------------------- */
 const HOOKS={
-  mode:'stub',
-  wait:ms=>new Promise(r=>setTimeout(r,ms)),
-  async startOtp(){await this.wait(500);return{ok:true}},
-  async verifyOtp({code}){await this.wait(500);return code==='000000'?{ok:false,error:'wrong_code'}:{ok:true,reg_id:'preview'}},
-  async startPayment(){await this.wait(500);return{ok:true,url:null}},
+  mode:'live',
+  post:async(url,body)=>(await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json(),
+  startOtp(reg){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-send-3f9a61c2',reg)},
+  verifyOtp(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-check-b27e40d8',p)},
+  startPayment(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-web-pay-71c4e9a0',p)},
   track(name,data){adEvent(name,data)}
 };
 
