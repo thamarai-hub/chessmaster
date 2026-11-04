@@ -301,11 +301,11 @@ function firePurchase(){
   fbq('track','Purchase',{value:v,currency:c},{eventID:eid});
 }
 function cookie(n){const m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):''}
-/* Fields for CM - Workflow's server event. Without browser.ua the server skips the event, so a visitor who declined sends none. */
+/* Fields for CM - Workflow's server event. No ad_consent means no server event. */
 function adFields(){
   if(!adConsent())return{ad_consent:false};
   const clid=q.get('fbclid');
-  return{ad_consent:true,browser:{ua:navigator.userAgent,url:location.href,fbp:cookie('_fbp'),fbc:cookie('_fbc')||(clid?'fb.1.'+Date.now()+'.'+clid:'')}};
+  return{ad_consent:true,fbp:cookie('_fbp'),fbc:cookie('_fbc')||(clid?'fb.1.'+Date.now()+'.'+clid:''),page_url:location.origin+location.pathname};
 }
 function showConsent(){
   if($('#ckb'))return;
