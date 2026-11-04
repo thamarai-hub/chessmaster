@@ -290,7 +290,12 @@ function startPixel(){
 }
 function adEvent(name,data){
   if(!window.fbq||!adConsent())return;
-  if(name==='otp_confirmed')fbq('track','Lead');
+  if(name==='otp_confirmed'){
+    /* One Lead per browser: the ads optimise on it, and a buyer can confirm a code twice. */
+    const key='cm_lead_'+EVENT_KEY;
+    try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
+    fbq('track','Lead');
+  }
   if(name==='payment_started')fbq('track','InitiateCheckout',data);
 }
 function firePurchase(){
