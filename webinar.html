@@ -488,7 +488,7 @@ function viewDetails(){
     <div class="field full"><label for="email">Email <span class="req" aria-hidden="true">*</span></label><input class="inp" id="email" required type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" value="${esc(r.email||'')}"><span class="ferr">Enter a valid email, like name@example.com.</span></div>
     <div class="field full"><label for="country">Country <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="country" required autocomplete="off">${opt(COUNTRIES,r.country,'Choose your country')}</select></span><span class="ferr">Choose your country.</span></div>
     <div class="field full" id="stateWrap" hidden><label for="state">State <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="state" required>${opt(STATES.map(x=>[x,x]),r.state,'Choose your state')}</select></span><span class="ferr">Choose your state.</span></div>
-    <div class="field full"><label for="phone">WhatsApp number <span class="req" aria-hidden="true">*</span></label><div class="phone"><input class="inp" id="cc" required type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" required type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr">Enter your WhatsApp number with its country code.</span></div>
+    <div class="field full"><label for="phone">WhatsApp number <span class="req" aria-hidden="true">*</span></label><div class="phone"><input class="inp" id="cc" required type="tel" inputmode="tel" aria-label="Country code" placeholder="+44" autocomplete="tel-country-code" value="${esc(cc)}"><input class="inp" id="phone" required type="tel" inputmode="tel" autocomplete="tel-national" value="${esc(r.national||'')}"></div><span class="ferr" id="phoneErr">Enter your WhatsApp number with its country code.</span></div>
     <div class="field full" id="childWrap" hidden><label for="child_name">Child's full name <span class="req" aria-hidden="true">*</span></label><input class="inp" id="child_name" required autocomplete="off" value="${esc(r.child_name||'')}"><span class="ferr">Enter your child's full name.</span></div>
     <div class="field"><label for="age"><span id="ageL">Age</span> <span class="req" aria-hidden="true">*</span></label><input class="inp" id="age" required type="number" inputmode="numeric" min="3" max="120" value="${esc(r.age||'')}"><span class="ferr" id="ageErr">Enter the age.</span></div>
     <div class="field"><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
@@ -508,7 +508,8 @@ function viewOtp(){
     ${stub('Preview: no code was sent. Enter any 6 digits (000000 shows the wrong-code message).')}
     <div class="field"><label for="code">Code <span class="req" aria-hidden="true">*</span></label><input class="inp otp" id="code" required inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*"><span class="ferr">Enter the 6-digit code.</span></div>
     <button class="btn btn-lg btn-y" type="submit" ${state.busy?'disabled':''}>${state.busy?'Checking…':'Confirm'}</button>
-    <div class="row"><button type="button" class="link" id="editBtn">Change my details</button><button type="button" class="link" id="resendBtn" ${left?'disabled':''}>${left?'Send again in '+left+'s':'Send the code again'}</button></div>
+    <p class="note">Didn't get it? Check that this number is on WhatsApp.</p>
+    <div class="row"><button type="button" class="link" id="editBtn">Change my number</button><button type="button" class="link" id="resendBtn" ${left?'disabled':''}>${left?'Send again in '+left+'s':'Send the code again'}</button></div>
   </form>`;
 }
 function viewPay(){
@@ -620,8 +621,9 @@ function bindDetails(){
     const res=await safe(()=>HOOKS.startOtp(payload()));
     state.busy=false;
     if(res.ok){state.step='otp';state.resendAt=Date.now()+60000;HOOKS.track('otp_sent',{country:state.reg.country})}
-    else state.error=errorText(res.error);
+    else if(res.error!=='invalid_number')state.error=errorText(res.error);
     render();
+    if(res.error==='invalid_number'){setErr($('#phone'),true);$('#phoneErr').textContent=errorText(res.error);$('#phone').focus()}
   });
 }
 function payload(){const{cc,national,guardian,consent,...r}=state.reg;return{...r,event_key:EVENT_KEY,utm,...adFields()}}
@@ -672,6 +674,7 @@ function errorText(code){
     wrong_code:"That code isn't right. Please check it and try again.",
     expired:'That code has expired. Please ask for a new one.',
     rate_limited:'Too many tries. Please wait a few minutes and try again.',
+    invalid_number:'Please check your WhatsApp number.',
     india_whatsapp:'For India and the UAE, registration is on WhatsApp.', /* until the india_page switch */
     phone_taken:'This WhatsApp number is already registered.'
   }[code]||'Something went wrong. Please try again, or email support@chessmaster.io.';
