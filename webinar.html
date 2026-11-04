@@ -185,7 +185,6 @@ footer.site{margin-top:0}
       <details><summary>How do I join on the day?</summary><p>The masterclass is live online. We send your login details on WhatsApp after you pay.</p></details>
       <details><summary>Can I register my child?</summary><p>Yes. Choose "My child" on the form. A parent or guardian must register anyone under 18. Each registration is for one person.</p></details>
       <details><summary>Which currency do I pay in?</summary><p>US dollars. You pay on our payment provider's secure page, so we don't see or store your card details.</p></details>
-      <details><summary>Can I get a refund?</summary><p>No. We don't give refunds for this masterclass.</p></details>
       <details><summary>I have another question</summary><p>Email us at <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></details>
     </div>
   </div>
@@ -360,7 +359,7 @@ function viewPay(){
   <div class="stack">
     ${stub('Preview: no payment is taken.')}
     <button class="btn btn-lg btn-y" id="payBtn" ${state.busy?'disabled':''}>${state.busy?'Opening payment page…':'Pay $'+tier.USD}</button>
-    <p class="note">You pay on our payment provider's secure page. We don't see or store your card details. We don't give refunds for this masterclass.</p>
+    <p class="note">You pay on our payment provider's secure page. We don't see or store your card details.</p>
   </div>`;
 }
 function viewDone(){
