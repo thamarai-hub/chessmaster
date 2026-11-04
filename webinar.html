@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="/legal.css">
+<script src="https://rybbit.shortcastle.com/api/script.js" data-site-id="8323b32aee3d" defer></script>
 <style>
 :root{--bad:#B42318;--ok:#15803D;--ok-bg:#E7F6EC}
 [hidden]{display:none!important}
@@ -265,7 +266,7 @@ const HOOKS={
   startOtp(reg){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-send-3f9a61c2',reg)},
   verifyOtp(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-check-b27e40d8',p)},
   startPayment(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-web-pay-71c4e9a0',p)},
-  track(name,data){adEvent(name,data)}
+  track(name,data){adEvent(name,data);funnelEvent(name)}
 };
 
 /* Meta browser pixel. Dataset ID from CMS-543. It never runs while HOOKS.mode is 'stub' (preview).
@@ -327,6 +328,22 @@ function initConsent(){
   $('#ckLink').onclick=e=>{e.preventDefault();showConsent()};
   if(adConsent())startPixel();
   else if(needsConsent()&&!storedConsent())showConsent();
+}
+
+/* Rybbit funnel events. market is the only property; nothing personal goes in. It loads outside the cookie banner. */
+const FUNNEL={otp_sent:'code_sent',otp_confirmed:'code_confirmed',payment_started:'payment_started'};
+function funnelMarket(){
+  const c=PAID?(q.get('c')==='INR'?'IN':market==='ae'?'AE':''):state.reg.country;
+  const m=(c==='IN'||(!PAID&&payInRupees()))?'in':c==='AE'?'ae':'';
+  return m?{market:m}:undefined;
+}
+function funnel(name){window.rybbit?.event(name,funnelMarket())}
+function funnelEvent(name){if(FUNNEL[name])funnel(FUNNEL[name])}
+function firePaid(id){
+  if(!PAID||!id)return;
+  const key='cm_paid_'+id;
+  try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
+  funnel('paid');
 }
 
 /* Facts: same dates and amounts as bot/pricing.js. Price dates turn over in IST. */
@@ -474,6 +491,14 @@ const RZP_ID=q.get('razorpay_payment_link_id'),RZP_STATUS=q.get('razorpay_paymen
 const PAID=q.get('paid')==='1'&&(!RZP_ID||RZP_STATUS==='paid');
 const PAY_FAILED=q.get('paid')==='1'&&!PAID;
 const state={step:PAID?'paid':(!tier?'closed':'details'),error:PAY_FAILED?"Your payment didn't go through. Please try again, or email support@chessmaster.io.":'',reg:{country:market==='local'||!MARKETS[market]?'':MARKETS[market].country},busy:false,resendAt:0};
+/* Take payment IDs out of the address before analytics loads (deferred scripts run after this one). q keeps the original values for this page load. */
+(()=>{
+  const u=new URL(location.href);let changed=false;
+  [...u.searchParams.keys()].forEach(k=>{if(/^razorpay_|^(eid|v|c)$/.test(k)){u.searchParams.delete(k);changed=true}});
+  if(PAY_FAILED)u.searchParams.delete('paid');
+  if(changed)history.replaceState(null,'',u.pathname+u.search);
+})();
+let formStarted=false;
 const utm={};q.forEach((v,k)=>{if(/^utm_|^fbclid$/.test(k))utm[k]=v.slice(0,200)});
 
 function stepper(n){
@@ -594,6 +619,8 @@ function bindDetails(){
   });
   $$('input[name=attendee],input[name=has_fide]').forEach(i=>i.addEventListener('change',()=>{i.closest('.field').classList.remove('err');sync()}));
   $$('.inp',f).forEach(i=>i.addEventListener('input',()=>i.closest('.field').classList.remove('err')));
+  const started=()=>{if(!formStarted){formStarted=true;funnel('form_started')}};
+  f.addEventListener('input',started);f.addEventListener('change',started);
   sync();
   f.addEventListener('submit',async ev=>{
     ev.preventDefault();
@@ -698,6 +725,7 @@ render();
 if(PAID)$('#register').scrollIntoView({block:'center'});
 HOOKS.track('page_view',{market});
 initConsent();
+document.addEventListener('DOMContentLoaded',()=>firePaid(q.get('eid')||RZP_ID));
 </script>
 </body>
 </html>
