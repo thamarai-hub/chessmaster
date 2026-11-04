@@ -281,6 +281,7 @@ const MARKETS={
   ae:{label:'UAE',time:'6:30–7:30 PM UAE time',country:'AE'}
 };
 const WA_REGISTER='https://wa.me/13642058191?text='+encodeURIComponent("Hi! I'd like to register for GM Shyam Sundar's masterclass.");
+const WA_LOGIN='https://wa.me/13642058191?text='+encodeURIComponent("Hi! I've paid. Please send my login.");
 const LEVELS=[['foundation','Foundation (new to chess)'],['beginner','Beginner (knows the moves)'],['improver','Improver (plays full games)'],['intermediate','Intermediate (knows tactics)'],['skilled','Skilled (plays regularly)'],['advanced','Advanced (plays tournaments)'],['expert','Expert (rated, trains hard)']];
 const COUNTRIES=[['GB','United Kingdom','+44'],['US','United States','+1'],['AE','United Arab Emirates','+971'],['IN','India','+91'],['OTHER','Other country','']];
 
@@ -390,7 +391,8 @@ function enhanceSelect(sel,link){
 document.addEventListener('pointerdown',e=>{if(openDropdown&&!e.target.closest('.csl,.csb'))openDropdown(false)});
 
 /* Registration card */
-const state={step:(!tier?'closed':(market==='in'||market==='ae')?'wa':'details'),reg:{country:market==='local'||!MARKETS[market]?'':MARKETS[market].country},busy:false,error:'',resendAt:0};
+const PAID=q.get('paid')==='1';
+const state={step:PAID?'paid':(!tier?'closed':(market==='in'||market==='ae')?'wa':'details'),reg:{country:market==='local'||!MARKETS[market]?'':MARKETS[market].country},busy:false,error:'',resendAt:0};
 const utm={};q.forEach((v,k)=>{if(/^utm_|^fbclid$/.test(k))utm[k]=v.slice(0,200)});
 
 function stepper(n){
@@ -452,6 +454,12 @@ function viewDone(){
   <h2 tabindex="-1">End of the preview</h2><p class="sub">On the live page, this button opens the payment page. After payment, we send the login details on WhatsApp.</p>
   <div class="stack">${stub('Preview: nothing was saved or sent.')}<button class="btn btn-lg" id="restartBtn">Start again</button></div>`;
 }
+/* WhatsApp can't send the login until the buyer messages the number, so this button is required. */
+function viewPaid(){
+  return `<h2 tabindex="-1">One last step</h2><p class="sub">Tap the button and send the message. We'll reply on WhatsApp with your login once your payment is confirmed.</p>
+  <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_LOGIN}" target="_blank" rel="noopener">Get my login on WhatsApp</a>
+  <p class="note">Questions? Email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></div>`;
+}
 function viewWa(){
   const india=market==='in';
   return `<h2 tabindex="-1">Register on WhatsApp</h2><p class="sub">Fee: <b>${india?'₹'+tier.INR+' incl. GST':'$'+tier.USD}</b>${tier.note?' · '+tier.note:''}${nextFee(india)}</p>
@@ -461,7 +469,7 @@ function viewWa(){
 function viewClosed(){
   return `<h2 tabindex="-1">Registration has closed</h2><p class="sub">Questions? Email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p>`;
 }
-const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,wa:viewWa,closed:viewClosed};
+const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,wa:viewWa,closed:viewClosed,paid:viewPaid};
 
 let lastStep=null,timer=null;
 function render(){
@@ -520,7 +528,7 @@ function bindDetails(){
     state.busy=true;state.error='';render();
     const res=await safe(()=>HOOKS.startOtp(payload()));
     state.busy=false;
-    if(res.ok){state.step='otp';state.resendAt=Date.now()+30000;HOOKS.track('otp_sent',{country:state.reg.country})}
+    if(res.ok){state.step='otp';state.resendAt=Date.now()+60000;HOOKS.track('otp_sent',{country:state.reg.country})}
     else state.error=errorText(res.error);
     render();
   });
@@ -534,7 +542,7 @@ function bindOtp(){
   $('#editBtn').onclick=()=>{state.step='details';state.error='';render()};
   $('#resendBtn').onclick=async()=>{
     const res=await safe(()=>HOOKS.startOtp(payload()));
-    state.error=res.ok?'':errorText(res.error);state.resendAt=Date.now()+30000;render();
+    state.error=res.ok?'':errorText(res.error);state.resendAt=Date.now()+60000;render();
   };
   $('#otpForm').addEventListener('submit',async ev=>{
     ev.preventDefault();
@@ -574,13 +582,15 @@ function errorText(code){
 
 /* Mobile register bar: hidden while the card is on screen, and when closed. */
 if('IntersectionObserver'in window){
-  new IntersectionObserver(es=>{$('#mbar').toggleAttribute('data-off',es[0].isIntersecting||!tier)},{rootMargin:'0px 0px -80px 0px'}).observe($('#register'));
+  new IntersectionObserver(es=>{$('#mbar').toggleAttribute('data-off',es[0].isIntersecting||!tier||PAID)},{rootMargin:'0px 0px -80px 0px'}).observe($('#register'));
 }
-if(!tier)$$('[data-cta]').forEach(a=>a.hidden=true);
+if(!tier||PAID)$$('[data-cta]').forEach(a=>a.hidden=true);
+if(PAID)$('#mbar').hidden=true;
 if(HOOKS.mode==='stub')$('#previewBar').hidden=false;
 renderFacts();
 enhanceSelect($('#tzSel'),true);
 render();
+if(PAID)$('#register').scrollIntoView({block:'center'});
 HOOKS.track('page_view',{market});
 </script>
 </body>
