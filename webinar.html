@@ -252,7 +252,7 @@ footer.site{margin-top:0}
    The backend must work out the price itself; the price on this page is display only.
 
    startOtp(reg)       reg: {full_name,email,country,attendee,child_name,age,level,phone,event_key,utm}
-                       -> {ok:true} or {ok:false,error:'phone_taken'|'rate_limited'|'failed'}
+                       -> {ok:true} or {ok:false,error:'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
    verifyOtp(p)        p: {phone,code}
                        -> {ok:true,reg_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
    startPayment(p)     p: {reg_id}
@@ -527,10 +527,16 @@ function viewWa(){
   <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>
   <button class="link" id="useForm" style="justify-self:start;font-size:.875rem">Not in India or the UAE? Use the form</button></div>`;
 }
+/* Every +91 number registers on WhatsApp and pays in rupees, whichever country it picked. */
+function viewWaOnly(){
+  return `<h2 tabindex="-1">Register on WhatsApp</h2><p class="sub">For India and the UAE, registration is on WhatsApp.</p>
+  <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>
+  <button class="link" id="editBtn" style="justify-self:start;font-size:.875rem">Change my details</button></div>`;
+}
 function viewClosed(){
   return `<h2 tabindex="-1">Registration has closed</h2><p class="sub">Questions? Email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p>`;
 }
-const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,wa:viewWa,closed:viewClosed,paid:viewPaid};
+const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,wa:viewWa,closed:viewClosed,paid:viewPaid,waOnly:viewWaOnly};
 
 let lastStep=null,timer=null;
 function render(){
@@ -543,6 +549,7 @@ function render(){
   if(state.step==='otp')bindOtp();
   if(state.step==='pay')$('#payBtn').onclick=pay;
   if(state.step==='done')$('#restartBtn').onclick=()=>{state.step='details';state.reg={country:state.reg.country};state.error='';render()};
+  if(state.step==='waOnly')$('#editBtn').onclick=()=>{state.step='details';render()};
   if(state.step==='wa')$('#useForm').onclick=()=>{state.step='details';state.reg.country='';render()};
 }
 function setErr(el,on){el.closest('.field').classList.toggle('err',on);return on}
@@ -590,6 +597,7 @@ function bindDetails(){
     const res=await safe(()=>HOOKS.startOtp(payload()));
     state.busy=false;
     if(res.ok){state.step='otp';state.resendAt=Date.now()+60000;HOOKS.track('otp_sent',{country:state.reg.country})}
+    else if(res.error==='india_whatsapp')state.step='waOnly';
     else state.error=errorText(res.error);
     render();
   });
