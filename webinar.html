@@ -401,7 +401,7 @@ function renderFacts(){
   $('#curFaq').textContent=(india?'Indian rupees, including GST.':'US dollars.')+" You pay on our payment provider's secure page, so we don't see or store your card, UPI or bank details.";
 }
 /* India and any +91 number pay in rupees. Display only: the server sets the price. */
-function payInRupees(){return state.reg.country==='IN'||(state.reg.cc||'').replace(/\D/g,'')==='91'}
+function payInRupees(){return state.reg.country==='IN'||(state.reg.cc||'').replace(/\D/g,'').replace(/^00/,'')==='91'}
 const feeLabel=(t,india)=>india?'₹'+t.INR:'$'+t.USD;
 function feeLine(){
   const india=payInRupees();
@@ -478,7 +478,7 @@ function stepper(n){
   return `<ol class="steps" aria-label="Step ${n} of 3">${['Details','Confirm','Pay'].map((s,i)=>`<li ${i<n?'data-on':''}>${s}</li>`).join('')}</ol>`;
 }
 const stub=html=>HOOKS.mode==='stub'?`<p class="stubnote">${html}</p>`:'';
-const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}${state.error===errorText('phone_taken')?` <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>.`:''}</p>`:'';
+const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}${state.error===errorText('phone_taken')?` <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>.`:state.error===errorText('india_whatsapp')?` <a href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>.`:''}</p>`:'';
 const opt=(arr,val,ph)=>`<option value="">${ph}</option>`+arr.map(([v,l])=>`<option value="${v}" ${v===val?'selected':''}>${esc(l)}</option>`).join('');
 
 function viewDetails(){
@@ -541,16 +541,10 @@ function viewPaid(){
   <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_LOGIN}" target="_blank" rel="noopener">Get my login on WhatsApp</a>
   <p class="note">Need help? <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a> or email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></div>`;
 }
-/* Only until CM - Workflow's india_page switch; remove this screen right after it. */
-function viewWaOnly(){
-  return `<h2 tabindex="-1">Register on WhatsApp</h2><p class="sub">For India and the UAE, registration is on WhatsApp.</p>
-  <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>
-  <button class="link" id="editBtn" style="justify-self:start;font-size:.875rem">Change my details</button></div>`;
-}
 function viewClosed(){
   return `<h2 tabindex="-1">Registration has closed</h2><p class="sub">Questions? Email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p>`;
 }
-const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,closed:viewClosed,paid:viewPaid,waOnly:viewWaOnly};
+const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,closed:viewClosed,paid:viewPaid};
 
 let lastStep=null,timer=null;
 function render(){
@@ -563,7 +557,6 @@ function render(){
   if(state.step==='otp')bindOtp();
   if(state.step==='pay')$('#payBtn').onclick=pay;
   if(state.step==='done')$('#restartBtn').onclick=()=>{state.step='details';state.reg={country:state.reg.country};state.error='';render()};
-  if(state.step==='waOnly')$('#editBtn').onclick=()=>{state.step='details';render()};
 }
 function setErr(el,on){el.closest('.field').classList.toggle('err',on);return on}
 
@@ -572,7 +565,7 @@ function bindDetails(){
   const sync=()=>{
     const child=$('input[name=attendee][value=child]').checked,self=$('input[name=attendee][value=self]').checked;
     state.reg.country=$('#country').value;state.reg.cc=$('#cc').value;
-    $('#stateWrap').hidden=state.reg.country!=='IN';
+    $('#stateWrap').hidden=!payInRupees();
     $('#childWrap').hidden=!child;
     $('#guardianWrap').hidden=!child;
     $('#ageL').textContent=child?"Child's age":self?'Your age':'Age';
@@ -587,7 +580,7 @@ function bindDetails(){
   /* The +91 rule: a +91 number is India, whichever country was picked. */
   $('#cc').addEventListener('input',e=>{
     const sel=$('#country');
-    if(e.target.value.replace(/\D/g,'')==='91'&&sel.value!=='IN'){sel.value='IN';sel.csRefresh&&sel.csRefresh();sel.dispatchEvent(new Event('change',{bubbles:true}))}
+    if(e.target.value.replace(/\D/g,'').replace(/^00/,'')==='91'&&sel.value!=='IN'){sel.value='IN';sel.csRefresh&&sel.csRefresh();sel.dispatchEvent(new Event('change',{bubbles:true}))}
     else sync();
   });
   $$('input[name=attendee]').forEach(i=>i.addEventListener('change',()=>{i.closest('.field').classList.remove('err');sync()}));
@@ -602,7 +595,7 @@ function bindDetails(){
     if(setErr($('#full_name'),v('full_name').length<2))bad.push('full_name');
     if(setErr($('#email'),!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email'))))bad.push('email');
     if(setErr($('#country'),!v('country')))bad.push('country');
-    const isIN=v('country')==='IN';
+    const isIN=v('country')==='IN'||cc.replace(/\D/g,'').replace(/^00/,'')==='91';
     if(isIN&&setErr($('#state'),!v('state')))bad.push('state');
     if(setErr($('#phone'),!/^\+?\d{1,4}$/.test(cc)||digits.length<6||digits.length>14))bad.push('phone');
     if(setErr($('input[name=attendee]'),!attendee))bad.push('attendee');
@@ -614,14 +607,13 @@ function bindDetails(){
     if(setErr($('#gender'),!v('gender')))bad.push('gender');
     if(attendee==='child'&&setErr($('#guardian'),!$('#guardian').checked))bad.push('guardian');
     if(setErr($('#consent'),!$('#consent').checked))bad.push('consent');
-    state.reg={full_name:v('full_name'),email:v('email'),country:v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),
-      cc,national:v('phone'),phone:'+'+cc.replace(/\D/g,'')+digits,guardian:$('#guardian').checked,consent:$('#consent').checked};
+    state.reg={full_name:v('full_name'),email:v('email'),country:isIN?'IN':v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),
+      cc,national:v('phone'),phone:'+'+cc.replace(/\D/g,'').replace(/^00/,'')+digits,guardian:$('#guardian').checked,consent:$('#consent').checked};
     if(bad.length){const first=$('#'+bad[0])||$('input[name=attendee]');if(first)((first.closest('.sel')||first).querySelector('.csb')||first).focus();return}
     state.busy=true;state.error='';render();
     const res=await safe(()=>HOOKS.startOtp(payload()));
     state.busy=false;
     if(res.ok){state.step='otp';state.resendAt=Date.now()+60000;HOOKS.track('otp_sent',{country:state.reg.country})}
-    else if(res.error==='india_whatsapp')state.step='waOnly';
     else state.error=errorText(res.error);
     render();
   });
@@ -674,6 +666,7 @@ function errorText(code){
     wrong_code:"That code isn't right. Please check it and try again.",
     expired:'That code has expired. Please ask for a new one.',
     rate_limited:'Too many tries. Please wait a few minutes and try again.',
+    india_whatsapp:'For India and the UAE, registration is on WhatsApp.', /* until the india_page switch */
     phone_taken:'This WhatsApp number is already registered.'
   }[code]||'Something went wrong. Please try again, or email support@chessmaster.io.';
 }
