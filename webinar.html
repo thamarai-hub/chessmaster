@@ -131,6 +131,11 @@
 .band .btn{flex:none;width:auto}
 footer.site{margin-top:0}
 
+.ckb{position:fixed;left:16px;bottom:16px;z-index:60;width:min(420px,calc(100% - 32px));background:var(--card);border:2px solid var(--ink);border-radius:16px;box-shadow:0 4px 0 var(--ink);padding:16px;font-size:.875rem;line-height:1.5}
+.ckb>div{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.ckb .btn{cursor:pointer;font-family:inherit;box-shadow:none}
+.ckb #ckNo{background:var(--card)}
+
 /* Mobile register bar */
 .mbar{display:none}
 @media (max-width:960px){
@@ -233,7 +238,7 @@ footer.site{margin-top:0}
     <div class="fbrand"><a class="brand" href="/"><svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#FFCC00"/><path d="M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z" fill="#151515"/><circle cx="10" cy="10.5" r="2.4" fill="#151515"/><circle cx="24" cy="8" r="2.4" fill="#151515"/><circle cx="38" cy="10.5" r="2.4" fill="#151515"/><rect x="10" y="38.5" width="28" height="3" rx="1.5" fill="#151515"/></svg><span><em>Chess</em><b>Master</b></span></a><span class="tag">Learn from Masters. Play Like One.</span></div>
     <div class="fbottom">
       <span>© 2026 Shortcastle Technologies Private Limited · No. 14, Sabari Salai, Madipakkam, Chennai, Tamil Nadu 600091 · <a href="mailto:support@chessmaster.io">support@chessmaster.io</a></span>
-      <span class="flinks"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></span>
+      <span class="flinks"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a><a href="#" id="ckLink" hidden>Cookie settings</a></span>
     </div>
   </div>
 </footer>
@@ -252,7 +257,7 @@ footer.site{margin-top:0}
                        -> {ok:true,reg_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
    startPayment(p)     p: {reg_id}
                        -> {ok:true,url} (the page then opens url) or {ok:false,error:'closed'|'failed'}
-   track(name,data)    analytics placeholder. No Meta pixel until Nissi's OK and a /privacy update.
+   track(name,data)    sends the Meta browser events below. Off until META_PIXEL_ID is set.
 --------------------------------------------------------------------------- */
 const HOOKS={
   mode:'stub',
@@ -260,8 +265,64 @@ const HOOKS={
   async startOtp(){await this.wait(500);return{ok:true}},
   async verifyOtp({code}){await this.wait(500);return code==='000000'?{ok:false,error:'wrong_code'}:{ok:true,reg_id:'preview'}},
   async startPayment(){await this.wait(500);return{ok:true,url:null}},
-  track(){}
+  track(name,data){adEvent(name,data)}
 };
+
+/* Meta browser pixel. Dataset ID from CMS-543; empty keeps it off, and it never runs in preview mode.
+   No form details go to Meta from the page (autoConfig off). Purchase uses eid from the return URL so it
+   matches CM - Workflow's server event. No token or secret belongs in this file. */
+const META_PIXEL_ID='';
+const CONSENT_KEY='cm_ad_consent';
+const US_ZONE=/^(America\/(New_York|Detroit|Kentucky\/.+|Indiana\/.+|Chicago|Menominee|North_Dakota\/.+|Denver|Boise|Phoenix|Los_Angeles|Anchorage|Juneau|Sitka|Metlakatla|Yakutat|Nome|Adak)|Pacific\/Honolulu)$/;
+let consentChoice=null;
+const pixelEnabled=()=>!!META_PIXEL_ID&&HOOKS.mode!=='stub';
+const needsConsent=(tz=browserZone())=>!US_ZONE.test(tz);
+function storedConsent(){if(consentChoice)return consentChoice;try{return localStorage.getItem(CONSENT_KEY)}catch(e){return null}}
+function saveConsent(v){consentChoice=v;try{localStorage.setItem(CONSENT_KEY,v)}catch(e){}}
+const adConsent=()=>pixelEnabled()&&(!needsConsent()||storedConsent()==='yes');
+function startPixel(){
+  if(window.fbq||!adConsent())return;
+  const f=window.fbq=function(){f.callMethod?f.callMethod.apply(f,arguments):f.queue.push(arguments)};
+  f.push=f;f.loaded=true;f.version='2.0';f.queue=[];
+  const t=document.createElement('script');t.async=true;t.src='https://connect.facebook.net/en_US/fbevents.js';document.head.append(t);
+  fbq('set','autoConfig',false,META_PIXEL_ID);fbq('init',META_PIXEL_ID);fbq('track','PageView');
+  firePurchase();
+}
+function adEvent(name,data){
+  if(!window.fbq||!adConsent())return;
+  if(name==='otp_confirmed')fbq('track','Lead');
+  if(name==='payment_started')fbq('track','InitiateCheckout',data);
+}
+function firePurchase(){
+  const eid=q.get('eid'),v=Number(q.get('v')),c=q.get('c')||'USD';
+  if(q.get('paid')!=='1'||!eid||!(v>0)||!/^[A-Z]{3}$/.test(c)||!window.fbq)return;
+  const key='cm_purchase_'+eid;
+  try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
+  fbq('track','Purchase',{value:v,currency:c},{eventID:eid});
+}
+function cookie(n){const m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):''}
+/* Extra fields for the server event. Empty without consent. */
+function adFields(){
+  if(!adConsent())return{ad_consent:false};
+  const clid=q.get('fbclid');
+  return{ad_consent:true,fbp:cookie('_fbp'),fbc:cookie('_fbc')||(clid?'fb.1.'+Date.now()+'.'+clid:''),page_url:location.origin+location.pathname};
+}
+function showConsent(){
+  if($('#ckb'))return;
+  const b=document.createElement('div');b.className='ckb';b.id='ckb';b.setAttribute('role','region');b.setAttribute('aria-label','Cookies');
+  b.innerHTML=`<p>We use cookies to measure how our ads perform. See our <a href="/privacy#tracking">Privacy Policy</a>.</p><div><button type="button" class="btn" id="ckNo">No thanks</button><button type="button" class="btn btn-y" id="ckYes">Accept</button></div>`;
+  document.body.append(b);
+  const had=storedConsent()==='yes';
+  $('#ckYes').onclick=()=>{saveConsent('yes');b.remove();startPixel()};
+  $('#ckNo').onclick=()=>{saveConsent('no');b.remove();if(had)location.reload()};
+}
+function initConsent(){
+  if(!pixelEnabled()||!needsConsent()){startPixel();return}
+  $('#ckLink').hidden=false;
+  $('#ckLink').onclick=e=>{e.preventDefault();showConsent()};
+  if(storedConsent()==='yes')startPixel();
+  else if(!storedConsent())showConsent();
+}
 
 /* Facts: same dates and amounts as bot/pricing.js. Price dates turn over in IST. */
 const EVENT_KEY='webinar-2026-11-19';
@@ -533,7 +594,7 @@ function bindDetails(){
     render();
   });
 }
-function payload(){const{cc,national,guardian,consent,...r}=state.reg;return{...r,event_key:EVENT_KEY,utm}}
+function payload(){const{cc,national,guardian,consent,...r}=state.reg;return{...r,event_key:EVENT_KEY,utm,...adFields()}}
 function bindOtp(){
   const left=state.resendAt-Date.now();
   if(left>0)bindOtpTick();
@@ -565,7 +626,7 @@ async function pay(){
   state.busy=true;state.error='';render();
   const res=await safe(()=>HOOKS.startPayment({reg_id:state.regId}));
   state.busy=false;
-  if(res.ok&&res.url){HOOKS.track('payment_started',{});location.href=res.url;return}
+  if(res.ok&&res.url){HOOKS.track('payment_started',{value:tier.USD,currency:'USD'});location.href=res.url;return}
   if(res.ok){state.step='done';render();return}
   if(res.error==='closed'){state.step='closed';render();return}
   state.error=errorText(res.error);render();
@@ -592,6 +653,7 @@ enhanceSelect($('#tzSel'),true);
 render();
 if(PAID)$('#register').scrollIntoView({block:'center'});
 HOOKS.track('page_view',{market});
+initConsent();
 </script>
 </body>
 </html>
