@@ -297,7 +297,8 @@ function adEvent(name,data){
     /* One Lead per browser: the ads optimise on it, and a buyer can confirm a code twice. */
     const key='cm_lead_'+EVENT_KEY;
     try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
-    fbq('track','Lead');
+    /* eventID matches CM - Workflow's server Lead, so Meta counts one. */
+    state.checkId?fbq('track','Lead',{},{eventID:state.checkId}):fbq('track','Lead');
   }
   if(name==='payment_started')fbq('track','InitiateCheckout',data);
 }
@@ -695,6 +696,7 @@ function showPhoneError(msg){
 let deliveryRun=0;
 async function watchDelivery(checkId){
   const run=++deliveryRun;
+  state.checkId=checkId;
   if(!checkId)return;
   const end=Date.now()+60000;
   while(Date.now()<end){
