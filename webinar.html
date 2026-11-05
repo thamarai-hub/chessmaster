@@ -256,7 +256,7 @@ footer.site{margin-top:0}
                        -> {ok:true,check_id} or {ok:false,error:'invalid_number'|'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
    codeStatus(p)       p: {check_id}. -> {ok:true,status:'pending'|'delivered'|'failed',not_on_whatsapp}
    verifyOtp(p)        p: {phone,code}
-                       -> {ok:true,reg_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
+                       -> {ok:true,reg_id,lead_event_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
    startPayment(p)     p: {reg_id}
                        -> {ok:true,url} (the page then opens url) or {ok:false,error:'closed'|'failed'}
    track(name,data)    sends the Meta browser events below. Off until META_PIXEL_ID is set.
@@ -298,7 +298,7 @@ function adEvent(name,data){
     const key='cm_lead_'+EVENT_KEY;
     try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
     /* eventID matches CM - Workflow's server Lead, so Meta counts one. */
-    state.checkId?fbq('track','Lead',{},{eventID:state.checkId}):fbq('track','Lead');
+    state.leadEventId?fbq('track','Lead',{},{eventID:state.leadEventId}):fbq('track','Lead');
   }
   if(name==='payment_started')fbq('track','InitiateCheckout',data);
 }
@@ -683,7 +683,7 @@ function bindOtp(){
     state.busy=true;state.error='';render();
     const res=await safe(()=>HOOKS.verifyOtp({phone:state.reg.phone,code}));
     state.busy=false;
-    if(res.ok){state.regId=res.reg_id;state.step='pay';HOOKS.track('otp_confirmed',{})}
+    if(res.ok){state.regId=res.reg_id;state.leadEventId=res.lead_event_id;state.step='pay';HOOKS.track('otp_confirmed',{})}
     else state.error=errorText(res.error);
     render();
   });
@@ -696,7 +696,6 @@ function showPhoneError(msg){
 let deliveryRun=0;
 async function watchDelivery(checkId){
   const run=++deliveryRun;
-  state.checkId=checkId;
   if(!checkId)return;
   const end=Date.now()+60000;
   while(Date.now()<end){
