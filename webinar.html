@@ -252,7 +252,7 @@ footer.site{margin-top:0}
    Backend hooks to CM - Workflow's endpoints; the page calls nothing else. No secrets belong here.
    The backend must work out the price itself; the price on this page is display only.
 
-   startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,phone,event_key,utm,ad_consent,...}
+   startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,lichess,chesscom,phone,event_key,utm,ad_consent,...}
                        -> {ok:true,check_id} or {ok:false,error:'invalid_number'|'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
    codeStatus(p)       p: {check_id}. -> {ok:true,status:'pending'|'delivered'|'failed',not_on_whatsapp}
    verifyOtp(p)        p: {phone,code}
@@ -526,6 +526,8 @@ function viewDetails(){
     <div class="field"><label for="level">Chess level <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="level" required>${opt(LEVELS,r.level,'Choose level')}</select></span><span class="ferr">Choose a level.</span></div>
     <div class="field full"><span class="lab" id="fideQ"><span id="fideL">Do you have a FIDE ID or rating?</span> <span class="req" aria-hidden="true">*</span></span><div class="seg" role="radiogroup" aria-labelledby="fideQ"><label><input type="radio" name="has_fide" value="yes" required ${r.has_fide==='yes'?'checked':''}>Yes</label><label><input type="radio" name="has_fide" value="no" ${r.has_fide==='no'?'checked':''}>No</label></div><span class="ferr">Choose one option.</span></div>
     <div class="field full" id="fideWrap" hidden><label for="fide">FIDE ID or rating <span class="req" aria-hidden="true">*</span></label><input class="inp" id="fide" required inputmode="numeric" autocomplete="off" maxlength="10" value="${esc(r.fide||'')}"><span class="ferr">Enter the FIDE ID or rating, in numbers only.</span></div>
+    <div class="field"><label for="lichess"><span data-who></span>Lichess username (optional)</label><input class="inp" id="lichess" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="100" value="${esc(r.lichess||'')}"><span class="ferr">Enter the username only.</span></div>
+    <div class="field"><label for="chesscom"><span data-who></span>Chess.com username (optional)</label><input class="inp" id="chesscom" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="100" value="${esc(r.chesscom||'')}"><span class="ferr">Enter the username only.</span></div>
     <div class="field full"><label for="gender"><span id="genderL">Gender</span> <span class="req" aria-hidden="true">*</span></label><span class="sel"><select class="inp" id="gender" required>${opt(GENDERS,r.gender,'Choose gender')}</select></span><span class="ferr">Choose an option.</span></div>
     <div class="field full" id="guardianWrap" hidden><label class="chk"><input type="checkbox" id="guardian" required ${r.guardian?'checked':''}><span><b>I am the student's parent or legal guardian</b> and I agree to them taking part in this live online class. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">A parent or guardian must give consent for students under 18.</span></div>
     <div class="field full"><label class="chk"><input type="checkbox" id="consent" required ${r.consent?'checked':''}><span><b>I agree to ChessMaster using these details</b> to manage this registration and send class information on WhatsApp and email. We may send you one reminder about this class if you don't finish registering. I accept the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>. <span class="req" aria-hidden="true">*</span></span></label><span class="ferr">Please agree so we can process the registration.</span></div>
@@ -590,6 +592,12 @@ function render(){
   if(state.step==='pay')$('#payBtn').onclick=pay;
   if(state.step==='done')$('#restartBtn').onclick=()=>{state.step='details';state.reg={country:state.reg.country};state.error='';render()};
 }
+/* Takes a username, or the last part of a pasted profile link. '' if empty, null if it can't be a username. */
+function chessUsername(v){
+  const name=v.trim().replace(/[?#].*$/,'').replace(/\/+$/,'').split('/').pop().replace(/^@/,'');
+  if(!name)return '';
+  return /^[A-Za-z0-9_.-]{1,50}$/.test(name)?name:null;
+}
 function setErr(el,on){el.closest('.field').classList.toggle('err',on);return on}
 
 function bindDetails(){
@@ -603,6 +611,7 @@ function bindDetails(){
     $('#nameL').textContent=child?"Parent's full name":'Your full name';
     $('#nameErr').textContent=child?"Enter the parent's full name.":'Enter your full name.';
     $('#ageL').textContent=child?"Child's age":self?'Your age':'Age';
+    $$('[data-who]',f).forEach(e=>e.textContent=child?"Child's ":'');
     $('#fideL').textContent=child?'Does your child have a FIDE ID or rating?':'Do you have a FIDE ID or rating?';
     $('#fideWrap').hidden=!$('input[name=has_fide][value=yes]').checked;
     $('#genderL').textContent=child?"Child's gender":self?'Your gender':'Gender';
@@ -645,10 +654,13 @@ function bindDetails(){
     const hasFide=($('input[name=has_fide]:checked')||{}).value||'';
     if(setErr($('input[name=has_fide]'),!hasFide))bad.push('has_fide');
     if(hasFide==='yes'&&setErr($('#fide'),!/^\d{3,10}$/.test(v('fide'))))bad.push('fide');
+    const lichess=chessUsername(v('lichess')),chesscom=chessUsername(v('chesscom'));
+    if(setErr($('#lichess'),lichess===null))bad.push('lichess');
+    if(setErr($('#chesscom'),chesscom===null))bad.push('chesscom');
     if(setErr($('#gender'),!v('gender')))bad.push('gender');
     if(attendee==='child'&&setErr($('#guardian'),!$('#guardian').checked))bad.push('guardian');
     if(setErr($('#consent'),!$('#consent').checked))bad.push('consent');
-    state.reg={full_name:v('full_name'),email:v('email'),country:isIN?'IN':v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),has_fide:hasFide,fide:hasFide==='yes'?v('fide'):'',
+    state.reg={full_name:v('full_name'),email:v('email'),country:isIN?'IN':v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),lichess:lichess||'',chesscom:chesscom||'',has_fide:hasFide,fide:hasFide==='yes'?v('fide'):'',
       cc,national:v('phone'),phone:'+'+cc.replace(/\D/g,'').replace(/^00/,'')+digits,guardian:$('#guardian').checked,consent:$('#consent').checked};
     if(bad.length){const first=$('#'+bad[0])||$('input[name='+bad[0]+']');if(first)((first.closest('.sel')||first).querySelector('.csb')||first).focus();return}
     state.busy=true;state.error='';render();
@@ -660,7 +672,7 @@ function bindDetails(){
     if(res.error==='invalid_number')showPhoneError(errorText(res.error));
   });
 }
-function payload(){const{cc,national,guardian,consent,...r}=state.reg;return{...r,event_key:EVENT_KEY,utm,...adFields()}}
+function payload(){const{cc,national,guardian,consent,...r}=state.reg;if(!r.lichess)delete r.lichess;if(!r.chesscom)delete r.chesscom;return{...r,event_key:EVENT_KEY,utm,...adFields()}}
 function bindOtp(){
   const left=state.resendAt-Date.now();
   if(left>0)bindOtpTick();
