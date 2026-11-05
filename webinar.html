@@ -135,6 +135,14 @@ footer.site{margin-top:0}
 .ckb .btn{cursor:pointer;font-family:inherit;box-shadow:none}
 .ckb #ckNo{background:var(--card)}
 
+/* Phones: a slim bar at the bottom, so the fees stay visible. */
+@media (max-width:560px){
+  .ckb{left:0;bottom:0;width:100%;border-radius:0;border-width:2px 0 0;box-shadow:none;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:10px;font-size:.75rem;line-height:1.35}
+  .ckb p{flex:1;min-width:0}
+  .ckb>div{margin-top:0;flex:none;gap:6px}
+  .ckb .btn{min-height:36px;padding:0 10px;font-size:.8125rem}
+}
+
 /* Mobile register bar */
 .mbar{display:none}
 @media (max-width:960px){
@@ -321,8 +329,8 @@ function showConsent(){
   b.innerHTML=`<p>We use cookies to measure how our ads perform. See our <a href="/privacy#tracking">Privacy Policy</a>.</p><div><button type="button" class="btn" id="ckNo">No thanks</button><button type="button" class="btn btn-y" id="ckYes">Accept</button></div>`;
   document.body.append(b);
   const had=!!window.fbq;
-  $('#ckYes').onclick=()=>{saveConsent('yes');b.remove();startPixel()};
-  $('#ckNo').onclick=()=>{saveConsent('no');b.remove();if(had)location.reload()};
+  $('#ckYes').onclick=()=>{saveConsent('yes');b.remove();funnel('cookie_accept');startPixel()};
+  $('#ckNo').onclick=()=>{saveConsent('no');b.remove();funnel('cookie_decline');if(had)location.reload()};
 }
 function initConsent(){
   if(!pixelEnabled())return;
