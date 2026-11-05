@@ -348,7 +348,10 @@ function funnelMarket(){
   const m=(c==='IN'||(!PAID&&payInRupees()))?'in':c==='AE'?'ae':'';
   return m?{market:m}:undefined;
 }
-function funnel(name){window.rybbit?.event(name,funnelMarket())}
+function funnel(name,extra){
+  const p={...funnelMarket(),...extra};
+  window.rybbit?.event(name,Object.keys(p).length?p:undefined);
+}
 function funnelEvent(name){if(FUNNEL[name])funnel(FUNNEL[name])}
 function firePaid(id){
   if(!PAID||!id)return;
@@ -758,6 +761,32 @@ function errorText(code){
   }[code]||'Something went wrong. Please try again, or email support@chessmaster.io.';
 }
 
+/* Rybbit engagement events, each once per page load. Not on the return from payment. */
+function watchEngagement(){
+  const depths=[25,50,75,100];let ticking=false;
+  const onScroll=()=>{
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(()=>{
+      ticking=false;
+      const seen=(scrollY+innerHeight)/document.documentElement.scrollHeight*100;
+      while(depths.length&&seen>=depths[0]-.5)funnel('scroll_depth',{depth:depths.shift()});
+      if(!depths.length)removeEventListener('scroll',onScroll);
+    });
+  };
+  addEventListener('scroll',onScroll,{passive:true});
+  const marks=[10,30,60];let visible=0;
+  const clock=setInterval(()=>{
+    if(document.visibilityState!=='visible')return;
+    visible++;
+    if(visible===marks[0]){funnel('time_on_page',{seconds:marks.shift()});if(!marks.length)clearInterval(clock)}
+  },1000);
+  if('IntersectionObserver'in window){
+    /* 80px off the bottom, so a form hidden behind the phone bars doesn't count as seen. */
+    const seen=new IntersectionObserver(es=>{if(es[0].isIntersecting){seen.disconnect();funnel('form_seen')}},{rootMargin:'0px 0px -80px 0px'});
+    seen.observe($('#register'));
+  }
+}
 /* Mobile register bar: hidden while the card is on screen, and when closed. */
 if('IntersectionObserver'in window){
   new IntersectionObserver(es=>{$('#mbar').toggleAttribute('data-off',es[0].isIntersecting||!tier||PAID)},{rootMargin:'0px 0px -80px 0px'}).observe($('#register'));
@@ -771,6 +800,7 @@ render();
 if(PAID)$('#register').scrollIntoView({block:'center'});
 HOOKS.track('page_view',{market});
 initConsent();
+if(!PAID&&tier)watchEngagement();
 document.addEventListener('DOMContentLoaded',()=>firePaid(q.get('eid')||RZP_ID));
 </script>
 </body>
