@@ -292,7 +292,7 @@ const HOOKS={
   },
   startOtp(reg){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-send-3f9a61c2',reg)},
   codeStatus(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-status-6d10e7b4',p)},
-  /* {eid} -> {ok:true,paid:true|false}. Read-only check from CM - Workflow, URL pending. */
+  /* {eid} -> {ok:true,paid:true|false}. Read-only check from CM - Workflow. */
   paymentStatus(p){return this.post(PAYMENT_STATUS_URL,p)},
   verifyOtp(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-check-b27e40d8',p)},
   startPayment(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-web-pay-71c4e9a0',p)},
@@ -302,7 +302,7 @@ const HOOKS={
 /* Meta browser pixel. Dataset ID from CMS-543. It never runs while HOOKS.mode is 'stub' (preview).
    No form details go to Meta from the page (autoConfig off). Purchase uses eid from the return URL so it
    matches CM - Workflow's server event. No token or secret belongs in this file. */
-const PAYMENT_STATUS_URL='';
+const PAYMENT_STATUS_URL='https://n8n.shortcastle.com/webhook/chessmaster-paid-status-8c4e19a7';
 const META_PIXEL_ID='1679421333977086';
 const CONSENT_KEY='cm_ad_consent';
 const US_ZONE=/^(America\/(New_York|Detroit|Kentucky\/.+|Indiana\/.+|Chicago|Menominee|North_Dakota\/.+|Denver|Boise|Phoenix|Los_Angeles|Anchorage|Juneau|Sitka|Metlakatla|Yakutat|Nome|Adak)|Pacific\/Honolulu)$/;
