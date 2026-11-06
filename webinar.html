@@ -273,7 +273,7 @@ footer.site{margin-top:0}
    Backend hooks to CM - Workflow's endpoints; the page calls nothing else. No secrets belong here.
    The backend must work out the price itself; the price on this page is display only.
 
-   startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,lichess,chesscom,phone,event_key,utm,ad_consent,...}
+   startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,lichess,chesscom,phone,event_key,utm,tz,ad_consent,...}
                        -> {ok:true,check_id} or {ok:false,error:'invalid_number'|'phone_taken'|'rate_limited'|'failed'}
    codeStatus(p)       p: {check_id}. -> {ok:true,status:'pending'|'delivered'|'failed',not_on_whatsapp}
    verifyOtp(p)        p: {phone,code}
@@ -764,7 +764,7 @@ function bindDetails(){
     if(res.error==='invalid_number')showPhoneError(errorText(res.error));
   });
 }
-function payload(){const{cc,national,guardian,consent,...r}=state.reg;if(!r.lichess)delete r.lichess;if(!r.chesscom)delete r.chesscom;return{...r,event_key:EVENT_KEY,utm,...adFields()}}
+function payload(){const{cc,national,guardian,consent,...r}=state.reg;if(!r.lichess)delete r.lichess;if(!r.chesscom)delete r.chesscom;return{...r,event_key:EVENT_KEY,utm,tz:browserZone(),...adFields()}}
 function bindOtp(){
   const left=state.resendAt-Date.now();
   if(left>0)bindOtpTick();
