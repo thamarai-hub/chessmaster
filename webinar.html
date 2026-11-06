@@ -528,7 +528,7 @@ function stepper(n){
   return `<ol class="steps" aria-label="Step ${n} of 3">${['Details','Confirm','Pay'].map((s,i)=>`<li ${i<n?'data-on':''}>${s}</li>`).join('')}</ol>`;
 }
 const stub=html=>HOOKS.mode==='stub'?`<p class="stubnote">${html}</p>`:'';
-const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}${state.error===errorText('phone_taken')?` <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>.`:state.error===errorText('india_whatsapp')?` <a href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>.`:''}</p>`:'';
+const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}${state.error===errorText('phone_taken')||state.error===errorText('seats_changed')?` <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>.`:state.error===errorText('india_whatsapp')?` <a href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>.`:''}</p>`:'';
 const opt=(arr,val,ph)=>`<option value="">${ph}</option>`+arr.map(([v,l])=>`<option value="${v}" ${v===val?'selected':''}>${esc(l)}</option>`).join('');
 
 /* Extra children: at most 4, so 5 in all. The first child stays in the main fields. */
@@ -826,6 +826,7 @@ function errorText(code){
     wrong_code:"That code isn't right. Please check it and try again.",
     expired:'That code has expired. Please ask for a new one.',
     rate_limited:'Too many tries. Please wait a few minutes and try again.',
+    seats_changed:'The number of children has changed since your payment link was made.',
     invalid_number:'Please check your WhatsApp number.',
     india_whatsapp:'For India and the UAE, registration is on WhatsApp.', /* until the india_page switch */
     phone_taken:'This WhatsApp number is already registered.'
