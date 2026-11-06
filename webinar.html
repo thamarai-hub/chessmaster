@@ -6,6 +6,19 @@
 <title>Win Tournaments with Perfect Opening Play | ChessMaster</title>
 <meta name="description" content="Live online masterclass with GM Shyam Sundar on Thu, 19 Nov. Open to all ages and levels.">
 <link rel="canonical" href="https://chessmaster.io/webinar">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ChessMaster">
+<meta property="og:url" content="https://chessmaster.io/webinar">
+<meta property="og:title" content="Win Tournaments with Perfect Opening Play">
+<meta property="og:description" content="Live online masterclass with GM Shyam Sundar on Thu, 19 Nov. Open to all ages and levels.">
+<meta property="og:image" content="https://chessmaster.io/og-webinar.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ChessMaster live online masterclass with GM Shyam Sundar">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Win Tournaments with Perfect Opening Play">
+<meta name="twitter:description" content="Live online masterclass with GM Shyam Sundar on Thu, 19 Nov. Open to all ages and levels.">
+<meta name="twitter:image" content="https://chessmaster.io/og-webinar.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23FFCC00'/%3E%3Cpath d='M10 36V14l7 8 7-10 7 10 7-8v22h-7l-7-8-7 8z' fill='%23151515'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -261,7 +274,7 @@ footer.site{margin-top:0}
    The backend must work out the price itself; the price on this page is display only.
 
    startOtp(reg)       reg: {full_name,email,country,state,attendee,child_name,age,level,gender,has_fide,fide,lichess,chesscom,phone,event_key,utm,ad_consent,...}
-                       -> {ok:true,check_id} or {ok:false,error:'invalid_number'|'india_whatsapp'|'phone_taken'|'rate_limited'|'failed'}
+                       -> {ok:true,check_id} or {ok:false,error:'invalid_number'|'phone_taken'|'rate_limited'|'failed'}
    codeStatus(p)       p: {check_id}. -> {ok:true,status:'pending'|'delivered'|'failed',not_on_whatsapp}
    verifyOtp(p)        p: {phone,code}
                        -> {ok:true,reg_id,lead_event_id} or {ok:false,error:'wrong_code'|'expired'|'failed'}
@@ -271,9 +284,16 @@ footer.site{margin-top:0}
 --------------------------------------------------------------------------- */
 const HOOKS={
   mode:'live',
-  post:async(url,body)=>(await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})).json(),
+  post:async(url,body)=>{
+    /* A stuck call ends as an error, so buttons can't stay busy. */
+    const stop=new AbortController(),t=setTimeout(()=>stop.abort(),25000);
+    try{return await(await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body),signal:stop.signal})).json()}
+    finally{clearTimeout(t)}
+  },
   startOtp(reg){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-send-3f9a61c2',reg)},
   codeStatus(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-status-6d10e7b4',p)},
+  /* {eid} -> {ok:true,paid:true|false}. Read-only check from CM - Workflow, URL pending. */
+  paymentStatus(p){return this.post(PAYMENT_STATUS_URL,p)},
   verifyOtp(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-otp-check-b27e40d8',p)},
   startPayment(p){return this.post('https://n8n.shortcastle.com/webhook/chessmaster-web-pay-71c4e9a0',p)},
   track(name,data){adEvent(name,data);funnelEvent(name)}
@@ -282,6 +302,7 @@ const HOOKS={
 /* Meta browser pixel. Dataset ID from CMS-543. It never runs while HOOKS.mode is 'stub' (preview).
    No form details go to Meta from the page (autoConfig off). Purchase uses eid from the return URL so it
    matches CM - Workflow's server event. No token or secret belongs in this file. */
+const PAYMENT_STATUS_URL='';
 const META_PIXEL_ID='1679421333977086';
 const CONSENT_KEY='cm_ad_consent';
 const US_ZONE=/^(America\/(New_York|Detroit|Kentucky\/.+|Indiana\/.+|Chicago|Menominee|North_Dakota\/.+|Denver|Boise|Phoenix|Los_Angeles|Anchorage|Juneau|Sitka|Metlakatla|Yakutat|Nome|Adak)|Pacific\/Honolulu)$/;
@@ -312,7 +333,7 @@ function adEvent(name,data){
 }
 function firePurchase(){
   const eid=q.get('eid')||RZP_ID,v=Number(q.get('v')),c=q.get('c')||'USD';
-  if(!PAID||!eid||!(v>0)||!/^[A-Z]{3}$/.test(c)||!window.fbq)return;
+  if(!state.paidConfirmed||!eid||!(v>0)||!/^[A-Z]{3}$/.test(c)||!window.fbq)return;
   const key='cm_purchase_'+eid;
   try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
   fbq('track','Purchase',{value:v,currency:c},{eventID:eid});
@@ -354,7 +375,7 @@ function funnel(name,extra){
 }
 function funnelEvent(name){if(FUNNEL[name])funnel(FUNNEL[name])}
 function firePaid(id){
-  if(!PAID||!id)return;
+  if(!state.paidConfirmed||!id)return;
   const key='cm_paid_'+id;
   try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){}
   funnel('paid');
@@ -377,7 +398,6 @@ const MARKETS={
   in:{label:'India',time:'8–9 PM IST',country:'IN'},
   ae:{label:'UAE',time:'6:30–7:30 PM UAE time',country:'AE'}
 };
-const WA_REGISTER='https://wa.me/13642058191?text='+encodeURIComponent("Hi! I'd like to register for GM Shyam Sundar's masterclass.");
 const WA_LOGIN='https://wa.me/13642058191?text='+encodeURIComponent("Hi! I've paid. Please send my login.");
 const LEVELS=[['foundation','Foundation (new to chess)'],['beginner','Beginner (knows the moves)'],['improver','Improver (plays full games)'],['intermediate','Intermediate (knows tactics)'],['skilled','Skilled (plays regularly)'],['advanced','Advanced (plays tournaments)'],['expert','Expert (rated, trains hard)']];
 const GENDERS=[['male','Male'],['female','Female'],['prefer_not_to_say','Prefer not to say']];
@@ -390,7 +410,7 @@ const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelecto
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 /* ?now=2026-11-12 tests the fee dates, in preview mode only. */
 const NOW=HOOKS.mode==='stub'&&q.get('now')?new Date(q.get('now')+'T12:00:00+05:30'):new Date();
-const tier=TIERS.find(t=>NOW<=new Date(t.until));
+let tier=TIERS.find(t=>NOW<=new Date(t.until));
 
 /* The reader's own time: ?tz=uk|et|ct|mt|pt|in|ae (for ad links), else from the browser. */
 function browserZone(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||''}catch(e){return ''}}
@@ -399,7 +419,7 @@ function offsetMin(tz,d){
   return Math.round((Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute)-d.getTime())/6e4);
 }
 function detectMarket(tz){
-  if(q.get('tz')&&MARKETS[q.get('tz')])return q.get('tz');
+  if(Object.prototype.hasOwnProperty.call(MARKETS,q.get('tz')))return q.get('tz');
   if(/^(Europe\/(London|Belfast|Jersey|Guernsey|Isle_of_Man)|GB)$/.test(tz))return 'uk';
   if(/^Asia\/(Kolkata|Calcutta)$/.test(tz))return 'in';
   if(tz==='Asia/Dubai')return 'ae';
@@ -430,7 +450,7 @@ function renderFacts(){
   $$('[data-price]').forEach(e=>e.textContent=tier?(india?'₹'+tier.INR+' incl. GST':'$'+tier.USD):'Registration closed');
   const now=TIERS.indexOf(tier);
   $('#ladder').hidden=!tier;
-  if(tier)$('#ladder').innerHTML=`<h2>The fee goes up with time</h2><ol>${TIERS.map((t,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':''}<b>${india?'₹'+t.INR:'$'+t.USD}</b><span>${t.when}</span></li>`).join('')}</ol>${india?'<small>Fees include GST.</small>':''}`;
+  if(tier)$('#ladder').innerHTML=`<h2>The fee goes up with time</h2><ol>${TIERS.map((t,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':''}<b>${india?'₹'+t.INR:'$'+t.USD}</b><span>${t.when}</span></li>`).join('')}</ol><small>${india?'Fees include GST. ':''}Fee dates end at midnight India time (IST).</small>`;
   $('#curFaq').textContent=(india?'Indian rupees, including GST.':'US dollars.')+" You pay on our payment provider's secure page, so we don't see or store your card, UPI or bank details.";
 }
 /* India and any +91 number pay in rupees. Display only: the server sets the price. */
@@ -441,6 +461,15 @@ function feeLine(){
   return `Fee: <b>${feeLabel(tier,india)}${india?' incl. GST':''}</b>${tier.note?' · '+tier.note:''}${nextFee(india)}`;
 }
 /* "Goes up to $10 on 11 Nov", or nothing on the last fee. */
+/* A tab left open can pass a fee date. True if the fee changed. */
+function refreshTier(){
+  const t=TIERS.find(x=>Date.now()<=new Date(x.until));
+  if(t===tier)return false;
+  tier=t;renderFacts();
+  if(!t){state.step='closed';render()}
+  else if(state.step==='details'&&$('#feeSub'))$('#feeSub').innerHTML=feeLine();
+  return true;
+}
 function nextFee(india){
   const next=TIERS[TIERS.indexOf(tier)+1];
   return next?`<br>Goes up to ${india?'₹'+next.INR:'$'+next.USD} on ${next.starts}.`:'';
@@ -504,7 +533,7 @@ document.addEventListener('pointerdown',e=>{if(openDropdown&&!e.target.closest('
 const RZP_ID=q.get('razorpay_payment_link_id'),RZP_STATUS=q.get('razorpay_payment_link_status');
 const PAID=q.get('paid')==='1'&&(!RZP_ID||RZP_STATUS==='paid');
 const PAY_FAILED=q.get('paid')==='1'&&!PAID;
-const state={step:PAID?'paid':(!tier?'closed':'details'),error:PAY_FAILED?"Your payment didn't go through. Please try again, or email support@chessmaster.io.":'',reg:{country:market==='local'||!MARKETS[market]?'':MARKETS[market].country},busy:false,resendAt:0};
+const state={step:PAID?'confirming':(!tier?'closed':'details'),error:PAY_FAILED?"Your payment didn't go through. Please try again, or email support@chessmaster.io.":'',reg:{country:market==='local'||!MARKETS[market]?'':MARKETS[market].country},busy:false,resendAt:0};
 /* Take payment IDs out of the address before analytics loads (deferred scripts run after this one). q keeps the original values for this page load. */
 (()=>{
   const u=new URL(location.href);let changed=false;
@@ -519,7 +548,7 @@ function stepper(n){
   return `<ol class="steps" aria-label="Step ${n} of 3">${['Details','Confirm','Pay'].map((s,i)=>`<li ${i<n?'data-on':''}>${s}</li>`).join('')}</ol>`;
 }
 const stub=html=>HOOKS.mode==='stub'?`<p class="stubnote">${html}</p>`:'';
-const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}${state.error===errorText('phone_taken')?` <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>.`:state.error===errorText('india_whatsapp')?` <a href="${WA_REGISTER}" target="_blank" rel="noopener">Register on WhatsApp</a>.`:''}</p>`:'';
+const errBox=()=>state.error?`<p class="alert" role="alert">${esc(state.error)}${state.error===errorText('phone_taken')?` <a href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>.`:''}</p>`:'';
 const opt=(arr,val,ph)=>`<option value="">${ph}</option>`+arr.map(([v,l])=>`<option value="${v}" ${v===val?'selected':''}>${esc(l)}</option>`).join('');
 
 function viewDetails(){
@@ -575,12 +604,31 @@ function viewPay(){
     <p class="note">You pay on our payment provider's secure page. We don't see or store your card, UPI or bank details.${payInRupees()?'':' Your card statement will show CHESSMETHOD.'}</p>
   </div>`;
 }
-function viewDone(){
-  return `<div class="tick" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
-  <h2 tabindex="-1">End of the preview</h2><p class="sub">On the live page, this button opens the payment page. After payment, we email the login details, and they're also available on WhatsApp.</p>
-  <div class="stack">${stub('Preview: nothing was saved or sent.')}<button class="btn btn-lg" id="restartBtn">Start again</button></div>`;
-}
 /* The login goes by email at once. The WhatsApp button is the backup: WhatsApp can't message a buyer until they message the number. */
+function viewConfirming(){
+  return `<h2 tabindex="-1">Confirming your payment</h2><p class="sub">This usually takes about a minute. You can stay on this page.</p>`;
+}
+function viewUnconfirmed(){
+  return `<h2 tabindex="-1">Still confirming your payment</h2><p class="sub">If you've paid, we'll send your login by email once it's confirmed. Please check your spam folder too.</p>
+  <div class="stack"><a class="btn btn-lg btn-wa" href="${WA_HELP}" target="_blank" rel="noopener">Message us on WhatsApp</a>
+  <p class="note">Or email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p></div>`;
+}
+/* On return from payment: the address can be forged, so only the server decides. Keeps the IDs for a reload, as the address is cleaned. */
+async function confirmPayment(){
+  let eid=q.get('eid')||RZP_ID;
+  try{if(eid)sessionStorage.setItem('cm_return_eid',eid);else eid=sessionStorage.getItem('cm_return_eid')}catch(e){}
+  const end=Date.now()+90000;
+  while(eid&&PAYMENT_STATUS_URL&&Date.now()<end){
+    const res=await safe(()=>HOOKS.paymentStatus({eid}));
+    if(res.ok&&res.paid===true){
+      state.paidConfirmed=true;state.step='paid';render();
+      firePurchase();firePaid(eid);
+      return;
+    }
+    await new Promise(r=>setTimeout(r,5000));
+  }
+  state.step='unconfirmed';render();
+}
 function viewPaid(){
   let email='';try{email=sessionStorage.getItem('cm_email')||''}catch(e){}
   return `<h2 tabindex="-1">You're almost done</h2><p class="sub">Your login is on its way to ${email?'<b>'+esc(email)+'</b>':'your email'}. It can take up to a minute. If you don't see it, check your spam folder.</p>
@@ -590,7 +638,7 @@ function viewPaid(){
 function viewClosed(){
   return `<h2 tabindex="-1">Registration has closed</h2><p class="sub">Questions? Email <a href="mailto:support@chessmaster.io">support@chessmaster.io</a>.</p>`;
 }
-const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,done:viewDone,closed:viewClosed,paid:viewPaid};
+const VIEWS={details:viewDetails,otp:viewOtp,pay:viewPay,closed:viewClosed,confirming:viewConfirming,unconfirmed:viewUnconfirmed,paid:viewPaid};
 
 let lastStep=null,timer=null;
 function render(){
@@ -602,13 +650,37 @@ function render(){
   if(state.step==='details'){$$('select',box).forEach(s=>enhanceSelect(s));bindDetails()}
   if(state.step==='otp')bindOtp();
   if(state.step==='pay')$('#payBtn').onclick=pay;
-  if(state.step==='done')$('#restartBtn').onclick=()=>{state.step='details';state.reg={country:state.reg.country};state.error='';render()};
 }
 /* Takes a username, or the last part of a pasted profile link. '' if empty, null if it can't be a username. */
 function chessUsername(v){
   const name=v.trim().replace(/[?#].*$/,'').replace(/\/+$/,'').split('/').pop().replace(/^@/,'');
   if(!name)return '';
   return /^[A-Za-z0-9_.-]{1,50}$/.test(name)?name:null;
+}
+/* Length after the country code, for the markets we advertise in. */
+const PHONE_LEN={'91':10,'1':10,'44':10,'971':9};
+const KNOWN_CC=['971','91','44','1'];
+const ccDigits=v=>v.replace(/\D/g,'').replace(/^00/,'');
+/* A number pasted with its country code: returns {cc,national}. */
+function splitPhone(cc,raw){
+  const own=ccDigits(cc),t=raw.trim(),all=raw.replace(/\D/g,'');
+  const intl=/^(\+|00)/.test(t)?all.replace(/^00/,''):'';
+  if(intl){
+    const code=[own,...KNOWN_CC].find(c=>c&&intl.startsWith(c));
+    if(code)return{cc:code,national:intl.slice(code.length).replace(/^0+/,'')};
+    return{cc:own,national:intl};
+  }
+  const nat=all.replace(/^0+/,''),len=PHONE_LEN[own];
+  if(len&&nat.length===own.length+len&&nat.startsWith(own))return{cc:own,national:nat.slice(own.length)};
+  return{cc:own,national:nat};
+}
+function phoneProblem(cc,national){
+  const len=PHONE_LEN[cc];
+  if(!cc||!/^\d{1,4}$/.test(cc))return 'Enter your WhatsApp number with its country code.';
+  if(len&&national.length!==len)return `Enter your ${len}-digit WhatsApp number.`;
+  if(!len&&(national.length<6||national.length>14))return 'Enter your WhatsApp number with its country code.';
+  if(cc==='91'&&!/^[6-9]/.test(national))return 'Enter your 10-digit WhatsApp number.';
+  return '';
 }
 function setErr(el,on){el.closest('.field').classList.toggle('err',on);return on}
 
@@ -634,6 +706,13 @@ function bindDetails(){
     if(c&&c[2])$('#cc').value=c[2];else if(c)$('#cc').value='';
     setErr(e.target,false);sync();
   });
+  /* A pasted +91… fills the code box and leaves the rest in the number box. */
+  $('#phone').addEventListener('input',e=>{
+    if(!/^\s*(\+|00)/.test(e.target.value)||e.target.value.replace(/\D/g,'').length<8)return;
+    const p=splitPhone($('#cc').value,e.target.value);
+    e.target.value=p.national;
+    if(ccDigits($('#cc').value)!==p.cc){$('#cc').value='+'+p.cc;$('#cc').dispatchEvent(new Event('input',{bubbles:true}))}
+  });
   /* The +91 rule: a +91 number is India, whichever country was picked. */
   $('#cc').addEventListener('input',e=>{
     const sel=$('#country');
@@ -649,14 +728,15 @@ function bindDetails(){
     ev.preventDefault();
     if(state.busy)return;
     const v=id=>$('#'+id).value.trim(),attendee=($('input[name=attendee]:checked')||{}).value||'';
-    const cc=v('cc'),digits=v('phone').replace(/\D/g,'').replace(/^0+/,''),age=parseInt(v('age'),10);
+    const split=splitPhone(v('cc'),v('phone')),cc=split.cc,digits=split.national,age=parseInt(v('age'),10);
     const bad=[];
     if(setErr($('#full_name'),v('full_name').length<2))bad.push('full_name');
     if(setErr($('#email'),!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email'))))bad.push('email');
     if(setErr($('#country'),!v('country')))bad.push('country');
     const isIN=v('country')==='IN'||cc.replace(/\D/g,'').replace(/^00/,'')==='91';
     if(isIN&&setErr($('#state'),!v('state')))bad.push('state');
-    if(setErr($('#phone'),!/^\+?\d{1,4}$/.test(cc)||digits.length<6||digits.length>14))bad.push('phone');
+    const phoneMsg=phoneProblem(cc,digits);
+    if(setErr($('#phone'),!!phoneMsg)){$('#phoneErr').textContent=phoneMsg;bad.push('phone')}
     if(setErr($('input[name=attendee]'),!attendee))bad.push('attendee');
     if(attendee==='child'&&setErr($('#child_name'),v('child_name').length<2))bad.push('child_name');
     const under18Self=attendee==='self'&&age<18;
@@ -673,7 +753,7 @@ function bindDetails(){
     if(attendee==='child'&&setErr($('#guardian'),!$('#guardian').checked))bad.push('guardian');
     if(setErr($('#consent'),!$('#consent').checked))bad.push('consent');
     state.reg={full_name:v('full_name'),email:v('email'),country:isIN?'IN':v('country'),state:isIN?v('state'):'',attendee,child_name:attendee==='child'?v('child_name'):'',age:v('age'),level:v('level'),gender:v('gender'),lichess:lichess||'',chesscom:chesscom||'',has_fide:hasFide,fide:hasFide==='yes'?v('fide'):'',
-      cc,national:v('phone'),phone:'+'+cc.replace(/\D/g,'').replace(/^00/,'')+digits,guardian:$('#guardian').checked,consent:$('#consent').checked};
+      cc:'+'+cc,national:digits,phone:'+'+cc+digits,guardian:$('#guardian').checked,consent:$('#consent').checked};
     if(bad.length){const first=$('#'+bad[0])||$('input[name='+bad[0]+']');if(first)((first.closest('.sel')||first).querySelector('.csb')||first).focus();return}
     state.busy=true;state.error='';render();
     const res=await safe(()=>HOOKS.startOtp(payload()));
@@ -736,6 +816,10 @@ function bindOtpTick(){
 }
 async function pay(){
   if(state.busy)return;
+  if(refreshTier()){
+    if(!tier)return;
+    state.error='The fee is now '+feeLabel(tier,payInRupees())+'. Please check it and pay again.';render();return;
+  }
   state.busy=true;state.error='';render();
   const res=await safe(()=>HOOKS.startPayment({reg_id:state.regId}));
   state.busy=false;
@@ -745,7 +829,6 @@ async function pay(){
     try{sessionStorage.setItem('cm_email',state.reg.email)}catch(e){}
     location.href=res.url;return;
   }
-  if(res.ok){state.step='done';render();return}
   if(res.error==='closed'){state.step='closed';render();return}
   state.error=errorText(res.error);render();
 }
@@ -756,7 +839,6 @@ function errorText(code){
     expired:'That code has expired. Please ask for a new one.',
     rate_limited:'Too many tries. Please wait a few minutes and try again.',
     invalid_number:'Please check your WhatsApp number.',
-    india_whatsapp:'For India and the UAE, registration is on WhatsApp.', /* until the india_page switch */
     phone_taken:'This WhatsApp number is already registered.'
   }[code]||'Something went wrong. Please try again, or email support@chessmaster.io.';
 }
@@ -801,7 +883,8 @@ if(PAID)$('#register').scrollIntoView({block:'center'});
 HOOKS.track('page_view',{market});
 initConsent();
 if(!PAID&&tier)watchEngagement();
-document.addEventListener('DOMContentLoaded',()=>firePaid(q.get('eid')||RZP_ID));
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!PAID)refreshTier()});
+if(PAID)confirmPayment();
 </script>
 </body>
 </html>
