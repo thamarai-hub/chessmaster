@@ -165,6 +165,68 @@ nav.main a:hover::after,nav.main a[aria-current="page"]::after{transform:scaleX(
   .float.live{justify-content:center}
 }
 
+/* Masterclass hero (shown on the home page until the class starts) */
+.mc .hero-copy{gap:16px}
+.mc h1{font-size:clamp(2.25rem,1.2rem + 3vw,3.5rem);max-width:15ch}
+.mc .hero-copy .lead{font-size:clamp(1rem,.96rem + .25vw,1.125rem)}
+.mc.hero{padding-block:clamp(20px,3vw,40px) clamp(48px,6vw,80px)}
+.mc-coach{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:clamp(1.125rem,1rem + .5vw,1.375rem);font-weight:800;letter-spacing:-.01em;margin-top:-6px}
+.mc-facts{display:grid;grid-template-columns:1fr 1fr;background:var(--card);border:2px solid var(--ink);border-radius:var(--r);box-shadow:0 4px 0 var(--ink);overflow:hidden}
+.mc-facts>div{padding:12px 18px;display:grid;gap:2px;align-content:start}
+.mc-facts>div+div{border-left:1.5px solid var(--line)}
+.mc-facts small{font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mc-facts b{font-size:clamp(1.0625rem,1rem + .3vw,1.25rem);font-weight:800;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.mc-tl{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mc-tz{position:relative;line-height:1}
+.mc-tz select{field-sizing:content;max-width:120px;appearance:none;-webkit-appearance:none;border:0;background:transparent;font-size:.75rem;font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:2px 18px 2px 0;cursor:pointer;color:var(--fg)}
+.mc-tz::after{content:"";position:absolute;right:4px;top:50%;width:6px;height:6px;border:solid var(--fg);border-width:0 1.5px 1.5px 0;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.mc-fee h3{font-size:.9375rem;font-weight:800;letter-spacing:-.005em;margin-bottom:10px}
+.mc-ladder{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mc-ladder li{position:relative;display:grid;justify-items:center;gap:2px;padding:16px 8px 12px;border:1.5px solid var(--line);border-radius:14px;background:var(--card);text-align:center}
+.mc-ladder b{font-size:clamp(1.375rem,1.1rem + 1vw,1.75rem);font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.mc-ladder span{font-size:.75rem;color:var(--muted);font-weight:600}
+.mc-ladder li[data-now]{background:var(--y);border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink)}
+.mc-ladder li[data-now] span{color:var(--ink)}
+.mc-ladder li[data-past]{opacity:.45}
+.mc-ladder li[data-past] b{text-decoration:line-through;text-decoration-thickness:2px}
+.mc-ladder i{position:absolute;top:-11px;font-style:normal;font-size:.6875rem;font-weight:800;padding:2px 9px;border-radius:999px;background:var(--ink);color:var(--y);white-space:nowrap}
+.mc-note{display:block;margin-top:10px;font-size:.75rem;color:var(--muted)}
+.mc-usd{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;background:var(--card);border:2px solid var(--ink);border-radius:var(--r);box-shadow:0 4px 0 var(--ink);padding:16px 20px}
+.mc-usd .amt{display:flex;align-items:baseline;gap:10px;font-variant-numeric:tabular-nums}
+.mc-usd s{font-size:1.375rem;font-weight:700;color:var(--muted);text-decoration-thickness:2px}
+.mc-usd .amt b{font-size:clamp(2.25rem,1.8rem + 1.6vw,2.875rem);font-weight:800;letter-spacing:-.03em;line-height:1}
+.mc-usd .pill{display:inline-flex;align-items:center;gap:6px;font-size:.8125rem;font-weight:800;padding:6px 12px;border-radius:999px;background:var(--y);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.mc-usd .up{flex-basis:100%;font-size:.8125rem;font-weight:600;color:#B42318}
+.mc-cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px}
+.mc-cta .btn{min-height:56px;padding:0 30px;font-size:1.0625rem}
+.mc-meta{font-size:.875rem;font-weight:600;color:var(--muted)}
+.mc-stage{padding:30px 34px 40px 30px}
+.mc-photo{position:relative;border-radius:28px;overflow:hidden;background:var(--y);border:3px solid var(--ink);box-shadow:var(--shadow-lg),10px 10px 0 var(--ink);transform:rotate(1.5deg)}
+.mc-photo img{display:block;width:100%;height:auto;aspect-ratio:880/841;object-fit:cover}
+.float.mc-count{right:-20px;top:24%;text-align:center;padding:12px 16px;animation-delay:-4s}
+.mc-count small{display:block;font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mc-count .t{display:flex;gap:10px;margin-top:4px;font-variant-numeric:tabular-nums}
+.mc-count .t b{display:grid;font-size:1.5rem;font-weight:800;line-height:1;letter-spacing:-.02em}
+.mc-count .t b em{font-style:normal;font-size:.625rem;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-top:3px}
+.float.mc-aud{right:-6px;bottom:10px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:.8125rem;padding:10px 12px;animation-delay:-1s}
+.float.mc-aud .glyph{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--y);box-shadow:inset 0 0 0 1.5px var(--ink);font-size:.95rem}
+.mc .float.live{bottom:14%}
+.mc .float.mcard{max-width:none;white-space:nowrap}
+@media (max-width:900px){.mc-stage{width:min(100%,460px)}}
+@media (max-width:640px){
+  .mc-stage{padding:0}
+  .mc-photo{transform:none;box-shadow:var(--shadow);max-width:400px;margin-inline:auto}
+  .mc-count .t{justify-content:center}
+  .float.mc-count{grid-column:1/-1}
+  .float.mc-aud{justify-content:center}
+}
+@media (max-width:420px){
+  .mc-facts{grid-template-columns:1fr}
+  .mc-facts>div+div{border-left:0;border-top:1.5px solid var(--line)}
+  .mc-ladder{gap:8px}.mc-ladder li{padding:14px 4px 10px}
+  .mc-cta .btn{width:100%}
+}
+
 /* Avatar + title badge */
 .avatar{position:relative;flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--y);color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink);overflow:hidden}
 .avatar::before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(rgba(21,21,21,.10) 0 25%,transparent 0 50%) 0 0/50% 50%}
@@ -788,11 +850,113 @@ function miniBoard(t){
 }
 
 /* ============ VIEWS ============ */
+/* ============ MASTERCLASS HERO ============ */
+/* Same dates, fees and times as /webinar. Fee dates turn over at midnight IST.
+   The home hero shows this until the class starts, then the regular hero returns. */
+const MC={
+  start:new Date('2026-11-19T20:00:00+05:30'),end:new Date('2026-11-19T21:00:00+05:30'),url:'/webinar',
+  tiers:[
+    {until:'2026-11-10T23:59:59+05:30',INR:499,when:'Till 10 Nov',USD:6,was:15,badge:'Early Bird Ends 10 Nov',up:'Price increases after 10 Nov'},
+    {until:'2026-11-15T23:59:59+05:30',INR:749,when:'11 to 15 Nov',USD:10,was:15,badge:'Till 15 Nov',up:'Price increases after 15 Nov'},
+    {until:'2026-11-19T20:00:00+05:30',INR:999,when:'From 16 Nov',USD:15,was:0,badge:'Last few days',up:''}
+  ],
+  markets:{in:{label:'India',time:'8–9 PM IST'},uk:{label:'UK',time:'2:30–3:30 PM UK time'},et:{label:'US Eastern',time:'9:30–10:30 AM ET'},ct:{label:'US Central',time:'8:30–9:30 AM CT'},ae:{label:'UAE',time:'6:30–7:30 PM UAE time'}}
+};
+const mcQ=new URLSearchParams(location.search);
+/* Preview only: ?now=2026-11-12 tests the fee dates, ?tz=uk|et|ct|ae|in picks the region. */
+const MC_PROD=/^(www\.)?chessmaster\.io$|^chessmasters-website\.vercel\.app$/.test(location.hostname);
+const MC_SHIFT=!MC_PROD&&/^\d{4}-\d{2}-\d{2}$/.test(mcQ.get('now')||'')?new Date(mcQ.get('now')+'T12:00:00+05:30')-Date.now():0;
+const mcNow=()=>new Date(Date.now()+MC_SHIFT);
+const mcOpen=()=>mcNow()<MC.start;
+const mcTier=()=>MC.tiers.find(t=>mcNow()<=new Date(t.until));
+function mcOffset(tz,d){
+  const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric'}).formatToParts(d).map(x=>[x.type,x.value]));
+  return Math.round((Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute)-d.getTime())/6e4);
+}
+function mcLocal(){
+  if(!localTz)return null;
+  try{
+    const t=d=>new Intl.DateTimeFormat('en-US',{timeZone:localTz,hour:'numeric',minute:'2-digit'}).format(d).replace(':00','').replace(/\s/g,' ');
+    const a=t(MC.start),b=t(MC.end),ap=/ (AM|PM)$/,same=a.match(ap)&&b.match(ap)&&a.match(ap)[1]===b.match(ap)[1];
+    return{date:new Intl.DateTimeFormat('en-GB',{timeZone:localTz,weekday:'short',day:'numeric',month:'short'}).format(MC.start).replace(/^(\w+),? /,'$1, '),time:(same?a.replace(ap,''):a)+'–'+b+' your time'};
+  }catch(e){return null}
+}
+const MC_LOCAL=mcLocal();
+let mcMarket=(()=>{
+  const f=mcQ.get('tz');if(!MC_PROD&&f&&MC.markets[f])return f;
+  if(/^Asia\/(Kolkata|Calcutta)$/.test(localTz))return 'in';
+  if(/^Europe\/(London|Belfast|Jersey|Guernsey|Isle_of_Man)$/.test(localTz))return 'uk';
+  if(localTz==='Asia/Dubai')return 'ae';
+  if(/^America\//.test(localTz)){try{const m={'-300':'et','-360':'ct'}[mcOffset(localTz,MC.start)];if(m)return m}catch(e){}}
+  return MC_LOCAL?'local':'in';
+})();
+function mcFee(){
+  const t=mcTier();if(!t)return '';
+  if(mcMarket==='in'){
+    const now=MC.tiers.indexOf(t);
+    return `<div class="mc-fee"><h3>The fee goes up with time</h3><ol class="mc-ladder">${MC.tiers.map((x,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':i<now?'<i>Ended</i>':''}<b>₹${x.INR}</b><span>${x.when}</span></li>`).join('')}</ol><small class="mc-note">Fees include GST. Fee dates end at midnight India time (IST).</small></div>`;
+  }
+  return `<div class="mc-usd" aria-label="Fee"><span class="amt">${t.was?`<s aria-label="Was $${t.was}">$${t.was}</s>`:''}<b>$${t.USD}</b></span><span class="pill">${t.badge}</span>${t.up?`<span class="up">${t.up}</span>`:''}</div>`;
+}
+function mcFacts(){
+  const loc=mcMarket==='local'&&MC_LOCAL;
+  return{date:loc?MC_LOCAL.date:'Thu, 19 Nov',time:loc?MC_LOCAL.time:MC.markets[mcMarket].time};
+}
+function mcCountdown(){
+  const ms=Math.max(0,MC.start-mcNow()),d=Math.floor(ms/864e5),h=Math.floor(ms/36e5)%24,m=Math.floor(ms/6e4)%60;
+  return `<b>${d}<em>DAYS</em></b><b>${String(h).padStart(2,'0')}<em>HRS</em></b><b>${String(m).padStart(2,'0')}<em>MIN</em></b>`;
+}
+function viewMCHero(){
+  const f=mcFacts();
+  const opts=(MC_LOCAL?[['local','My time']]:[]).concat(Object.entries(MC.markets).map(([k,v])=>[k,v.label]));
+  return `<section class="hero mc" id="mcHero">
+    <span class="bgp hide-m" data-depth="18" style="left:-2%;top:6%;font-size:13rem">${G('♞')}</span>
+    <span class="bgp hide-m" data-depth="10" style="right:1%;bottom:2%;font-size:11rem">${G('♝')}</span>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Live online masterclass</span>
+        <h1>Win Tournaments with <span class="mark">Perfect Opening Play</span></h1>
+        <p class="mc-coach">with ${tbadge('GM')} Shyam Sundar</p>
+        <p class="lead">Learn how strong opening preparation helps you score better in tournaments. Open to all ages and levels.</p>
+        <div class="mc-facts">
+          <div><small>Date</small><b id="mcDate">${f.date}</b></div>
+          <div><span class="mc-tl"><small>Time</small><label class="mc-tz"><select id="mcTz" aria-label="Show the time for">${opts.map(([k,l])=>`<option value="${k}" ${k===mcMarket?'selected':''}>${l}</option>`).join('')}</select></label></span><b id="mcTime">${f.time}</b></div>
+        </div>
+        <div id="mcFee">${mcFee()}</div>
+        <div class="mc-cta"><a class="btn btn-y" href="${MC.url}">Register now ${ic('arrow','arrow')}</a><span class="mc-meta">60-minute live class with a Grandmaster</span></div>
+      </div>
+      <div class="stage mc-stage" id="stage">
+        <figure class="mc-photo"><img src="/gm-shyam-sundar.jpg" width="880" height="842" alt="GM Shyam Sundar at a chess board" fetchpriority="high"></figure>
+        <div class="stage-row">
+          <div class="float mcard"><span class="avatar" aria-hidden="true"><span class="glyph">${G('♚')}</span></span><div><div style="display:flex;gap:8px;align-items:center">${tbadge('GM')}<b style="font-size:.9375rem">Shyam Sundar</b></div><div class="cap muted" style="margin-top:2px">Grandmaster · Opening play</div></div></div>
+          <div class="float mc-count" aria-label="Time until the class starts"><small>Starts in</small><div class="t" id="mcCount">${mcCountdown()}</div></div>
+          <div class="float live"><span class="livedot"></span>Live online · 60 min</div>
+          <div class="float mc-aud"><span class="glyph" aria-hidden="true">${G('♞')}</span>All ages &amp; levels</div>
+        </div>
+      </div>
+    </div>
+  </section>`;
+}
+let mcTimer=null;
+function bindMC(){
+  clearInterval(mcTimer);
+  const sel=$('#mcTz');if(!sel)return;
+  const paint=()=>{const f=mcFacts();$('#mcDate').textContent=f.date;$('#mcTime').textContent=f.time;$('#mcFee').innerHTML=mcFee()};
+  sel.onchange=e=>{mcMarket=e.target.value;paint()};
+  let tier=mcTier();
+  mcTimer=setInterval(()=>{
+    if(!$('#mcHero')){clearInterval(mcTimer);return}
+    if(!mcOpen()){clearInterval(mcTimer);lastHash=null;route();return}
+    $('#mcCount').innerHTML=mcCountdown();
+    if(mcTier()!==tier){tier=mcTier();paint()}
+  },15000);
+}
+
 function viewHome(){
   const upcoming=DATA.classes.filter(c=>c.status==='open').sort((a,b)=>a.start.localeCompare(b.start)).slice(0,3);
   const nextFor=id=>DATA.classes.filter(c=>c.master===id&&(c.status==='open'||c.status==='soon')).sort((a,b)=>a.start.localeCompare(b.start))[0];
   return `<div class="view">
-  <section class="hero">
+  ${mcOpen()?viewMCHero():`  <section class="hero">
     <span class="bgp hide-m" data-depth="18" style="left:-2%;top:6%;font-size:13rem">${G('♜')}</span>
     <span class="bgp" data-depth="-12" style="left:38%;bottom:-4%;font-size:9rem">${G('♟')}</span>
     <span class="bgp hide-m" data-depth="10" style="right:1%;bottom:2%;font-size:11rem">${G('♝')}</span>
@@ -818,7 +982,7 @@ function viewHome(){
         </div>
       </div>
     </div>
-  </section>
+  </section>`}
 
   <section class="section rv" style="padding-top:clamp(24px,3vw,40px)">
     <div class="wrap">
@@ -1249,7 +1413,7 @@ function bindSchedule(){
 }
 function bindTz(rerender){const s=$('#tzSel');if(s)s.onchange=e=>{TZ=e.target.value;store.set('cm-tz',TZ);rerender()}}
 function bindHome(){
-  mountHeroBoard();bindNotify();
+  mountHeroBoard();bindNotify();bindMC();
   const st=$('#stage'),bgs=$$('.bgp');
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&matchMedia('(pointer:fine)').matches){
     const hero=$('.hero');hero.addEventListener('pointermove',e=>{const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;
