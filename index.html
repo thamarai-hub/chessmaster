@@ -857,7 +857,7 @@ const MC={
   start:new Date('2026-11-19T20:00:00+05:30'),end:new Date('2026-11-19T21:00:00+05:30'),url:'/webinar',
   tiers:[
     {until:'2026-11-10T23:59:59+05:30',INR:499,when:'Till 10 Nov',USD:6,was:15,badge:'Early Bird Ends 10 Nov',up:'Price increases after 10 Nov'},
-    {until:'2026-11-15T23:59:59+05:30',INR:749,when:'11 to 15 Nov',USD:10,was:15,badge:'Till 15 Nov',up:'Price increases after 15 Nov'},
+    {until:'2026-11-15T23:59:59+05:30',INR:499,when:'11 to 15 Nov',inWhen:'Early bird extended till 15 Nov',USD:10,was:15,badge:'Till 15 Nov',up:'Price increases after 15 Nov'},
     {until:'2026-11-19T20:00:00+05:30',INR:999,when:'From 16 Nov',USD:15,was:0,badge:'Last few days',up:''}
   ],
   markets:{in:{label:'India',time:'8–9 PM IST'},uk:{label:'UK',time:'2:30–3:30 PM UK time'},et:{label:'US Eastern',time:'9:30–10:30 AM ET'},ct:{label:'US Central',time:'8:30–9:30 AM CT'},ae:{label:'UAE',time:'6:30–7:30 PM UAE time'}}
@@ -893,8 +893,9 @@ let mcMarket=(()=>{
 function mcFee(){
   const t=mcTier();if(!t)return '';
   if(mcMarket==='in'){
-    const now=MC.tiers.indexOf(t);
-    return `<div class="mc-fee"><h3>The fee goes up with time</h3><ol class="mc-ladder">${MC.tiers.map((x,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':i<now?'<i>Ended</i>':''}<b>₹${x.INR}</b><span>${x.when}</span></li>`).join('')}</ol><small class="mc-note">Fees include GST. Fee dates end at midnight India time (IST).</small></div>`;
+    /* Back-to-back steps with the same rupee fee show once (the later one). */
+    const steps=MC.tiers.filter((x,i)=>!(MC.tiers[i+1]&&MC.tiers[i+1].INR===x.INR)),now=steps.findIndex(x=>new Date(x.until)>=new Date(t.until));
+    return `<div class="mc-fee"><h3>The fee goes up with time</h3><ol class="mc-ladder">${steps.map((x,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':i<now?'<i>Ended</i>':''}<b>₹${x.INR}</b><span>${x.inWhen||x.when}</span></li>`).join('')}</ol><small class="mc-note">Fees include GST. Fee dates end at midnight India time (IST).</small></div>`;
   }
   return `<div class="mc-usd" aria-label="Fee"><span class="amt">${t.was?`<s aria-label="Was $${t.was}">$${t.was}</s>`:''}<b>$${t.USD}</b></span><span class="pill">${t.badge}</span>${t.up?`<span class="up">${t.up}</span>`:''}</div>`;
 }

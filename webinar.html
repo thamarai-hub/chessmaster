@@ -386,7 +386,7 @@ const EVENT_KEY='webinar-2026-11-19';
 const START=new Date('2026-11-19T20:00:00+05:30'),END=new Date('2026-11-19T21:00:00+05:30');
 const TIERS=[
   {until:'2026-11-10T23:59:59+05:30',USD:6,INR:499,note:'Early bird till 10 Nov',when:'Till 10 Nov',starts:''},
-  {until:'2026-11-15T23:59:59+05:30',USD:10,INR:749,note:'Till 15 Nov',when:'11 to 15 Nov',starts:'11 Nov'},
+  {until:'2026-11-15T23:59:59+05:30',USD:10,INR:499,note:'Till 15 Nov',when:'11 to 15 Nov',starts:'11 Nov',inNote:'Early bird extended till 15 Nov',inWhen:'Early bird extended till 15 Nov'},
   {until:'2026-11-19T20:00:00+05:30',USD:15,INR:999,note:'',when:'From 16 Nov',starts:'16 Nov'}
 ];
 const MARKETS={
@@ -448,17 +448,19 @@ function renderFacts(){
   $$('[data-time]').forEach(e=>e.textContent=time);
   const india=payInRupees();
   $$('[data-price]').forEach(e=>e.textContent=tier?(india?'₹'+tier.INR+' incl. GST':'$'+tier.USD):'Registration closed');
-  const now=TIERS.indexOf(tier);
+  const steps=feeSteps(india),now=tier?steps.findIndex(t=>new Date(t.until)>=new Date(tier.until)):-1;
   $('#ladder').hidden=!tier;
-  if(tier)$('#ladder').innerHTML=`<h2>The fee goes up with time</h2><ol>${TIERS.map((t,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':''}<b>${india?'₹'+t.INR:'$'+t.USD}</b><span>${t.when}</span></li>`).join('')}</ol><small>${india?'Fees include GST. ':''}Fee dates end at midnight India time (IST).</small>`;
+  if(tier)$('#ladder').innerHTML=`<h2>The fee goes up with time</h2><ol>${steps.map((t,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':''}<b>${india?'₹'+t.INR:'$'+t.USD}</b><span>${india&&t.inWhen||t.when}</span></li>`).join('')}</ol><small>${india?'Fees include GST. ':''}Fee dates end at midnight India time (IST).</small>`;
   $('#curFaq').textContent=(india?'Indian rupees, including GST.':'US dollars.')+" You pay on our payment provider's secure page, so we don't see or store your card, UPI or bank details.";
 }
 /* India and any +91 number pay in rupees. Display only: the server sets the price. */
 function payInRupees(){return state.reg.country==='IN'||(state.reg.cc||'').replace(/\D/g,'').replace(/^00/,'')==='91'}
 const feeLabel=(t,india)=>india?'₹'+t.INR:'$'+t.USD;
+/* Fee steps for the ladder. In rupees, back-to-back steps with the same fee show once (the later one). */
+const feeSteps=india=>india?TIERS.filter((t,i)=>!(TIERS[i+1]&&TIERS[i+1].INR===t.INR)):TIERS;
 function feeLine(){
   const india=payInRupees();
-  return `Fee: <b>${feeLabel(tier,india)}${india?' incl. GST':''}</b>${tier.note?' · '+tier.note:''}${nextFee(india)}`;
+  return `Fee: <b>${feeLabel(tier,india)}${india?' incl. GST':''}</b>${(india&&tier.inNote||tier.note)?' · '+(india&&tier.inNote||tier.note):''}${nextFee(india)}`;
 }
 /* "Goes up to $10 on 11 Nov", or nothing on the last fee. */
 /* A tab left open can pass a fee date. True if the fee changed. */
@@ -471,7 +473,7 @@ function refreshTier(){
   return true;
 }
 function nextFee(india){
-  const next=TIERS[TIERS.indexOf(tier)+1];
+  const next=TIERS.slice(TIERS.indexOf(tier)+1).find(t=>india?t.INR!==tier.INR:t.USD!==tier.USD);
   return next?`<br>Goes up to ${india?'₹'+next.INR:'$'+next.USD} on ${next.starts}.`:'';
 }
 $('#tzSel').innerHTML=(local?['local']:[]).concat(['uk','et','ct','mt','pt','in','ae'])
