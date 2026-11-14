@@ -1,15 +1,45 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/in",
+      "destination": "https://chessmaster.io/webinar?tz=in&utm_source=raghu&utm_medium=community&utm_campaign=cm_19nov_india",
+      "statusCode": 302
+    },
+    {
+      "source": "/us",
+      "destination": "https://chessmaster.io/webinar?utm_source=raghu&utm_medium=community&utm_campaign=cm_19nov_us",
+      "statusCode": 302
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" },
-        { "key": "Content-Security-Policy", "value": "frame-ancestors 'none'; base-uri 'self'; object-src 'none'" },
-        { "key": "Content-Security-Policy-Report-Only", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net https://rybbit.shortcastle.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://www.facebook.com; connect-src 'self' https://n8n.shortcastle.com https://rybbit.shortcastle.com https://connect.facebook.net https://www.facebook.com; frame-src https://www.facebook.com; form-action 'self'" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+        },
+        {
+          "key": "Content-Security-Policy-Report-Only",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net https://rybbit.shortcastle.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://www.facebook.com; connect-src 'self' https://n8n.shortcastle.com https://rybbit.shortcastle.com https://connect.facebook.net https://www.facebook.com; frame-src https://www.facebook.com; form-action 'self'"
+        }
       ]
     }
   ]
