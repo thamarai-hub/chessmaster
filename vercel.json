@@ -2,16 +2,6 @@
   "cleanUrls": true,
   "redirects": [
     {
-      "source": "/in",
-      "destination": "https://chessmaster.io/webinar?tz=in&utm_source=raghu&utm_medium=community&utm_campaign=cm_19nov_india",
-      "statusCode": 302
-    },
-    {
-      "source": "/us",
-      "destination": "https://chessmaster.io/webinar?utm_source=raghu&utm_medium=community&utm_campaign=cm_19nov_us",
-      "statusCode": 302
-    },
-    {
       "source": "/masterclass/in",
       "destination": "https://chessmaster.io/webinar?tz=in&utm_source=raghu&utm_medium=community&utm_campaign=cm_19nov_india",
       "statusCode": 302
