@@ -10,6 +10,11 @@
       "source": "/masterclass/us",
       "destination": "https://chessmaster.io/webinar?utm_source=raghu&utm_medium=community&utm_campaign=cm_19nov_us",
       "statusCode": 302
+    },
+    {
+      "source": "/help",
+      "destination": "https://wa.me/13642058191?text=Get%20my%20login",
+      "statusCode": 302
     }
   ],
   "headers": [
