@@ -74,3 +74,10 @@ footer.site{background:var(--band);color:var(--band-fg);margin-top:clamp(40px,6v
 .wa-fab:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 @media (max-width:520px){.wa-fab{width:52px;height:52px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}.wa-fab svg{width:28px;height:28px}}
 @media print{header.site,.wa-fab,.toc,footer.site .fbrand{display:none}footer.site{background:none;color:#000}.fbottom,.fbottom a{color:#000}}
+
+/* /community: placeholder content area */
+.community .cta{margin-top:32px}
+.community .btn{min-height:52px;padding:0 26px;font-size:1rem}
+/* Short page: keep the footer at the bottom of the screen */
+body:has(main.community){display:flex;flex-direction:column;min-height:100vh;min-height:100svh}
+main.community{flex:1 0 auto;width:100%}
