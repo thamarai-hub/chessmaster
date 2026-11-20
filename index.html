@@ -610,7 +610,8 @@ footer.site p.tag{color:var(--y);font-weight:700;font-size:.8125rem;margin-top:1
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 </style>
-<style>img{max-width:100%}[hidden]{display:none!important}body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<style>.pastcard{display:grid;grid-template-columns:120px minmax(0,1fr);gap:18px;align-items:center;max-width:640px;background:var(--card);border:2px solid var(--ink);border-radius:var(--r);box-shadow:0 4px 0 var(--ink);padding:14px;text-decoration:none;color:var(--ink)}.pastcard img{width:120px;height:120px;object-fit:cover;border-radius:14px}.pastcard h3{font-size:1.125rem;margin-top:6px}.pastcard p{color:var(--muted);font-size:.875rem;margin-top:4px}.endpill{display:inline-block;font-size:.75rem;font-weight:800;padding:3px 10px;border-radius:999px;background:var(--bg2);box-shadow:inset 0 0 0 1.5px var(--ink)}.btn-wa{background:#25D366;color:#fff;border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink);margin-top:20px}@media (max-width:520px){.pastcard{grid-template-columns:84px minmax(0,1fr)}.pastcard img{width:84px;height:84px}.past .btn-wa{width:100%}}
+img{max-width:100%}[hidden]{display:none!important}body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 </head>
 <body>
 <header class="site" id="hdr">
@@ -637,7 +638,7 @@ footer.site p.tag{color:var(--y);font-weight:700;font-size:.8125rem;margin-top:1
     <div class="fgrid2">
       <div><a class="brand" href="#home" style="color:#FFFCF3"><span id="ftLogo"></span><span><em>Chess</em><b>Master</b></span></a><p>Live chess masterclasses taught by Grandmasters and International Masters. Pick a topic, reserve a seat, learn from a master.</p><p class="tag">Learn from Masters. Play Like One.</p></div>
       <div><h4>Explore</h4><ul><li><a href="#schedule">Class schedule</a></li><li><a href="#schedule-opening">Openings</a></li><li><a href="#schedule-endgame">Endgames</a></li><li><a href="#pricing">Pricing</a></li></ul></div>
-      <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#contact">Contact us</a></li><li><a href="#pricing">FAQ</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="/community">Community</a></li><li><a href="#contact">Contact us</a></li><li><a href="#pricing">FAQ</a></li></ul></div>
       <div><h4>Get in touch</h4><ul><li><a href="https://wa.me/13642058191" target="_blank" rel="noopener">WhatsApp us</a></li><li><a href="mailto:support@chessmaster.io">support@chessmaster.io</a></li></ul></div>
     </div>
     <div class="fbottom"><span>© 2026 Shortcastle Technologies Private Limited · No. 14, Sabari Salai, Madipakkam, Chennai, Tamil Nadu 600091 · <a href="mailto:support@chessmaster.io">support@chessmaster.io</a></span><span class="flinks"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></span></div>
@@ -782,10 +783,11 @@ const tzSelect=id=>`<span class="sel"><select id="${id}" aria-label="Show times 
 const seatsLeft=c=>Math.max(0,c.seats-c.booked);
 
 /* ============ SHARED COMPONENTS ============ */
-const NAV=[['home','Home','♔'],['about','About','♗'],['schedule','Schedule','♘'],['pricing','Pricing','♖'],['contact','Contact Us','♙']];
+const NAV=[['home','Home','♔'],['about','About','♗'],['schedule','Schedule','♘'],['pricing','Pricing','♖'],['/community','Community','♕'],['contact','Contact Us','♙']];
+const navHref=h=>h.startsWith('/')?h:'#'+h;
 function renderNav(active){
-  $('#nav').innerHTML=NAV.map(([h,l])=>`<a href="#${h}" ${active===h?'aria-current="page"':''}>${l}</a>`).join('');
-  $('#dnav').innerHTML=NAV.map(([h,l,g],i)=>`<a href="#${h}" style="transition-delay:${80+i*50}ms" ${active===h?'aria-current="page"':''}>${l}<span class="glyph" aria-hidden="true">${G(g)}</span></a>`).join('');
+  $('#nav').innerHTML=NAV.map(([h,l])=>`<a href="${navHref(h)}" ${active===h?'aria-current="page"':''}>${l}</a>`).join('');
+  $('#dnav').innerHTML=NAV.map(([h,l,g],i)=>`<a href="${navHref(h)}" style="transition-delay:${80+i*50}ms" ${active===h?'aria-current="page"':''}>${l}<span class="glyph" aria-hidden="true">${G(g)}</span></a>`).join('');
 }
 function sectionHead(eyebrow,title,sub=''){return `<div class="shead"><span class="eyebrow">${eyebrow}</span><h2>${title}</h2>${sub?`<p>${sub}</p>`:''}</div>`}
 
@@ -851,116 +853,11 @@ function miniBoard(t){
 }
 
 /* ============ VIEWS ============ */
-/* ============ MASTERCLASS HERO ============ */
-/* Same dates, fees and times as /webinar. Fee dates turn over at midnight IST.
-   The home hero shows this until the class starts, then the regular hero returns. */
-const MC={
-  start:new Date('2026-11-19T20:00:00+05:30'),end:new Date('2026-11-19T21:00:00+05:30'),url:'/webinar',
-  tiers:[
-    {until:'2026-11-10T23:59:59+05:30',INR:499,when:'Till 10 Nov',USD:6,was:15,badge:'Early Bird Ends 10 Nov',up:'Price increases after 10 Nov'},
-    {until:'2026-11-15T23:59:59+05:30',INR:499,when:'11 to 15 Nov',USD:10,was:15,badge:'Till 15 Nov',up:'Price increases after 15 Nov'},
-    {until:'2026-11-19T20:00:00+05:30',INR:499,when:'From 16 Nov',USD:15,was:0,badge:'Last few days',up:''}
-  ],
-  markets:{in:{label:'India',time:'8–9 PM IST'},uk:{label:'UK',time:'2:30–3:30 PM UK time'},et:{label:'US Eastern',time:'9:30–10:30 AM ET'},ct:{label:'US Central',time:'8:30–9:30 AM CT'},ae:{label:'UAE',time:'6:30–7:30 PM UAE time'}}
-};
-const mcQ=new URLSearchParams(location.search);
-/* Preview only: ?now=2026-11-12 tests the fee dates, ?tz=uk|et|ct|ae|in picks the region. */
-const MC_PROD=/^(www\.)?chessmaster\.io$|^chessmasters-website\.vercel\.app$/.test(location.hostname);
-const MC_SHIFT=!MC_PROD&&/^\d{4}-\d{2}-\d{2}$/.test(mcQ.get('now')||'')?new Date(mcQ.get('now')+'T12:00:00+05:30')-Date.now():0;
-const mcNow=()=>new Date(Date.now()+MC_SHIFT);
-const mcOpen=()=>mcNow()<MC.start;
-const mcTier=()=>MC.tiers.find(t=>mcNow()<=new Date(t.until));
-function mcOffset(tz,d){
-  const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric'}).formatToParts(d).map(x=>[x.type,x.value]));
-  return Math.round((Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute)-d.getTime())/6e4);
-}
-function mcLocal(){
-  if(!localTz)return null;
-  try{
-    const t=d=>new Intl.DateTimeFormat('en-US',{timeZone:localTz,hour:'numeric',minute:'2-digit'}).format(d).replace(':00','').replace(/\s/g,' ');
-    const a=t(MC.start),b=t(MC.end),ap=/ (AM|PM)$/,same=a.match(ap)&&b.match(ap)&&a.match(ap)[1]===b.match(ap)[1];
-    return{date:new Intl.DateTimeFormat('en-GB',{timeZone:localTz,weekday:'short',day:'numeric',month:'short'}).format(MC.start).replace(/^(\w+),? /,'$1, '),time:(same?a.replace(ap,''):a)+'–'+b+' your time'};
-  }catch(e){return null}
-}
-const MC_LOCAL=mcLocal();
-let mcMarket=(()=>{
-  const f=mcQ.get('tz');if(!MC_PROD&&f&&MC.markets[f])return f;
-  if(/^Asia\/(Kolkata|Calcutta)$/.test(localTz))return 'in';
-  if(/^Europe\/(London|Belfast|Jersey|Guernsey|Isle_of_Man)$/.test(localTz))return 'uk';
-  if(localTz==='Asia/Dubai')return 'ae';
-  if(/^America\//.test(localTz)){try{const m={'-300':'et','-360':'ct'}[mcOffset(localTz,MC.start)];if(m)return m}catch(e){}}
-  return MC_LOCAL?'local':'in';
-})();
-function mcFee(){
-  const t=mcTier();if(!t)return '';
-  if(mcMarket==='in'){
-    /* Back-to-back steps with the same rupee fee show once (the later one). */
-    const steps=MC.tiers.filter((x,i)=>!(MC.tiers[i+1]&&MC.tiers[i+1].INR===x.INR)),now=steps.findIndex(x=>new Date(x.until)>=new Date(t.until));
-    /* One fee for the whole run (India since 15 Nov): no ladder. */
-    if(steps.length<2)return `<div class="mc-usd" aria-label="Fee"><span class="amt"><b>₹${t.INR}</b></span><span class="pill">incl. GST</span><span class="closes">Registration closes Thu, 19 Nov, 8 PM IST</span></div>`;
-    return `<div class="mc-fee"><h3>The fee goes up with time</h3><ol class="mc-ladder">${steps.map((x,i)=>`<li ${i===now?'data-now':i<now?'data-past':''}>${i===now?'<i>Fee today</i>':i<now?'<i>Ended</i>':''}<b>₹${x.INR}</b><span>${x.inWhen||x.when}</span></li>`).join('')}</ol><small class="mc-note">Fees include GST. Fee dates end at midnight India time (IST).</small></div>`;
-  }
-  return `<div class="mc-usd" aria-label="Fee"><span class="amt">${t.was?`<s aria-label="Was $${t.was}">$${t.was}</s>`:''}<b>$${t.USD}</b></span><span class="pill">${t.badge}</span>${t.up?`<span class="up">${t.up}</span>`:''}</div>`;
-}
-function mcFacts(){
-  const loc=mcMarket==='local'&&MC_LOCAL;
-  return{date:loc?MC_LOCAL.date:'Thu, 19 Nov',time:loc?MC_LOCAL.time:MC.markets[mcMarket].time};
-}
-function mcCountdown(){
-  const ms=Math.max(0,MC.start-mcNow()),d=Math.floor(ms/864e5),h=Math.floor(ms/36e5)%24,m=Math.floor(ms/6e4)%60;
-  return `<b>${d}<em>DAYS</em></b><b>${String(h).padStart(2,'0')}<em>HRS</em></b><b>${String(m).padStart(2,'0')}<em>MIN</em></b>`;
-}
-function viewMCHero(){
-  const f=mcFacts();
-  const opts=(MC_LOCAL?[['local','My time']]:[]).concat(Object.entries(MC.markets).map(([k,v])=>[k,v.label]));
-  return `<section class="hero mc" id="mcHero">
-    <span class="bgp hide-m" data-depth="18" style="left:-2%;top:6%;font-size:13rem">${G('♞')}</span>
-    <span class="bgp hide-m" data-depth="10" style="right:1%;bottom:2%;font-size:11rem">${G('♝')}</span>
-    <div class="wrap hero-grid">
-      <div class="hero-copy">
-        <span class="eyebrow">Live online masterclass</span>
-        <h1>Win Tournaments with <span class="mark">Perfect Opening Play</span></h1>
-        <p class="mc-coach">with ${tbadge('GM')} Shyam Sundar</p>
-        <p class="lead">Learn how strong opening preparation helps you score better in tournaments. Open to all ages and levels.</p>
-        <div class="mc-facts">
-          <div><small>Date</small><b id="mcDate">${f.date}</b></div>
-          <div><span class="mc-tl"><small>Time</small><label class="mc-tz"><select id="mcTz" aria-label="Show the time for">${opts.map(([k,l])=>`<option value="${k}" ${k===mcMarket?'selected':''}>${l}</option>`).join('')}</select></label></span><b id="mcTime">${f.time}</b></div>
-        </div>
-        <div id="mcFee">${mcFee()}</div>
-        <div class="mc-cta"><a class="btn btn-y" href="${MC.url}">Register now ${ic('arrow','arrow')}</a><span class="mc-meta">60-minute live class with a Grandmaster</span></div>
-      </div>
-      <div class="stage mc-stage" id="stage">
-        <figure class="mc-photo"><img src="/gm-shyam-sundar.jpg" width="880" height="842" alt="GM Shyam Sundar at a chess board" fetchpriority="high"></figure>
-        <div class="stage-row">
-          <div class="float mcard"><span class="avatar" aria-hidden="true"><span class="glyph">${G('♚')}</span></span><div><div style="display:flex;gap:8px;align-items:center">${tbadge('GM')}<b style="font-size:.9375rem">Shyam Sundar</b></div><div class="cap muted" style="margin-top:2px">Grandmaster · Opening play</div></div></div>
-          <div class="float mc-count" aria-label="Time until the class starts"><small>Starts in</small><div class="t" id="mcCount">${mcCountdown()}</div></div>
-          <div class="float live"><span class="livedot"></span>Live online · 60 min</div>
-          <div class="float mc-aud"><span class="glyph" aria-hidden="true">${G('♞')}</span>All ages &amp; levels</div>
-        </div>
-      </div>
-    </div>
-  </section>`;
-}
-let mcTimer=null;
-function bindMC(){
-  clearInterval(mcTimer);
-  const sel=$('#mcTz');if(!sel)return;
-  const paint=()=>{const f=mcFacts();$('#mcDate').textContent=f.date;$('#mcTime').textContent=f.time;$('#mcFee').innerHTML=mcFee()};
-  sel.onchange=e=>{mcMarket=e.target.value;paint()};
-  let tier=mcTier();
-  mcTimer=setInterval(()=>{
-    if(!$('#mcHero')){clearInterval(mcTimer);return}
-    if(!mcOpen()){clearInterval(mcTimer);lastHash=null;route();return}
-    $('#mcCount').innerHTML=mcCountdown();
-    if(mcTier()!==tier){tier=mcTier();paint()}
-  },15000);
-}
-
 function viewHome(){
   const upcoming=DATA.classes.filter(c=>c.status==='open').sort((a,b)=>a.start.localeCompare(b.start)).slice(0,3);
   const nextFor=id=>DATA.classes.filter(c=>c.master===id&&(c.status==='open'||c.status==='soon')).sort((a,b)=>a.start.localeCompare(b.start))[0];
   return `<div class="view">
-  ${mcOpen()?viewMCHero():`  <section class="hero">
+  <section class="hero">
     <span class="bgp hide-m" data-depth="18" style="left:-2%;top:6%;font-size:13rem">${G('♜')}</span>
     <span class="bgp" data-depth="-12" style="left:38%;bottom:-4%;font-size:9rem">${G('♟')}</span>
     <span class="bgp hide-m" data-depth="10" style="right:1%;bottom:2%;font-size:11rem">${G('♝')}</span>
@@ -986,7 +883,18 @@ function viewHome(){
         </div>
       </div>
     </div>
-  </section>`}
+  </section>
+
+  <section class="section past" id="past" style="padding-top:clamp(24px,3vw,40px)">
+    <div class="wrap">
+      ${sectionHead('Past masterclasses','Our Latest Masterclass','Get class updates, news of the next masterclass and chess tips in our WhatsApp community.')}
+      <a class="pastcard" href="/webinar">
+        <img src="/gm-shyam-sundar.jpg" width="880" height="842" alt="GM Shyam Sundar at a chess board" loading="lazy">
+        <div><span class="endpill">Ended</span><h3>Win Tournaments with Perfect Opening Play</h3><p>GM Shyam Sundar · held Thu, 19 Nov 2026</p></div>
+      </a>
+      <a class="btn btn-wa" href="https://chat.whatsapp.com/IRnLJjsMxNgCzK7AJ3evYm" target="_blank" rel="noopener">Join our community</a>
+    </div>
+  </section>
 
   <section class="section rv" style="padding-top:clamp(24px,3vw,40px)">
     <div class="wrap">
@@ -1417,7 +1325,7 @@ function bindSchedule(){
 }
 function bindTz(rerender){const s=$('#tzSel');if(s)s.onchange=e=>{TZ=e.target.value;store.set('cm-tz',TZ);rerender()}}
 function bindHome(){
-  mountHeroBoard();bindNotify();bindMC();
+  mountHeroBoard();bindNotify();
   const st=$('#stage'),bgs=$$('.bgp');
   if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&matchMedia('(pointer:fine)').matches){
     const hero=$('.hero');hero.addEventListener('pointermove',e=>{const x=e.clientX/innerWidth-.5,y=e.clientY/innerHeight-.5;
